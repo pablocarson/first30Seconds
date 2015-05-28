@@ -4,92 +4,67 @@ function unitTests() {
             function() {
                 descAlert = function() {};
             },
-        // P5. invite page
-            // Send invite page data and display page
+        // P4. home page
+            // Send home page data with zero credits and display page
                 function() {
-                    descAlert( "Let's begin the unit test of the Invite page. We'll populate the page data, namely the start time of the party and the distance of the party from the user's current location, and display the Invite page using the changePage function." );
-                    // Page data for the invite page. The page is populated with the start time of the party and the distance of the venue from the current location of the user.
-                        inviteServerRef.set ( { 
+                    descAlert( "Let's start the unit test of the Home page. We'll prepopulate the page data and then display the populated page. There are two possible page states depending on the number of credits, so we'll test the zero-credits case first. The copy at the top will read 'You have 0 credits', with the number zero appearing in red. The 'Find a party' button will be disabled, and additional text just above the button will instruct the user to buy credits." );
+                    // Let's start the unit test of the Home page by prepopulating the page data for the home page. The only initial page data is the number of credits. There are two possible page states depending on the number of credits, so we'll test the zero-credits case first.
+                        homeServerRef.set({
                             pageData : {
-                                partyTimeMsg : "9:15 PM" ,
-                                partyDistanceMsg : "1.2 miles"
+                                creditsMsg : "0"
                             }
-                         } )
-                    // display the Invite page
-                        globalServerRef.child('currentPage').set ( { changePageMsg : "invite" } )
+                        })
+                    return( 0 );
+                },
+                function() {
+                    // changePage to Home page
+                        globalServerRef.child('currentPage').set ( { changePageMsg : "home" } )
                     // Add a delay to allow page transition
                         return( 1000 );
                 },
-            // confirm display of invite page
+            // Confirm display of Home page with page data
                 function() {
-                    // Confirm that we are on the invite page
-                        var screen =  $.mobile.activePage.attr('id');
-                        var expectedScreen ="invite";
-                        if (screen != expectedScreen ) {
+                    // Confirm that we are on the home page
+                        var currentText =  $.mobile.activePage.attr('id');
+                        var expectedText ="home";
+                        if (currentText != expectedText ) {
                             alert(
                                 "Expecting value [ " +
-                                expectedScreen +
+                                expectedText +
                                 " ]. Got value: [ "+
-                                screen +
+                                currentText +
                                 " ]"
                             );
                             return( -1 );
                         };
-                    // Check that the party time and distance are correctly displayed.
-                        var partyTimeText = $('#partyTime').text()
-                        var expectedPartyTimeText ="9:15 PM";
-                        var partyDistanceText = $('#partyDistance').text()
-                        var expectedPartyDistanceText ="1.2 miles";
-                        if (( partyTimeText != expectedPartyTimeText ) || ( partyDistanceText != expectedPartyDistanceText )) {
-                            alert(
-                                "Expecting value[ " +
-                                expectedPartyTimeText +
-                                ", " +
-                                expectedPartyDistanceText +
-                                " ]. Got value: [ "+
-                                partyTimeText +
-                                ", " +
-                                partyDistanceText +
-                                "}"
-                            );
-                            return( -1 );
-                        };
-                    descAlert( "We're successfully populated and displayed the invite page. Let's test that we can change page data elements as necessary and confirm that the page will display the changes. We'll change the start time of the party and confirm that the display updates." );
-                    return( 0 );
-                },
-            // Server changes the start time, reconfirm page data
-                function() {
-                    // Change the start time
-                        inviteServerRef.child('pageData').child( 'partyTimeMsg' ).set( '10:15 PM' );
                     return( 0 );
                 },
                 function() {
-                    // Check that the display has updated the start time accordingly
-                        var currentText = $('#partyTime').text()
-                        var expectedText ="10:15 PM";
+                    // Since we're testing a user with no credits, the copy at the top will read 'You have 0 credits, and the number zero will appear in red. The 'Find a party' button will be disabled, and the text just above the button will instruct the user to buy credits. Let's confirm that this is the case.
+                    // Confirm that the number of credits appears
+                        var currentText = $("#homeCredits").html();
+                        var expectedText ="0";
                         if ( currentText != expectedText ) {
                             alert(
                                 "Expecting value[ " +
                                 expectedText +
                                 " ]. Got value: [ "+
                                 currentText +
-                                "}"
+                                " ]"
                             );
                             return( -1 );
                         };
-                    return( 0 );
-                },
-                function() {
-                    // Check that the display has updated the distance accordingly
-                        var currentText = $('#partyDistance').text()
-                        var expectedText ="1.2 miles";
-                        if ( currentText != expectedText ) {
+                    // Confirm that the credits text number is red
+                        if ( $(homeCredits).css('color') != 'rgb(153, 0, 0)') {
                             alert(
-                                "Expecting value[ " +
-                                expectedText +
-                                " ]. Got value: [ "+
-                                currentText +
-                                "}"
+                                "Error: The credits text color should be rgb(153, 0, 0)  or (#990000)"
+                            );
+                            return( -1 );
+                        };
+                    // Confirm that the 'Find a party' button is disabled
+                        if ( $("#ratingSubmit").hasClass('ui-disabled') != true) {
+                            alert(
+                                "Error: The 'Find a party' button should be disabled."
                             );
                             return( -1 );
                         };
@@ -97,7 +72,7 @@ function unitTests() {
                 },
             // Server sends an alert
                 function() {
-                    descAlert( "The time was updated and the page data is properly displayed. Let's send an alert and confirm that the page displays it properly. In this case, let's test that a properly flagged alert will remove the Waiting overlay if it's active. This also covers the condition where we display an alert with no Waiting overlay, since that state is a substate of this test. (If no Waiting overlay is active, the command to remove it will just be ignored.)" );
+                    descAlert( "The page and page data remain unchanged. Let's display an alert with a flag to remove a Waiting overlay if one is open. This also covers the case where an alert is displayed with no Waiting overlay, since that's a substate of this test: if no Waiting overlay is active, the command to remove it will be ignored." );
                     // Open the Waiting overlay
                         usr_sys_openWaiting();
                     return( 1000 );
@@ -106,24 +81,17 @@ function unitTests() {
                     // Send a message to Firebase containing an alert with a flag to remove a waiting overlay if one is present
                         globalServerAlertRef.set({
                             currentAlert : {
-                                alertMsg : " [Alert text] (Invite) ",
+                                alertMsg : " [Alert text] (Home) ",
                                 removeWaitingMsg : true
-                                },
+                            },
                         })
                     //  Include a small delay for app response
-                        return( 1000 );
+                        return( 10 );
                 },
                 function() {
-                    // Confirm that Waiting overlay has been removed
-                        if ($(inviteWaiting).parent().hasClass('ui-popup-active')) {
-                            alert(
-                                "Error: App should not be in Waiting mode."
-                            );
-                            return( -1 );
-                        };
                     // Confirm receipt / display of alert text by app
-                        var currentText = $('#inviteAlertText').text()
-                        var expectedText =" [Alert text] (Invite) ";
+                        var currentText = $('#homeAlertText').text()
+                        var expectedText =" [Alert text] (Home) ";
                         if ( currentText != expectedText ) {
                             alert(
                                 "Expecting text: [" +
@@ -134,7 +102,7 @@ function unitTests() {
                             );
                             return( -1 );
                         };
-                        if ( $(inviteAlertWrapper).css('display') != 'block') {
+                        if ( $(homeAlertWrapper).css('display') != 'block') {
                             alert(
                                 "Error: App should be displaying an alert."
                             );
@@ -146,35 +114,42 @@ function unitTests() {
                 function() {
                     descAlert( "The alert was displayed and the Waiting overlay was removed. Let's click on the alert to test that a message is sent to Firebase to close the alert." );
                     // Click on the alert
-                        $(inviteAlertWrapper).click();
+                        $(homeAlertWrapper).click();
                     // Add a delay to allow for page transition
                         return( 1000 );
                 },
                 function() {
+                    // Confirm display state change to Waiting
+                        if ($(homeWaiting).parent().hasClass('ui-popup-hidden')) {
+                            alert(
+                                "Error: App should be in Waiting mode."
+                            );
+                            return( -1 );
+                        };
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
-                        GLOB.usr_inviteCloseAlert = "";
+                        GLOB.usr_homeCloseAlert = "";
                         // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
-                            GLOB.usr_inviteCloseAlert = JSON.stringify(val);
-                        // Turn the listener off after retrieving the data
-                            checkGlobalClientRef.off();
+                            GLOB.usr_homeCloseAlert = JSON.stringify(val);
+                        // Close the listener
+                            checkGlobalClientRef.off()
                         });
                     // Add a delay to ensure the data is received
                         return( 1000 );
                 },
                 function() {
                     // Confirm that the 'Close_alert' message was received by Firebase
-                        if (GLOB.usr_inviteCloseAlert != '{"Close_alert":true}') {
+                        if (GLOB.usr_homeCloseAlert != '{"Close_alert":true}') {
                             alert(
                                 'Expecting {"Close_alert":true }. Got: ' +
-                                GLOB.usr_inviteCloseAlert
+                                GLOB.usr_homeCloseAlert
                             );
                             return( -1 );
                         };
-                    // Confirm that the Waiting overlay is open
-                        if ($(inviteWaiting).parent().hasClass('ui-popup-hidden')) {
+                    // Confirm that Waiting overlay is still present
+                        if ($(homeWaiting).parent().hasClass('ui-popup-hidden')) {
                             alert(
                                 "Error: App should be in Waiting mode."
                             );
@@ -183,27 +158,29 @@ function unitTests() {
                 },
             // Server removes an alert
                 function() {
-                    descAlert( "Let's simulate a server response to Firebase to close the alert and the Waiting overlay." );
+                },
+                function() {
+                    descAlert( "The Firebase message to close the alert was received. Let's simulate a server response to Firebase to close the alert. Firebase does this by setting the alert content to null (''). Since the Waiting overlay should also be closed,  we'll also send this instruction as part of the message." );
                     // Simulate a server message to Firebase to close the alert and the waiting overlay. This is done by setting the alertMsg value to null ("")
                         globalServerAlertRef.set({
                             currentAlert : {
                                 alertMsg : "",
                                 removeWaitingMsg : true
-                            },
+                                },
                         })
                     //  Include a small delay for app response
                         return( 1000 );
                 },
                 function() {
                     // Confirm that alert has been removed
-                        if ( $(inviteAlertWrapper).css('display') == 'block') {
+                        if ( $(homeAlertWrapper).css('display') == 'block') {
                             alert(
                                 "Error: App should not be displaying an alert."
                             );
                             return( -1 );
                         };
                     // Confirm that Waiting overlay has been removed
-                        if ($(inviteWaiting).parent().hasClass('ui-popup-active')) {
+                        if ($(homeWaiting).parent().hasClass('ui-popup-active')) {
                             alert(
                                 "Error: App should not be in Waiting mode."
                             );
@@ -215,7 +192,7 @@ function unitTests() {
                 function() {
                     descAlert( "The alert closed properly and the Waiting overlay was removed. Let's restore the Waiting overlay and test the alert again with the instruction to retain the Waiting overlay. The alert should be visible behind the translucent overlay." );
                     // Induce a waiting state
-                        $(inviteWaiting).popup('open');
+                        $(homeWaiting).popup('open');
                     // Add a delay to allow for page transition
                         return( 1000 );
                 },
@@ -223,24 +200,24 @@ function unitTests() {
                     // Send a message to Firebase containing an alert and the instruction to retain the Waiting overlay
                         globalServerAlertRef.set({
                             currentAlert : {
-                                alertMsg : " [Alert text] (Invite / Waiting) ",
+                                alertMsg : " [Alert text] (Home / Waiting) ",
                                 removeWaitingMsg : false
-                            },
+                                },
                         })
                     // Add a delay to allow for page transition
                         return( 1000 );
                 },
                 function() {
                     // Confirm that Waiting overlay is still present
-                        if ($(inviteWaiting).parent().hasClass('ui-popup-hidden')) {
+                        if ($(homeWaiting).parent().hasClass('ui-popup-hidden')) {
                             alert(
                                 "Error: App should be in Waiting mode."
                             );
                             return( -1 );
                         };
                     // Confirm receipt / display of alert text by app
-                        var currentText = $('#inviteAlertText').text()
-                        var expectedText =" [Alert text] (Invite / Waiting) ";
+                        var currentText = $('#homeAlertText').text()
+                        var expectedText =" [Alert text] (Home / Waiting) ";
                         if ( currentText != expectedText ) {
                             alert(
                                 "Expecting text: [" +
@@ -251,7 +228,7 @@ function unitTests() {
                             );
                             return( -1 );
                         };
-                        if ( $(inviteAlertWrapper).css('display') != 'block') {
+                        if ( $(homeAlertWrapper).css('display') != 'block') {
                             alert(
                                 "Error: App should be displaying an alert."
                             );
@@ -259,264 +236,466 @@ function unitTests() {
                         };
                     return( 0 );
                 },
-            // User clicks 'Decline'
-                // Test that the Decline button puts the display in Waiting mode and sends a Decline_invitation message to Firebase.
+            // User clicks the 'Buy more credits' button
+                // Let's select the 'Buy more credits' button and check that it opens a Waiting overlay and sends the proper message to Firebase.
                 function() {
-                    descAlert( "The waiting overlay was removed and the alert displayed properly. Now let's remove the Waiting overlay and the alert and test the Decline button. It will put the display in Waiting mode and send a Decline_invitation message to Firebase." );
-                    // Close the alert and the Waiting overlay
+                    descAlert( "The server message displayed the alert behind the translucent Waiting overlay. Let's close them both, select the 'Buy credits' button and check that it opens the Waiting overlay and sends the proper message to Firebase." );
+                    //  Close the alert and remove the Waiting overlay
                         globalServerAlertRef.set({
                             currentAlert : {
                                 alertMsg : "",
                                 removeWaitingMsg : true
-                            },
+                                },
                         })
                     // Add a delay to allow for page transition
                         return( 1000 );
                 },
                 function() {
-                    // Click "cancel" to decline proposed invite
-                        $( "#inviteDecline" ).click();
-                    // Add a delay to allow for page transition
+                    // Click the 'Buy more credits' button
+                        $( "#homeBuyCredits" ).click();
+                    //  Include a delay to accommodate potential bandwidth delays between the app, Stripe, and Firebase.
                         return( 1000 );
                 },
-                // Confirm that the proper Decline message was received by Firebase and the display went into Waiting mode, and then send a system response
                 function() {
                     // Confirm display state change to Waiting
-                        if ($(inviteWaiting).parent().hasClass('ui-popup-hidden')) {
+                        if ($(homeWaiting).parent().hasClass('ui-popup-hidden')) {
                             alert(
                                 "Error: App should be in Waiting mode."
                             );
                             return( -1 );
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
-                        GLOB.usr_declineInvitation = "";
+                        GLOB.usr_homeBuyCredits = "";
                         // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
-                        var checkInviteClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/invite/clientEvents' );
-                        checkInviteClientRef.on('child_added', function(childSnapshot, prevChildName) {
+                        var checkHomeClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/home/clientEvents' );
+                        checkHomeClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
-                            GLOB.usr_declineInvitation = JSON.stringify(val);
-                        // Turn the listener off after retrieving the data
-                            checkInviteClientRef.off();
+                            GLOB.usr_homeBuyCredits = JSON.stringify(val);
+                        // Close the listener
+                            checkHomeClientRef.off()
                         });
                     // Add a delay to ensure the data is received
                         return( 1000 );
                 },
                 function() {
-                    // Confirm that the 'Decline_invitation' message was received by Firebase
-                        if (GLOB.usr_declineInvitation != '{"Decline_invitation":true}') {
+                    // Confirm that the 'Login_attempt' message was received by Firebase
+                        if (GLOB.usr_homeBuyCredits != '{"homeBuyCredits":true}') {
                             alert(
-                                'Expecting {"Decline_invitation":true}. Got: {' +
-                                GLOB.usr_declineInvitation +
-                                "}"
+                                'Expecting {"homeBuyCredits":true}. Got: ' +
+                                GLOB.usr_homeBuyCredits +
+                                "."
+                            );
+                            return( -1 );
+                        };
+                },
+            // Server opens the Checkout overlay
+                // Open the purchase overlay. The purchase process is handled by an external service called Stripe Checkout. The overlay is generated by Stripe within our app.
+                function() {
+                    descAlert( "The buyCredits message was received by Firebase. Let's simulate a Firebase response that closes the Waiting overlay and opens the purchase overlay." );
+                    //  Firebase command to open Stripe
+                        globalServerStripeRef.set({
+                            stripeMsg: true
+                        })
+                    // Add a delay to allow for page transition. We'll double the normal interval since one overlay has to close before the other one opens.
+                        return( 2000 );
+                },
+                // The app will respond by opening the Stripe overlay. The overlay is entirely external to the app and generated by Stripe's code checkout.js which is included in our HTML header. So it is outside our DOM. However, Stripe includes a handler with a callback when the overlay is opened that we can use to send a message to Firebase and confirm that the waiting overlay closes and the purchase overlay opens.
+                function() {
+                    // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
+                        GLOB.usr_checkoutOpened = "";
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        stripeClientRef.on('child_added', function(childSnapshot, prevChildName) {
+                            var val = childSnapshot.val();
+                            GLOB.usr_checkoutOpened = JSON.stringify(val);
+                        // Turn the listener off after retrieving the data
+                            stripeClientRef.off();
+                        });
+                    // Add a delay to allow for page transition
+                        return( 1000 );
+                },
+                function() {
+                    // Confirm that the 'Login_attempt' message was received by Firebase
+                        if (GLOB.usr_checkoutOpened != '{"Checkout_open":true}') {
+                            alert(
+                                'Expecting {"Checkout_open":true}. Got:' +
+                                GLOB.usr_checkoutOpened +
+                                "."
                             );
                             return( -1 );
                         };
                     // Confirm display state change to Waiting
-                        if ($(inviteWaiting).parent().hasClass('ui-popup-hidden')) {
+                        if ($(homeWaiting).parent().hasClass('ui-popup-active')) {
+                            alert(
+                                "Error: App should not be in Waiting mode."
+                            );
+                            return( -1 );
+                        };
+                    return( 0 );
+                },
+            // User cancels purchase
+                // Open the purchase overlay. The purchase process is handled by an external service called Stripe Checkout. The overlay is generated by Stripe within our app.
+                function() {
+                    descAlert( "Firebase received a message that the purchase overlay is open. Let's simulate the case where a user cancels the purchase and closes the overlay. Firebase will receive a message that the overlay was closed so it remains synchronous with the current client state." );
+                    //  Simulate a user command to close the purchase overlay
+                        handler.close();
+                    // Add a delay to allow for page transition
+                        return( 1000 );
+                },
+                // Stripe includes a handler with a callback when the overlay is closed. The callback sends a message to Firebase confirming that the overlay was closed.
+                function() {
+                    // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
+                        GLOB.usr_checkoutClosed = "";
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        var checkStripeClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/Stripe/clientEvents' );
+                        checkStripeClientRef.on('child_added', function(childSnapshot, prevChildName) {
+                            var val = childSnapshot.val();
+                            GLOB.usr_checkoutClosed = JSON.stringify(val);
+                        // Turn off the listener
+                            checkStripeClientRef.off();
+                        });
+                    // Add a delay to ensure the data is received
+                        return( 1000 );
+                },
+                function() {
+                    // Confirm that the 'Checkout_open' message was received by Firebase
+                        if (GLOB.usr_checkoutClosed != '{"Checkout_open":false}') {
+                            alert(
+                                'Expecting {"Checkout_open":false}. Got:' +
+                                GLOB.usr_checkoutClosed +
+                                "."
+                            );
+                            return( -1 );
+                        };
+                },
+            // User purchases credits
+                // Let's test the case where a user purchases credits. This has to be done manually so we'll reopen the Checkout overlay and then provide a placeholder with a timer instructing the person running the unit test to enter test credit card credentials.
+                function() {
+                    //  Remove the Waiting overlay
+                        sys_closeWaiting();
+                    // Add a delay to allow for page transition
+                        return( 1000 );
+                },
+                function() {
+                    descAlert( "The server confirmed that the Checkout overlay closed. Let's reopen it and submit a successful purchase. After this alert is closed, instructions to enter a test credit card number will follow. On successful submission, a pay token will be sent by Stripe to Firebase. This token is to be used by the server to complete the purchase process. Refer to documentation at stripe.com for server implementation details." );
+                    //  Open stripe overlay
+                        handler.open();
+                    // Add a delay to allow for the Stripe overlay
+                        return( 0 );
+                },
+                function() {
+                    //  Display instructions to complete a test purchase. 45 seconds will be provided to complete this process.
+                    $('body').append("<div data-role='popup' class='purchase-instructions' id='testPayment'>Enter the test purchase credentials below.<br><br><b>Email:</b> abc@abc.com<br><b>Credit card:</b> 4242 4242 4242 4242<br><b>Expiration:</b> Any month / year in the future.<br><b>CVC:</b> Any 3-digit number.<div style='color:#cc0000; font-weight: bold''>Do NOT select the 'Remember Me' checkbox.</div><br>You have <span id='testPaymentTimer'></span> seconds.</div>");
+                    //  Set the timer in the instructions to coincide with the timeout to complete this task.
+                    $('#testPaymentTimer').countdown({until: +60, compact:true, format: 'S', onExpiry: function(){$(".purchase-instructions").hide();}});
+                    // Add a listener for receipt of the token. Since this a user process, the listener will be open while the user completes the purchase process. When the server receives the token, it will kill the 60-second timer,  remove the instructional overlay (the pay overlay will already be removed as part of the purchase process), and proceed with the test.
+                    // Add a delay to allow the timer to run.
+                        return( 60500 );
+                },
+                // We've confirmed receipt of the pay token, so let's just confirm that the Waiting overlay is active and proceed. We want the waiting overlay to open so the server can update credits on the Home page before returning control to the user.
+                function() {
+                    // Confirm display state change to Waiting
+                        if ($(homeWaiting).parent().hasClass('ui-popup-hidden')) {
                             alert(
                                 "Error: App should be in Waiting mode."
                             );
                             return( -1 );
                         };
-                    descAlert( "The screen is in Waiting mode and Firebase received the proper Decline_invitation message. Let's remove the Waiting overlay from the Invite page, select the 'More' link and confirm that the display presents the 'Why we need you on time' overlay." ); 
-                    // The Waiting overlay will be removed by the function that handles the system response. Since pay mechanisms are still being worked out, let's just remove the waiting overlay and continue the test.
-                        $(inviteWaiting).popup('close');
-                    // Add a delay to allow for page transition
+                    // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
+                        GLOB.tokenString = "";
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        var checkStripeTokenRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/Stripe/payTokens' );
+                        checkStripeTokenRef.on('child_added', function(childSnapshot, prevChildName) {
+                            var val = childSnapshot.val();
+                            tokenVal = JSON.stringify(val.payToken)
+                            GLOB.tokenString = tokenVal.substring (1,5);
+                        // Turn the listener off after retrieving the data
+                            checkStripeTokenRef.off();
+                        });
+                    // Add a delay to ensure the data is received
                         return( 1000 );
                 },
-            // Test the 'More' link.
-                // Select the 'More' link and confirm that the display changes to the proper page.
                 function() {
-                    // Select the 'more' link
-                        $( "#whyTimerLink" ).click(); 
-                    // Add a delay to allow for page transition
-                        return( 1000 );
-                },
-                // Confirm the 'More' overlay appears
-                function() {
-                    // Confirm that display opened the 'More' overlay
-                        if ($(whyTimer).parent().hasClass('ui-popup-hidden')) {
+                    // Confirm that the 'Login_attempt' message was received by Firebase
+                        if (GLOB.tokenString != 'tok_') {
                             alert(
-                                "Error: The 'More?' overlay should be open"
+                                "Expecting 'tok_'. Got: " +
+                                GLOB.tokenString +
+                                "'."
+                            );
+                            return (-1)
+                        };
+                    return( 0 );
+                },
+            // Server updates credits
+                function() {
+                    // Let's update the home page to reflect a user who has credits.
+                        homeServerRef.child('pageData').child('creditsMsg').set(
+                            "10"
+                        )
+                    return( 50 );
+                },
+                function() {
+                    // When a user has credits, the number of credits will change, and the number will appear in green. The 'Find a party' button will be enabled, and there will be no additional text instructing the user to buy credits.
+                    // Confirm that the number of credits appears
+                        var creditsText = $("#homeCredits").html();
+                        var expectedCreditsText ="10";
+                        if ( creditsText != expectedCreditsText ) {
+                            alert(
+                                "Expecting value[ " +
+                                expectedCreditsText +
+                                " ]. Got value: [ "+
+                                creditsText +
+                                " ]"
                             );
                             return( -1 );
                         };
-                    descAlert( "The 'More' link works. Let's test that the Close button on the overlay returns us to the Invite page." );
-                    // Click the 'close' link in the 'More' page
-                        $( "#moreReturn" ).click(); 
-                    // Add a delay to allow for page transition
-                        return( 1000 );
-                },
-                // Return to Invite page
-                function() {
-                    // Now we'll close the "More" overlay using the [X] symbol in the upper right corner of the overlay. This test case applies to the following use cases from the logic tables:
-                        // P3: User has closed the "More" overlay
-                    // Confirm that the app removes the overlay
-                        if ($(whyTimer).parent().hasClass('ui-popup-active')) {
+                    // Confirm that the credits text number is green
+                        if ( $(homeCredits).css('color') != 'rgb(0, 153, 0)') {
                             alert(
-                                "Error: The 'More?' overlay should be closed"
+                                "Error: The credits text color should be rgb(0, 153, 0)  or (#009900)"
                             );
                             return( -1 );
                         };
-                    descAlert( "The Close button in the 'More' page works. Now return to the Invite page and test the Profile link in the footer. The app will open the Waiting overlay and send a request to Firebase to open the Invite page." );
+                    // Confirm that the 'Find a party' button is enabled
+                        if ( $("#homeFindParty").hasClass('ui-disabled') != false) {
+                            alert(
+                                "Error: The 'Find a party' button should be active."
+                            );
+                            return( -1 );
+                        };
                     return( 0 );
                 },
             // User clicks the Profile link in the footer
                 function() {
                     // Click the Profile button.
-                        $( "#inviteProfile" ).click(); 
+                        $( "#homeProfile" ).click(); 
                     // Add a delay to allow for page transition
                         return( 1000 );
                 },
                 function() {
-                    // Confirm display state change to Waiting
-                        if ($(inviteWaiting).parent().hasClass('ui-popup-hidden')) {
-                            alert(
-                                "Error: App should be in Waiting mode."
-                            );
-                            return( -1 );
-                        };
-                    // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
-                        GLOB.usr_inviteOpenProfile = "";
+                    // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
+                        GLOB.usr_homeOpenProfile = "";
                         // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
-                            GLOB.usr_inviteOpenProfile = JSON.stringify(val);
+                            GLOB.usr_homeOpenProfile = JSON.stringify(val);
                         // Turn the listener off after retrieving the data
                             checkGlobalClientRef.off();
                         });
-                    // Add a delay to ensure the data is received
+                    // Add a delay to allow for page transition
                         return( 1000 );
                 },
                 function() {
                     // Confirm that the 'Open_profile' message was received by Firebase
-                        if (GLOB.usr_inviteOpenProfile != '{"Open_profile":true}') {
+                        if (GLOB.usr_homeOpenProfile != '{"Open_profile":true}') {
                             alert(
                                 'Expecting {"Open_profile":true}. Got: {' +
-                                GLOB.usr_inviteOpenProfile +
+                                GLOB.usr_homeOpenProfile +
                                 "}"
                             );
                             return( -1 );
                         };
-                    // Confirm display state change to Waiting
-                        if ($(inviteWaiting).parent().hasClass('ui-popup-hidden')) {
+                    // Confirm display state change to "Waiting..."
+                        if ($(homeWaiting).parent().hasClass('ui-popup-hidden')) {
                             alert(
                                 "Error: App should be in Waiting mode."
                             );
                             return( -1 );
                         };
-                    descAlert( "The screen is in Waiting mode and Firebase received the proper Decline_invitation message. Let's remove the Waiting overlay from the Invite page and test the Help link which will open an overlay." ); 
-                    // Remove the Waiting overlay
-                        $(inviteWaiting).popup('close');
-                    // Add a delay to allow for page transition
+                    descAlert( "The Profile link opened the Waiting overlay and sent a message to Firebase. The server response is to change to the Profile page, which we'll cover in the Profile section of the unit test. Now let's remove the Waiting overlay, select 'Help' and confirm that it opens the Help overlay." );
+                    //  Remove the Waiting overlay
+                        sys_closeWaiting();
+                    // Add a delay to ensure the data is received
                         return( 1000 );
                 },
-            // Test the help link in the footer
-                // Let's test the Help link in the footer. This covers the following use case in the logic tables:
-                    // P3: User has selected the Help link from the footer
+            // User clicks the Help link
                 function() {
-                    // Click the Help button
-                        $( "#inviteHelpButton" ).click(); 
+                    // Click the Help button to confirm that it works
+                        $( "#homeHelpButton" ).click(); 
                     // Add a delay to allow for page transition
                         return( 1000 );
                 },
                 function() {
                     // Confirm that display opened the Help overlay
-                        if ($(inviteHelp).parent().hasClass('ui-popup-hidden')) {
+                        if ($(homeHelp).parent().hasClass('ui-popup-hidden')) {
                             alert(
                                 "Error: The Help overlay should be open"
                             );
                             return( -1 );
                         };
-                    descAlert( "The Help link works. Let's test that the Return button on the Help overlay returns us to the Invite page." );
+                    descAlert( "The Help button works. Let's test the 'Close' button in the Help overlay and confirm that it works." );
                     // Click the 'close' link in the Help page
-                        $( "#inviteReturn" ).click(); 
+                        $( "#homeReturn" ).click(); 
                     // Add a delay to allow for page transition
                         return( 1000 );
                 },
+                // Return to Home page
                 function() {
-                    // Let's close the Help overlay via the {X} element in the upper right corner. This covers the following use case in the logic tables:
-                        // P3: User has closed the Help overlay
                     // Confirm that the app removes the overlay
-                        if ($(inviteHelp).parent().hasClass('ui-popup-active')) {
+                        if ($(homeHelp).parent().hasClass('ui-popup-active')) {
                             alert(
                                 "Error: The Help overlay should be closed"
                             );
                             return( -1 );
                         };
-                    descAlert( "The Return button in the Help overlay works. Now reopen the Help overlay and test the 'More about this' link in the copy. This will bring us to the same 'More' overlay whose link we tested in the copy of the Invite page." );
                     $( "#inviteHelpButton" ).click(); 
                     // Add a delay to allow for page transition
                         return( 1000 );
                 },
-            // Test the 'more' link in the Help page
-                // The same "More" overlay is linked from the Help overlay as well. So let's select the 'More about this' link in the Help overaly and confirm that the display changes to the "More" overlay. This test case applies to the following use cases from the logic tables:
-                    // P3: User has selected the "More about this" link from the Help overlay
+            // User clicks 'Find a party'
+                // Click 'Find a Party' and confirm that the screen goes into waiting and the message is received by Firebase.
                 function() {
-                    // Test the "More about this" link in the page body
-                        $( "#whyTimerLink2" ).click(); 
-                    // Add a delay to allow for page transition
-                        return( 1000 );
+                    descAlert( "The 'Close' button in the Help overlay works. Let's test the 'Find a party' button. This will put the app in Waiting mode and send a message to Firebase." ); 
+                    $( "#homeFindParty" ).click();
+                    return( 1000 );
                 },
+                // Confirm receipt of the Find_party message
                 function() {
-                    // Confirm that display changed to whyTimer overlay.
-                        if ($(whyTimer).parent().hasClass('ui-popup-hidden')) {
-                            alert(
-                                "Error: The 'More?' overlay should be open"
-                            );
-                            return( -1 );
-                        };
-                    descAlert( "The 'More' overlay appeared. We already tested the 'Close' Link in this overlay so let's just close it and test the 'Accept (1 credit)' button. This will put the app in Waiting mode and send a message to Firebase." );
-                    // Click the 'close' link in the 'More' page
-                        $( "#moreReturn" ).click(); 
-                    // Add a delay to allow for page transition
-                        return( 1000 );
-                },
-            // User clicks 'Accept (1 credit)'
-                function() {
-                    // Let's test the case where the user selects the "Accept (1 credit)" button.
-                    // Click 'Accept' 
-                        $( "#inviteAccept" ).click();
-                    // Add a delay to allow for page transition
-                        return( 1000 );
-                },
-                function() {
-                    // Confirm display state change to Waiting
-                        if ($(inviteWaiting).parent().hasClass('ui-popup-hidden')) {
-                            alert(
-                                "Error: App should be in Waiting mode."
-                            );
-                            return( -1 );
-                        };
-                    // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
-                        GLOB.usr_inviteAccept = "";
+                    // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
+                        GLOB.usr_homeFindParty = "";
                         // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
-                        var checkInviteClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/invite/clientEvents' );
-                        checkInviteClientRef.on('child_added', function(childSnapshot, prevChildName) {
+                        var checkHomeClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/home/clientEvents' );
+                        checkHomeClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
-                            GLOB.usr_inviteAccept = JSON.stringify(val);
-                        // Turn the listener off after retrieving the data
-                            checkInviteClientRef.off();
+                            GLOB.usr_homeFindParty = JSON.stringify(val);
+                        // Close the listener
+                            checkHomeClientRef.off()
                         });
                     // Add a delay to ensure the data is received
                         return( 1000 );
                 },
                 function() {
-                    // Comfirm receipt of "Accept_invitation" message by Firebase
-                        if (GLOB.usr_inviteAccept != '{"Accept_invitation":true}') {
+                    // Confirm display state change to "Waiting..."
+                        if ($(homeWaiting).parent().hasClass('ui-popup-hidden')) {
                             alert(
-                                'Expecting {"Accept_invitation":true}. Got: {' +
-                                GLOB.usr_inviteAccept +
+                                "Error: App should be in Waiting mode."
+                            );
+                            return( -1 );
+                        };
+                    // Confirm that the 'logout' message was received by Firebase
+                        if (GLOB.usr_homeFindParty != '{"Find_party":true}') {
+                            alert(
+                                'Expecting {"Find_party":true}. Got: {' +
+                                GLOB.usr_homeFindParty +
                                 "}"
                             );
                             return( -1 );
                         };
-                    descAlert( "The screen is in Waiting mode and Firebase received the proper Accept_invitation message. This concludes the unit test for the Invite page." ); 
-                    // The Waiting overlay will be removed by the function that handles the system response. Since pay mechanisms are still being worked out, let's just remove the waiting overlay and continue the test.
+                },
+                function() {
+                    descAlert( "The 'Find a party' button put the app in Waiting mode and sent a message to Firebase. Let's check that the server can trigger the user's geolocation services to retrieve their location. We need this immediately to optimize a recommendation for the nearest party." ); 
+                    //  Remove the Waiting overlay
                         sys_closeWaiting();
                     // Add a delay to allow for page transition
                         return( 1000 );
+                },
+            // Test the server's ability to access the device geolocation function
+                function() {
+                    // If the unit test is being run on a desktop, skip this part of the test
+                        // Check whether Cordova is active or not
+                        platform = (window.cordova === undefined);
+                        // If it's not, skip the geolocation check.
+                        if (platform == true) {
+                            return (0);
+                        };
+                    //  We want to confirm that we can trigger the device's geolocation function, but we want to remove device variables from the unit test. So we'll test this by calling the function directly in the code base before testing that we can reach it via Firebase.
+                        getLocation();
+                    // Add a delay to allow for device response. Ten seconds should suffice for a device whose location services are set to high accuracy, but an increase in the delay may be required if this part of the unit test returns an error.
+                        return( 10000 );
+                },
+                function() {
+                    // If the unit test is being run on a desktop, skip this part of the test
+                        // Check whether Cordova is active or not
+                        platform = (window.cordova === undefined);
+                        // If it's not, skip the geolocation check.
+                        if (platform == true) {
+                            return (0);
+                        };
+                    // Initialize and assign variables to hold the values stored in the geolocation part of the data map
+                        GLOB.sys_startGeoLat = "0";
+                        GLOB.sys_startGeoLong = "0";
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        globalClientGeoRef.on('child_added', function(childSnapshot, prevChildName) {
+                            var val = childSnapshot.val();
+                            latVal = val.latitude;
+                            longVal = val.longitude;
+                            GLOB.sys_startGeoLat = latVal;
+                            GLOB.sys_startGeoLong = longVal;
+                        // Close the listener
+                            globalClientGeoRef.off()
+                        });
+                    // Add a delay to ensure the data is received
+                        return( 1000 );
+                },
+                function() {
+                    // If the unit test is being run on a desktop, skip this part of the test
+                        // Check whether Cordova is active or not
+                        platform = (window.cordova === undefined);
+                        // If it's not, skip the geolocation check.
+                        if (platform == true) {
+                            return (0);
+                        };
+                    // Confirm that coordinates were received by Firebase
+                        if (GLOB.sys_startGeoLat == "0") {
+                            alert(
+                                'No value was received for latitude'
+                            );
+                            return( -1 );
+                        };
+                        if (GLOB.sys_startGeoLong == "0") {
+                            alert(
+                                'No value was received for longitude'
+                            );
+                            return( -1 );
+                        };
+                    return( 0 );
+                },
+            // Test the geo services polling function
+                function() {
+                    descAlert( "We've confirmed that we can retrieve geolocation coordinates from a user's device. Since we want to track the user's progress and confirm when they've arrived we need to check location periodically. The next test iterates through five cycles of the geolocation test. In production we'll provide ample time to receive coordinates but to streamline the intervals for the unit test we'll overwrite the core geolocation function we just tested so it sends dummy coordinates to Firebase, and confirm that they were received." ); 
+                    //  Create a global variable to allow indexing of the number of cycles
+                    GLOB.intervalCounter = 0
+                    //  Overwrite the getLocation function so we can test the loop independently of device capabilities.
+                        getLocation = function() {
+                            var latCounter = 'lat' + GLOB.intervalCounter;
+                            var lngCounter = 'lng' + GLOB.intervalCounter;
+                            globalClientGeoRef.push( { 'latitude' : latCounter, 'longitude' : lngCounter } );
+                            GLOB.intervalCounter++;
+                        };
+                    //  Send the server message
+                        globalServerGeoRef.set({geoLoopMsg:true})
+                    // Add a delay to allow for device response. Ten seconds should suffice for a device whose location services are set to high accuracy, but an increase in the delay may be required if this part of the unit test returns an error.
+                        return( 5000 );
+                },
+                function() {
+                    // Stop the cycling of the function. Five cycles should have completed.
+                        stopLocation();
+                    // Initialize and assign a variable to hold the values stored in the geolocation part of the data map
+                        GLOB.locationCycle = "";
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        var checkGlobalClientGeoRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/geolocation' );
+                        checkGlobalClientGeoRef.on('child_added', function(childSnapshot, prevChildName) {
+                            var val = childSnapshot.val();
+                            GLOB.locationCycle = JSON.stringify(val);
+                        // Turn the listener off after retrieving the data
+                            checkGlobalClientGeoRef.off();
+                        });
+                    // Add a delay to ensure the data is received
+                        return( 1000 );
+                },
+                function() {
+                    // Confirm that coordinates were received by Firebase
+                        if (GLOB.locationCycle != '{"latitude":"lat4","longitude":"lng4"}') {
+                            alert(
+                                'Expecting {"latitude":"lat4","longitude":"lng4"}. Got: {' +
+                                GLOB.locationCycle +
+                                "}"
+                            );
+                            return( -1 );
+                        };
+                    descAlert( "The dummy coordinates were received. This concludes the unit test for the Home page." ); 
+                    return( 0 );
                 },
         // P6. inTransit page
             // Send inTransit page data and display page
