@@ -1,0 +1,424 @@
+/* This is the custom stylesheet for the First 30 Seconds app. */
+
+   body{
+    font-size:13px;
+  }
+
+h2 {
+  font-size: 16px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+ /* Change header to allow more title text */ 
+  .ui-title {
+    margin: 0.6em 10% 0.8em !important;
+}  
+
+ /* Change header to allow more title text */ 
+  .ui-field-contain {
+    font-size: 10px;
+    padding-top: 10px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+
+}  
+
+ /* Remove the 'close' button from dialogs  
+  .ui-dialog  .ui-header .ui-btn-icon-notext	{ 
+    display:none;
+}
+*/  
+  .ui-dialog-background {
+	opacity: 0.25;
+	display: block !important;
+	-webkit-transition: opacity 0.5s ease-in;
+}
+  .ui-dialog-background.pop.in {
+	opacity: 1;
+	-webkit-transition: opacity 0.5s ease-in;
+}
+  .ui-btn-corner-all {
+    -moz-border-radius:                 4px /*{global-radii-buttons}*/;
+    -webkit-border-radius:              4px /*{global-radii-buttons}*/;
+    border-radius:                  4px /*{global-radii-buttons}*/;
+  } 
+  
+  .alert {
+    position: relative; 
+    top: -25px;
+    left: -3px;
+    text-decoration:none;
+	text-shadow:none;
+    font-size:12px;
+    font-weight:bold;
+    width: 80%;
+    border: solid;
+    border-color:#555555;
+    border-radius:5px;
+    box-shadow: 2px 2px 5px #666666;
+    color:#d00000;
+    background-color:#ffffff; 
+    padding-top:10px;
+    padding-bottom:10px;
+    padding-right:10px;
+    padding-left:10px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+.alertWrapper{
+    width:100%; 
+    display: none;
+    margin-right:auto; 
+    margin-left:auto;
+	margin-top:0px;
+	margin-bottom:0px;
+    padding-top:0px;
+    padding-bottom:0px;
+ }
+
+.profileAlertWrapper{
+	padding-bottom:20px;
+}
+
+.rateMatchAlertWrapper{
+	position: absolute;
+	z-index: 10;
+	margin-top:15px;
+}
+
+  .center-wrapper{
+  	text-align: center;
+  }
+
+  .center-wrapper * {
+    margin: 0 auto;
+  }
+
+  .closeOverlay * {
+    position: absolute; 
+	top: 10px;
+	right:10px;
+    font-size: 16px;
+	text-decoration: none;
+  }
+
+  .creditsText{
+    line-height:130%;
+    font-weight:bold;
+    font-size: 14px;
+  }  
+
+  .dialogButton{
+	width:95%;
+	margin:0 auto;
+  }  
+
+  .formText{
+    line-height:110%;
+    font-size: 15px;
+  }  
+
+  .creditsNumber{
+    font-size: 16px;
+    font-weight:bold;
+  }  
+
+  .descCopy{
+    color:#000000;
+    background-color:#ffffff; 
+    padding:10px;
+    border-color:#00FFFF;
+    border-radius:5px;
+    font-size: 13px;
+  }
+
+  .dialogHeader{
+    color:#a60000;
+    padding:2px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align:center;
+  }  
+
+  div.spacer10px{  
+    padding:10px;
+  } 
+ 
+  div.spacer5px{  
+    padding:5px;
+  } 
+
+/* atParty list thumbnails  */
+
+/*   .otherUserList {
+    text-decoration:none;
+	overflow: auto;
+    width: 100%;
+    border: none;
+    margin-right:0px;
+    margin-left:0px;
+    background-color:#222222; 
+    padding:0px;
+  }
+*/ 
+ 
+  div.otherUserWrapper{  
+    float:left; /* important */  
+    position:relative; /* important(so we can absolutely position the description div */ 
+    width:50%;
+	background-color:#222222;
+    text-align: center; 
+  }
+
+  img.thumbnail{
+    width:98%;
+    margin:auto;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    border-radius: 3px;
+  }
+
+  div.description{  
+    position:absolute; /* absolute position (so we can position it where we want)*/  
+    bottom:3px; /* position will be on bottom */  
+    left:1px; 
+    text-align:center;
+    width:98.5%;  
+    /* styling bellow */  
+    background-color:#ffffff;  
+    color:#333333;  
+    font-weight: bold;
+    font-size: 15px;
+    border-radius: 3px;
+    opacity:0.65; /* transparency */  
+    filter:alpha(opacity=65); /* IE transparency */
+
+  } 
+
+.description_content{  
+    padding:2px;  
+    margin:0px;
+    text-shadow:none;
+  }
+
+.rating{
+  color:#800000;
+  font-size: 16px;
+line-height: 80%;
+}
+
+/* end atParty list thumbnails */
+
+ 
+  .fullScreenImage {
+    width: 100%;
+	min-width:100%;
+  }
+
+  .hide {
+    visibility: hidden; 
+  }
+  
+  img.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .dialog {
+    text-decoration:none;
+    text-shadow:none;
+    text-align: center; 
+    font-size:13px;
+    width: 280px;
+    border: solid;
+    color:#333333;
+	padding:10px;
+    background-color:#ffffff; 
+    border-color:#333333;
+    border-radius:5px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  
+  .overlay {
+    text-decoration:none;
+    text-shadow:none; 
+    font-size:13px;
+    width: 280px;
+    border: solid;
+    color:#333333;
+	padding:10px;
+    background-color:#ffffff; 
+    border-color:#333333;
+    border-radius:5px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  
+  
+/* Timer for invite screen */
+  .timerAlert {
+    text-decoration:none;
+    font-size:12px;
+    font-weight:bold;
+    width: 280px;
+    border: solid;
+    color:#d00000;
+    background-color:#ffffff; 
+    padding-top:10px;
+    padding-bottom:10px;
+    padding-right:10px;
+    padding-left:10px;
+    border-color:#333333;
+    border-radius:5px;
+    box-shadow: 2px 2px 5px #666666;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .waiting{
+  }
+  .waitingElement{
+    color:#ffffff;
+    background-color:#000000;
+    width:150px; 
+    padding:10px;
+    border-color:#00FFFF;
+    box-shadow: 2px 2px 2px #666666;
+    text-align:center;
+  }
+
+  .inset{
+    background-color:#ffffff; 
+    padding:10px;
+	border: solid;
+    border-width:1px;
+    border-color:#999999;
+    border-radius:4px;
+    box-shadow: 2px 2px 4px #666666;
+  }
+
+  .pausedCopy{
+    height:140px; 
+	width:280px;
+    margin-left:auto;
+    margin-right:auto;
+    display:none;
+  }
+
+  .hidden{
+	display:none;
+	}
+  
+  .inset * {
+    margin: 0 auto;
+  }
+
+  .copyHeader{
+    line-height:130%;
+    font-weight:bold;
+    font-size: 14px;
+  }  
+
+
+  #partyMap{
+    height: 200px;
+    width: 250px;
+  }
+
+  .timer{
+    color:#00a600;
+    padding:2px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align:center;
+  }
+
+  .ui-btn-right {
+    position: relative; 
+    top: -10px;
+    left: 89%;
+    z-index: 2;
+	border-radius: 20px;
+  }
+
+  .purchase-instructions {
+    position: absolute;
+    color:#000000;
+    margin: auto;
+    top: 10px;
+    left: 0px;
+    right: 0px;
+    font-family: arial, helvetica, sans-serif;
+    font-size: 12px;
+    background-color:#ffffff;
+    width:300px; 
+    padding:10px;
+    border: solid;
+    border-width: 3px;
+    border-color:#990000;
+    text-shadow:none;
+    z-index: 12000;
+  }
+
+
+  .unit-test-end {
+    position: absolute;
+    color:#000000;
+    margin: auto;
+    top: 20%;
+    left: 0;
+    right: 0;
+    font-family: arial, helvetica, sans-serif;
+    font-size: 12px;
+    background-color:#ffffff;
+    width:250px; 
+    padding:10px;
+    border: solid;
+    border-width: 5px;
+    border-color:#990000;
+    text-shadow:none;
+    z-index: 1200;
+  }
+
+  .warning {
+	text-shadow:none; 
+	color:#cc0000; 
+	display:none
+  }
+  
+/* CSS for CropIt jQuery plugin */
+
+      .cropit-image-preview {
+        background-color: #f8f8f8;
+        background-size: cover;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        margin-top: 7px;
+        width: 320px;
+        height: 320px;
+        cursor: move;
+      }
+
+      .cropit-image-background {
+        opacity: .2;
+        cursor: auto;
+      }
+
+      .image-size-label {
+        margin-top: 10px;
+      }
+
+      input {
+        display: block;
+      }
+
+      .export {
+        margin-top: 10px;
+      }
+  /* End CropIt plugin CSS */

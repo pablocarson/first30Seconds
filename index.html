@@ -1,0 +1,1294 @@
+<!DOCTYPE html> 
+<html>
+  
+<head>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+
+	<!-- Page title -->
+	<title>F30s project</title> 
+
+	<!-- CSS stylesheets -->
+	<link rel="stylesheet" href="./css/jquery.mobile.structure-1.3.2.min.css" /><!-- jQuery Mobile stylesheet -->
+	<link rel="stylesheet" href="./themes/f30stheme.min.css" /><!-- jQuery Mobile custom theme  -->
+	<link rel="stylesheet" href="./css/f30s.css" /> <!-- stylesheet for app -->
+
+	<!-- Javascript sources -->
+	<script src="./js/jquery-1.11.2.min.js"></script> <!-- jQuery framework -->
+	<script src="./js/jquery.mobile-1.3.2.min.js"></script> <!-- jQuery Mobile framework -->
+	<script src="./js/jquery.countdown.min.js"></script> <!-- Plugin for countdown on #inTransit page -->
+	<script src="./js/jquery.cropit.min.js"></script> <!-- Plugin for image uploading software -->
+	<script src="https://cdn.firebase.com/js/client/2.1.2/firebase.js"></script><!--   Functions for accessing Firebase -->
+	<script src="cordova.js"></script> <!--Code required for Phonegap implementation --> 
+	<script src="PushNotification.js"></script>	 <!--Code required for push notifications via the Phonegap pushplugin --> 
+	<script src="https://checkout.stripe.com/checkout.js"></script>
+	<script type="text/javascript" src="./js/f30s.js"></script> <!-- Code specific to this page --> 
+	<script type="text/javascript" src="./js/unit_test.js"></script> <!-- Code containing the unit test --> 
+</head> 
+<body>
+<!-- ************************************ START #SPLASH *************************************** -->
+<div data-role="page" id="splash" data-close-btn="none" data-theme="d">
+<!-- This screen is provided to allow the unit test to be launched. The splash page can be removed for production. -->
+	<div data-role="content" style="padding:0px"><!-- content -->  
+	   <input type="button" id="unitTestButton" data-theme="d" value="Start unit test" onClick="unitTests()" style="z-index:1; position:absolute; left:0; top:0;">   
+		<img align="middle" src="./images/splash.png" height="100%" width="100%"> 
+		
+	</div><!-- /content. No footer for this page. -->
+  
+</div>
+
+<!-- ************************************ END #SPLASH ***************************************** -->
+<!-- *********************************** START #NEWUSER *************************************** -->
+<div data-role="page" id="newUser" data-theme="d"><!-- header -->
+
+	<div data-role="header" data-theme="b"><!-- header -->
+		<h1>
+			First 30 Seconds
+		</h1>  
+	
+	</div><!-- /header -->
+
+	<div data-role="content"><!-- content -->
+	
+		<!-- Inline alert. Hidden by default.
+		
+		Body text of alert is generated dynamically by system or in response to user actions. 
+		User can close manually, otherwise alert closes when user initiates an action on the page 
+		or when alert is superceded by a newer system alert. -->
+		<div id="newUserAlertWrapper" class="alertWrapper" onClick="manualAlertClose();">
+		
+			<!-- User 'close' element. User can select anywhere on the alert to close it but the 
+			element communicates this to the user.-->
+			<input type="button" data-role="button" data-theme="d" data-mini="true" value="Close" data-icon="delete" data-iconpos="notext" class="ui-btn-right">
+			
+			<div class="alert" id="newUserAlertText"><!-- System-generated alert copy appears here -->
+			</div>
+			<div class="spacer10px"></div><!-- Spacer between alert and page content -->
+
+			
+		</div>
+
+		<!-- Paid users will use this form to restore profile and credits. -->
+		<H2>New users</H2>
+		<div>Join now and get some free credits!</div>			
+		
+			<input type="button" id="newUserSubmitButton" data-mini="true" value="Join the party" onClick="newUserConfirmation()">    
+
+		<div class="spacer10px"></div>
+		<H2>Paid subscribers</H2>
+		<div>We need to confirm your subscription to restore your credits and profile information.</div>
+		<form name="restorePaidUserFormName" action="" class="formText" onsubmit="return restorePaidUser( this );" id="restorePaidUserForm" data-ajax="false">
+
+
+			<label for="creditEmail" data-mini="true">Email used to purchase credits:</label>
+			<input type="email" name="credit_Email" id="creditEmail" placeholder="Email" data-mini="true" value="">
+			<label for="creditLast4">Last four digits of your credit card:</label>
+			<input type="password" name="credit_Last4" id="creditLast4" pattern="[0-9]*" placeholder="Last 4 digits" data-mini="true" value="">
+
+		
+			<p><input type="submit" name="paidUserSubmitButtonName" id="paidUserSubmitButton" data-mini="true" value="Restore profile and credits"></p>    
+		</form>        
+
+		<!-- "Waiting..." modal overlay. Disables all user controls. -->   
+		<div data-role="popup" id="newUserWaiting" class="waiting" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" data-dismissible="false">
+
+			<!-- Inner text / graphical element --> 
+			<div class="waitingElement" id="newUserWaitingContent">
+				<img align="middle" src="./images/loadinfo.net.gif"><br>
+				<span id="newUserWaitingText">Waiting...</span>
+			</div> 
+			
+		</div>
+			
+		
+	</div><!-- /content -->
+
+	
+	<div data-theme="d" class="center-wrapper" data-position="fixed" data-role="footer"><!-- footer -->
+		
+		<!-- Link to "about" content -->
+		<a href="#about" id="newUserAbout" data-role="button" data-transition="fade" data-theme="b">
+			About this app
+		</a>
+		
+
+	</div><!-- /footer -->
+	
+</div>
+  
+<!-- ************************************ END #NEWUSER **************************************** -->
+<!-- ************************************ START #ABOUT **************************************** -->
+  
+<!-- Page displayed when user clicks "About This App" in #newUser footer -->
+  
+<div data-role="page" id="about" data-close-btn="none"  data-theme="d">  
+
+	<div data-role="header" data-theme="b"><!-- header -->
+	
+		<h1>
+			About this app
+		</h1>
+		
+	</div><!-- /header -->
+
+	<div data-role="content"><!-- content --> 
+		<p>Welcome to First 30 Seconds! Our mission is to get you face to face with people you'd like to date.</p>
+	   
+		<p>If you've tried online dating, this might sound familiar: you see someone interesting and wonder if there could be a connection. After a few emails, you arrange a time and place, maybe a coffee shop, and in 30 seconds it becomes obvious that there's no chemistry. So you stay long enough to be polite, wrap it up, and start over again.</p>
+		   
+		<p>Research proves that chemistry matters more than anything you can learn about someone from words and pictures. So we host parties in places convenient to you where you can go to meet others. Here's how it works:</p>
+	   
+		<ul>
+			<li>When you're ready, we send you to a nearby location.</li>
+			<li>When you arrive, we'll show you others who are there to meet someone like you.</li>
+			<li>Tell us how interested you are in meeting them.</li>
+			<li>If you're BOTH interested, we'll try to match you up, and <i>you get to meet them on the spot.</i></li>
+			<li>When you're done, close the match, and get ready for the next match.</li>
+		</ul>
+	  
+		<p>So after you provide a photo and some very basic preference info, you'll be ready to go. We'll give you enough credits to try a few parties for free. Good luck!</p>
+	
+		<a href="#newUser" id="aboutReturn" data-role="button" data-inline="true" data-mini="true">Return</a> 
+
+	</div><!-- /content. No footer for this page. -->
+  
+</div>
+
+<!-- ************************************ END #ABOUT ****************************************** -->
+<!-- *********************************** START #HOME ****************************************** -->
+
+<!-- Page displayed when user logs in. The default state of the app. -->
+
+<div data-theme="d" data-role="page" id="home">
+	<div data-role="header" data-theme="b">
+		<h1>First 30 Seconds</h1>
+	</div><!-- /header -->
+
+	<div data-role="content"><!-- content -->
+	
+		<!-- Inline alert. Hidden by default.
+		Body text of alert is generated dynamically by system or in response to user actions. 
+		User can close manually, otherwise alert closes when user initiates an action on the page 
+		or when alert is supplanted by a newer system alert. -->
+		<div id="homeAlertWrapper" class="alertWrapper" onClick="usr_closeAlerts()">
+			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
+			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
+			<div class="alert" id="homeAlertText"></div><!-- System-generated alert copy goes here -->
+		</div>   
+
+		You have
+		
+			<!-- Notify User as to their credit status. homeCredits span is populated by System. -->    
+			<span id="homeCredits" class="creditsNumber"></span>
+
+		credits remaining.<br>
+				<div class="ui-grid-a">
+					<div class="ui-block-a">
+						<a href="#homeWaiting" id="homeBuyCredits" data-rel="popup" data-position-to="window" data-mini="true" data-role="button" data-position-to="window" onclick="usr_homeBuyCredits()">
+							Buy credits
+						</a>
+					</div>
+					<div class="ui-block-b">
+						<a href="#homeWaiting" id="homeFindParty" data-rel="popup" data-mini="true" data-position-to="window" data-role="button" data-theme="d" onClick="usr_homeFindParty()">
+							Find a party
+						</a>   
+					</div>
+				</div>
+			
+
+				<div class="spacer5px"></div>
+		
+		<!-- "Waiting..." modal overlay. Disables all user controls. Hidden by default,
+		activated when the user selects a control that requires a system response. -->  
+		<div data-role="popup" id="homeWaiting" class="waiting" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" data-dismissible="false">    
+			<!-- Inner text / graphical element --> 
+			<div class="waitingElement" id="homeWaitingContent">
+				<img align="middle" src="./images/loadinfo.net.gif"><br>
+				<span id="homeWaitingText">Waiting...</span>
+			</div> 
+			
+		</div>
+			
+		<!-- "Help" overlay. Hidden by default,
+		activated when the user selects the Help button. -->  
+		<div data-role="popup" class="overlay" id="homeHelp" data-overlay-theme="a" data-corners="false" data-tolerance="30,15">
+
+			<!-- Overlay header --> 
+			<div class="dialogHeader">
+				Let's get started
+			</div>
+			<div align="right" class="closeOverlay">
+				<a href="#home" id="homeReturn">
+					[X]
+				</a>
+			</div>
+
+			<p>It's simple: click "Find a party". If one's available you'll see an invitation. You can accept (which costs you a credit) or decline (which doesn't). Only accept if you can be sure you're on time, because if you're late, you have to start over.</p>
+		
+			<p>If "Find a party" isn't working, it means you need more credits! Click "Buy more credits", follow the instructions, and when you return you should be able to Find a party.</p>
+
+			<p>If something's not working like it should, call us at at <a href="tel:1-888-XXX-XXXX">1-888-XXX-XXXX</a> or send an email to <a href="mailto:info@first30seconds">info@first30seconds.com</a>.</p>
+
+		</div>
+
+	</div><!-- /content -->
+	
+	
+	<div data-theme="d" class="center-wrapper" data-position="fixed" data-role="footer"><!-- footer -->
+	
+		<!-- Link to profile -->
+		<a href="#homeWaiting" id="homeProfile" data-rel="popup" data-position-to="window" data-role="button" data-transition="fade" data-theme="b"  onClick="usr_openProfile()">
+			 Profile
+		</a>
+		
+		<!-- Link to #invite help -->
+		<a href="#homeHelp" id="homeHelpButton" data-rel="popup" data-position-to="window" data-role="button" data-theme="d">
+			Help
+		</a>
+		
+
+	</div><!-- /footer -->
+  
+</div>
+	   
+<!-- ************************************* END #HOME ****************************************** -->
+<!-- ********************************** START #INVITE ***************************************** --> 
+  
+<div data-role="page" id="invite" data-theme="d">
+
+	<div data-theme="b" data-role="header"><!-- header -->
+		<h1>
+			First 30 Seconds
+		</h1>
+
+	</div><!-- /header -->
+  
+	<div data-role="content"><!-- content -->
+ 
+		<!-- Inline alert. Hidden by default.
+		Body text of alert is generated by system or in response to user actions. 
+		User can close manually, otherwise alert closes when user initiates an action on the page 
+		or when alert is supplanted by a newer system alert. -->
+		<div id="inviteAlertWrapper" class="alertWrapper" onClick="usr_closeAlerts()">
+			<!-- User 'close' element. User can select anywhere on the alert to close it but the 
+			element communicates this to the user.-->
+			<input type="button" data-mini="true" data-icon="delete" value="Close" data-iconpos="notext" class="ui-btn-right">
+			<div class="alert" id="inviteAlertText"></div><!-- System-generated alert copy goes here -->
+		</div>   
+
+		<div class="copyHeader">
+			There's a party close to you.
+		</div>
+		
+		<br>
+	  
+		<div class="inset">
+
+			<!-- Table contains start time and distance from current location. -->
+			<table width="95%" cellspacing="0" cellpadding="3">
+				<tr>
+					<td style="text-align:right; font-size:13px;">
+						You must arrive by:
+					</td> 
+					<td style="font-size:18px; font-weight:strong; color:#007a00">
+						<span id="partyTime"></span> <!-- Element to display system-generated start time -->
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align:right; font-size:13px;">
+						Distance from you:
+					</td> 
+					<td style="font-size:18px; font-weight:strong; color:#007a00">
+						<span id="partyDistance"></span> <!-- Element to display system-generated distance -->
+					</td>
+				</tr>
+			</table>
+			
+
+			<div class="copyHeader" id="lateWarning">
+			<hr>
+				BEFORE YOU ACCEPT:
+			</div>
+			
+			<div>
+				Accept ONLY if you're sure you can make it on time. If you're late, you will lose your place at the party and will have to start over.
+				
+				<a href="#whyTimer" id="whyTimerLink" data-rel="popup" data-position-to="window">
+					More
+				</a>
+				
+			</div>
+			
+		</div>
+		
+		<br>
+			
+		<div class="center-wrapper">
+			
+			<a href="#inviteWaiting" data-rel="popup" data-position-to="window" id="inviteAccept" data-role="button" data-inline="true" onclick="usr_inviteAccept();">
+				Accept (1 credit)
+			</a>    
+		
+			<a href="#inviteWaiting" data-rel="popup" data-position-to="window" id="inviteDecline" data-role="button" data-inline="true" onClick="usr_inviteDecline();">
+				Decline
+			</a>
+			
+		</div>      
+			
+		<!-- "Waiting..." overlay. Disables all user controls. Hidden by default,
+		activated when the user selects a control that requires a system response. -->  
+		<div data-role="popup" id="inviteWaiting" class="waiting" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" data-dismissible="false">
+
+			<!-- Inner text / graphical element --> 
+			<div class="waitingElement" id="inviteWaitingContent">
+				<img align="middle" src="./images/loadinfo.net.gif"><br>
+				<span id="inviteWaitingText">Waiting...</span>
+			</div> 
+			
+		</div>
+		
+			
+		<!-- "Help" overlay. Hidden by default,
+		activated when the user selects the Help button. -->  
+		<div data-role="popup" class="overlay" id="inviteHelp" data-overlay-theme="a" data-corners="false" data-tolerance="30,15">
+
+			<!-- Inner text / graphical element --> 
+				<div class="dialogHeader">
+					Invite help
+				</div>
+			<div align="right" class="closeOverlay">
+				<a href="#invite" id="inviteReturn">
+					[X]
+				</a>
+			</div>
+
+			<p>When you accept, you'll be charged a credit and we'll show you the exact location of the party along with a timer.</p>
+		
+			<p>When it runs out, you forfeit your credit and have to start over. We're constantly inviting others to keep the party full, so we can't guarantee you'll get the same exact party, but we'll do our best. <b>So don't be late!</b><p>
+			<a href="#whyTimer" id="whyTimerLink2" data-rel="popup" data-position-to="window">
+			More about this
+			</a>			
+		</div>
+		
+			
+		<!-- "WhyTimer" overlay. Hidden by default,
+		activated when the user selects the "More" link from the Invite page or from the Invite help overlay. -->  
+		<div data-role="popup" class="overlay" id="whyTimer" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" data-dismissible="false">
+
+			<!-- Inner text / graphical element --> 
+				<div class="dialogHeader">
+					We need you on time
+				</div>
+			<div class="closeOverlay">
+				<a href="#invite" id="moreReturn">
+					[X]
+				</a>
+			</div>
+
+		<p>For most parties, being late is practically a requirement. This is different: we need EVERYBODY to be on time.</p>
+
+		<p>We assemble these parties on the fly based on participation. When enough people near you want to meet up, we pick a time and place that's convenient for everyone, and your commitment helps determine the 'when' and 'where'. And if you "show up whenever", it's not fair to the those who arrived on time hoping to meet you. </p>
+		
+		<p>We do our best to give you plenty of time, and we show it to you before you spend a credit. If for some reason there are circumstances beyond your control, you can call us at 888-NNN-NNNN and request a refund.
+
+		<p>If something's not working like it should, call us at at <a href="tel:1-888-XXX-XXXX">1-888-XXX-XXXX</a> or send an email to <a href="mailto:info@first30seconds">info@first30seconds.com</a>.</p>
+		</div>
+		
+	</div><!-- /content -->
+	  
+	<div data-theme="d" class="center-wrapper" data-position="fixed" data-role="footer"><!-- footer -->
+	
+		<!-- Link to profile -->
+		<a href="#inviteWaiting" id="inviteProfile" data-rel="popup" data-position-to="window" data-role="button" data-transition="fade" data-theme="b"  onClick="usr_openProfile()">
+			 Profile
+		</a>
+		
+		<!-- Link to #invite help -->
+		<a href="#inviteHelp" id="inviteHelpButton" data-rel="popup" data-position-to="window" data-role="button" data-theme="d">
+			Help
+		</a>
+
+	</div><!-- /footer -->
+  
+</div>
+
+<!-- ************************************ END #INVITE ***************************************** -->
+<!-- ********************************** START #INTRANSIT *************************************** -->
+
+<div data-role="page" id="inTransit" data-theme="d">
+
+	<div data-theme="b" data-role="header"><!-- header -->
+		<h1>Confirmed!</h1>
+	</div><!-- /header -->
+  
+  
+	<div data-role="content"><!-- content -->
+		
+
+	 <div>
+		<!-- Inline alert. Hidden by default.
+		Body text of alert is generated dynamically by system or in response to user actions. 
+		User can close manually, otherwise alert closes when user initiates an action on the page 
+		or when alert is supplanted by a newer system alert. -->
+		<div id="inTransitAlertWrapper" class="alertWrapper" onClick="usr_closeAlerts()">
+			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
+			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
+			<div class="alert" id="inTransitAlertText"><!-- System-generated alert copy goes here -->
+			</div>
+		</div>
+	</div>		
+		<div class="inset"><!-- Party venue details, generated by system -->
+			<div class="copyHeader">
+				<h2>
+					<span id="partyNameText"><!-- Name of venue. Ideally should match Google Maps's name for the venue. -->
+					</span>
+				</h2>
+			</div>
+		
+			<div id="partyAddress1Text"><!-- Address 1 of venue -->
+			</div>
+			
+			<div>
+				<span id="partyCityText"><!-- City in which venue resides -->
+				</span>,
+				
+				<span id="partyStateText"><!-- State in which venue resides -->
+				</span>
+				
+			</div>
+ 
+			<a href="" id="partyPhoneLinkText"><!-- tel: link for venue phone number -->
+				<div id="partyPhoneText"><!-- venue phone number -->
+				</div>
+			</a>
+			
+			<div class="center-wrapper">
+			You're expected in the next
+				<span id="countdownTimer" class="timer"><!-- Countdown timer with time remaining populated by system -->
+				</span> 
+				minutes.				
+			
+				<a href="" id="mapLink" target="_blank"><!-- URL to Google Maps link. Refer to f30s.js for link construction. -->
+					<img id="partyMap" src=""><!-- Google Maps thumbnail image of venue. Will be provided by system via Firebase message. -->
+				</a>
+
+			</div>
+		
+		</div><!-- /party venue details -->
+		<p>The guest list will appear automatically on arrival.</p>
+	  
+		<a href="#userCancel" data-rel="popup" data-mini="true" data-position-to="window" id="cancelInvite" data-role="button" data-theme="d">
+			Cancel
+		</a>    
+
+		<!-- Confirmation dialog that opens when user clicks "I have to cancel". -->
+		<div data-role="popup" id="userCancel" class="dialog" data-overlay-theme="a" data-dismissible="false"> 
+			
+				<div class="dialogHeader">
+					Are you sure?
+				</div>
+				
+				You've already used a credit. If you're canceling for reasons beyond your control, contact us and we may be able to refund your credit.<p>
+				<!-- Confirm / cancel buttons. Since we're confirming a cancellation, the button wording is important. -->
+				<a href="#inTransitWaiting" id="confirmCancelInvite" onClick="usr_inTransitConfirmCancellation();" data-role="button" data-inline="true" data-mini="true">
+					Yes, cancel
+				</a>
+				
+				<a href="#inTransit" id="returnToinTransit" data-role="button" data-theme="d" data-inline="true" data-mini="true">
+					No, return
+				</a>        
+		</div>	
+
+
+		<!-- "Waiting..." modal overlay. Disables all user controls. Hidden by default,
+		activated when the user selects a control that requires a system response. -->  
+		<div data-role="popup" id="inTransitWaiting" class="waiting" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" data-dismissible="false">
+		
+			<!-- Inner text / graphical element --> 
+			<div class="waitingElement" id="inTransitWaitingContent">
+				<img align="middle" src="./images/loadinfo.net.gif"><br>
+				<span id="inTransitWaitingText">Waiting...</span>
+			</div> 
+			
+		</div>
+			
+		<!-- "Help" overlay. Hidden by default,
+		activated when the user selects the Help button. -->  
+		<div data-role="popup" class="overlay" id="inTransitHelp" data-overlay-theme="a" data-corners="false" data-tolerance="30,15">
+
+			<!-- Inner text / graphical element --> 
+				<div class="dialogHeader">
+					You're on your way
+				</div>
+			<div align="right" class="closeOverlay">
+				<a href="#inTransit" id="inTransitReturn">
+					[X]
+				</a>
+			</div>
+
+		<p>The countdown is a reminder that you need to arrive on time. Otherwise, you won't be allowed into the party and you lose a credit. There's a chance you might be invited to the same party if you try again right away.</p>
+		
+		<p>If you click on the map, your phone's map application will open with the location pinpointed. From there, you can get directions from your current location. We always provide plenty of time, but if there are circumstances beyond your control, you're welcome to contact us to see if we can refund your credit.<p>
+		
+		<p>If something's not working like it should, call us at at <a href="tel:1-888-XXX-XXXX">1-888-XXX-XXXX</a> or send an email to <a href="mailto:info@first30seconds">info@first30seconds.com</a>.</p>
+
+		</div>
+				
+	</div><!-- /content -->
+  
+	<div data-theme="d" class="center-wrapper" data-position="fixed" data-role="footer"><!-- footer -->
+	
+		<!-- Link to profile -->
+		<a href="#inTransitWaiting" id="inTransitProfile" data-rel="popup" data-position-to="window" data-role="button" data-transition="fade" data-theme="b"  onClick="usr_openProfile()">
+			 Profile
+		</a>
+		
+		<!-- Link to #inTransit help -->
+		<a href="#inTransitHelp" data-role="button" data-transition="fade" data-rel="popup" data-position-to="window" id="inTransitHelpButton" data-theme="b">
+			Help
+		</a>
+
+	</div><!-- /footer -->
+  
+</div>
+	
+<!-- ************************************ END #INTRANSIT *************************************** -->
+<!-- ************************************ START #ATPARTY **************************************** -->
+
+<div data-role="page" id="atParty" data-theme="a">
+
+	<div data-role="header" data-theme="b" data-position="fixed"><!-- header -->
+		<h1>
+			Welcome to the Party
+		</h1>
+		
+	</div><!-- /header -->
+
+	<div data-role="content" data-theme="a" style="padding:0px;">
+		
+		<!-- Upper page component below the header.
+		This is the only content element in this page until others join the party. -->
+		<div id="atPartyIntroContainer" style="background-color:#f0f0f0; padding:15px;">
+
+			<!-- Inline alert. Hidden by default.
+			Body text of alert is generated dynamically by system or in response to user actions. 
+			User can close manually, otherwise alert closes when user initiates an action on the page 
+			or when alert is supplanted by a newer system alert. -->
+			<div id="atPartyAlertWrapper" class="alertWrapper" onClick="usr_closeAlerts()">
+	
+				<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
+				<input type="button" data-mini="true" data-icon="delete" value="Close" data-iconpos="notext" class="ui-btn-right">
+				<div class="alert" id="atPartyAlertText">
+				</div>
+
+			</div>   
+		
+			<div id ="atPartyIntro" style="text-shadow:none; color:#000000;">Guests show up below as they arrive. Review them and 
+			select your level of interest. The more you review, the higher the odds of a match.
+			
+				<div class="spacer5px">
+				</div>			
+				<div class="ui-grid-a"><!-- Pause party participation -->
+					<div class="ui-block-a">
+						<a href="#atPartyWaiting" id="pause" data-rel="popup" data-position-to="window" data-role="button" data-theme="d" data-transition="fade" data-mini="true" onclick="usr_atPartyPause();" >
+							Pause matches
+						</a>
+					</div>
+					<div class="ui-block-b"><!-- Leave the party -->
+						<a href="#leavePartyDialog" id="leaveParty" data-position-to="window" data-rel="popup" data-role="button" data-theme="d" data-transition="fade" data-mini="true">
+							Leave party
+						</a>
+					</div>
+				</div>
+			</div>			
+				
+
+			<!-- Alternate version of upper page component below the header. This version is
+			displayed when the user is in 'Pause Matches' state. This is the only content 
+			element in this page until others join the party. -->
+			<div id ="atPartyIntroPaused" class="warning">Matches are currently paused. You can still rate people in the list and they can rate you, but you won't be matched with anyone until you return to the party.
+			
+				<div class="spacer5px">
+				</div>
+				
+				<div class="ui-grid-a">
+					<div class="ui-block-a"><!-- Close pause state and return to the party -->
+						<a href="#atPartyWaiting" id="endPause" data-rel="popup" data-position-to="window" data-role="button"data-transition="fade" data-mini="true" onclick="usr_atPartyEndPause();" data-theme="b">
+							Resume Matches
+						</a>
+					</div>
+					<div class="ui-block-b"><!-- Leave the party -->
+						<a href="#leavePartyDialog" id="leavePartyPaused" data-position-to="window" data-rel="popup" data-role="button" data-transition="fade" data-mini="true" data-theme="b">
+							Leave Party
+						</a>
+					</div>
+				</div>
+			</div>
+
+		</div>		
+		
+		<div id="atPartyList" class="otherUserList">
+	
+
+		<!-- HTML elements of list thumbnails and data is generated dynamically. Refer to the atParty section of f30s.js. -->        
+
+		</div>
+		
+		<!-- This is a hidden button to ensure that when the system opens a Better Party
+		dialog, the dialog opens centered in the window. Without this, the dialog opens with
+		the top left corner centered on the window. -->
+		<a href="#betterParty" id="betterPartyLink" data-position-to="window" data-rel="popup" style="display:none" data-theme="d" data-transition="fade" data-mini="true" data-inline="true">
+		(better party link, for system use only)
+		</a>		
+		
+		<!-- "Waiting..." modal overlay. Disables all user controls. Hidden by default,
+		activated when the user selects a control that requires a system response. -->   
+		<div data-role="popup" id="atPartyWaiting" class="waiting" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" data-dismissible="false">
+		
+			<!-- Inner text / graphical element --> 
+			<div class="waitingElement" id="atPartyWaitingContent">
+				<img align="middle" src="./images/loadinfo.net.gif"><br>
+				<span id="atPartyWaitingText">Waiting...</span>
+			</div> 
+		</div>
+			
+		<!-- "Help" overlay. Hidden by default,
+		activated when the user selects the Help button. -->  
+		<div data-role="popup" class="overlay" id="atPartyHelp" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" data-theme="d">
+
+			<!-- Inner text / graphical element --> 
+				<div class="dialogHeader">
+					Party help
+				</div>
+			<div align="right" class="closeOverlay">
+				<a href="#atParty" id="atPartyReturn">
+					[X]
+				</a>
+			</div>
+			<p>You made it to the party! Unless you're the first one to show up, there will be others in your list. They're here to meet you and you're here to meet them. But for that to happen, you need to tell us which ones you're interested in meeting.</p>
+		
+			<p>It's very easy:</p>
+		
+			<ul>
+				<li>Click a person's thumbnail</li>
+				<li>Rate them according to your interest</li>
+				<li>Return to the Party view.</li>
+			</ul>
+	
+		<p>You'll see a rating appear at the bottom of the person's thumbnail.</p>
+		
+		<p><b>Do this for everyone on the list.</b></p>
+		<p>People will continue to appear on your list as they show up. Do this for them as well.</p>
+		
+		<p>If something's not working like it should, call us at at <a href="tel:1-888-XXX-XXXX">1-888-XXX-XXXX</a> or send an email to <a href="mailto:info@first30seconds">info@first30seconds.com</a>.</p>
+
+		</div>
+		
+		<!-- "Better party available" modal dialog. Disables all other user controls. 
+		Activated by system when a better party is available to the user. -->   
+		<div data-role="popup" id="betterParty" class="dialog" data-overlay-theme="a" data-dismissible="false" data-theme="d">
+
+			<div class="dialogHeader">
+				There's another party!
+			</div>
+				
+			A party is starting nearby where you have higher odds of a match. If you decide to check it out, you'll be removed from this party's list.
+			<p>
+			
+			<!-- "Better party" confirmation. Opens "Waiting..." overlay and sends message to Firebase. -->			
+			<a href="#atPartyWaiting" id="goBetterParty" data-rel="popup" data-position-to="window" data-role="button" data-theme="d" data-inline="true" data-mini="true" onClick="usr_atPartyBetterPartyAccepted();">
+				Check it out
+			</a>
+			
+			<!-- Cancels and returns user to party view -->
+			<input type="button" id="stayHere" data-theme="d" data-inline="true" value="Stay here" data-mini="true" onClick="usr_atPartyBetterPartyDeclined()">      
+		</div>
+
+			<!-- Leave Party dialog. Confirms that user wishes to leave party. Hidden by default, active when
+			user selects "Leave Party" button. Disables all other user controls.--> 
+		<div data-role="popup" id="leavePartyDialog" class="dialog" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" data-theme="d">
+
+			<div class="dialogHeader">
+				Leave Party
+			</div>
+			Are you sure?
+			<p>
+			
+			<!-- User confirms that they're leaving the party. Opens 'Waiting...' overlay and sends message to Firebase. --> 
+			<a href="#atPartyWaiting" data-rel="popup" data-position-to="window" id="confirmLeaveParty" data-role="button" data-theme="d" data-inline="true" data-mini="true" onClick="usr_atPartyLeave();">
+				I'm sure
+			</a>
+			
+			<!-- User cancels 'leaving party' command. Returns user to party. --> 
+			<a href="#atParty" id="leavePartyCancel" data-role="button" data-theme="d" data-inline="true" data-mini="true">
+				Cancel
+			</a>      
+	 
+		</div>
+		
+	</div><!-- /content -->
+
+  
+	<div data-theme="d" class="center-wrapper" data-position="fixed" data-role="footer"><!-- footer -->
+	
+		<!-- Link to profile -->
+		<a href="#atPartyWaiting" id="atPartyProfile" data-rel="popup" data-position-to="window" data-role="button" data-transition="fade" data-theme="b"  onClick="usr_openProfile()">
+			 Profile
+		</a>
+		
+		<!-- Link to #inTransit help -->
+		<a href="#atPartyHelp" id="atPartyHelpButton" data-role="button" data-rel="popup" data-position-to="window" data-transition="fade" data-theme="b">
+			Help
+		</a>
+
+	</div><!-- /footer -->
+  
+</div>
+
+<!-- ************************************ END #ATPARTY ****************************************** -->
+<!-- ********************************** START #RATEOTHERUSER ************************************* -->
+
+<div data-role="page" id="rateOtherUser" data-theme="d">
+
+	<div data-role="header" data-theme="b"><!-- header -->
+		<h1>
+		
+			<span id="rateOtherUserUID" style="display:none"><!-- Unique ID. Not displayed. -->
+			</span>
+			
+			<span id="rateOtherUserName"><!-- Name of person being rated -->
+			</span>,
+		
+			<span id="rateOtherUserAge"><!-- Age of person being rated -->
+			</span>
+		
+		</h1>
+	</div><!-- /header -->
+
+
+	<div data-role="content" style="padding:0px"><!-- content. Spans entire width of display. -->
+
+		<!-- Inline alert. Hidden by default.
+		Body text of alert is generated dynamically by system or in response to user actions. 
+		User can close manually, otherwise alert closes when user initiates an action on the page 
+		or when alert is supplanted by a newer system alert. -->
+		<div id="rateOtherUserAlertWrapper" class="alertWrapper rateMatchAlertWrapper"  onClick="usr_closeAlerts()">
+			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
+			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
+			<div class="alert" id="rateOtherUserAlertText"><!-- System-generated alert copy goes here -->
+			</div>
+			<div class="spacer10px"></div><!-- Spacer between alert and page content -->
+		</div>
+	
+
+		<img id="rateOtherUserImage" class="fullScreenImage" src=""><!-- Image source populated by system. -->
+
+		<div class="descCopy" id="rateOtherUserDesc"><!-- Description populated by system. -->          
+		</div>
+
+		<!-- Select menu for rating. Must have a value from 0 to 5 (user must select a rating) for submit button 
+		to become active. --> 
+		<select name='rateOtherUserRating1' id='rateOtherUserRating' data-theme='d' data-native-menu='false' onChange="$('#ratingSubmit').removeClass('ui-disabled');">
+			<option value="-1" data-placeholder="true">How interested are you?</option>
+			<option value="0" data-theme="a">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I'm not interested</option>
+			<option value="1">♥&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I'm not *not* interested...</option>
+			<option value="2">♥♥&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Seems all right</option>
+			<option value="3">♥♥♥&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Seems more than all right</option>
+			<option value="4">♥♥♥♥&nbsp;&nbsp;&nbsp; This is why I'm here tonight</option>
+			<option value="5">♥♥♥♥♥&nbsp; This is why I'm here on Earth</option>
+		</select>
+		
+		<!-- Rating submit button. Inactive by default, selection of a rating activates the button. --> 
+		<a href="#rateOtherUserWaiting" id="ratingSubmit" data-rel="popup" data-role="button" data-position-to="window" data-icon="back" class="ui-disabled" onClick="usr_rateOtherUserSendRating()">
+			Submit and return to list
+		</a><br>
+		
+		<!-- TOS violation button. Opens TOS violation modal dialog. --> 
+		<a href="#rateOtherUserTOSdialog" id="rateOtherUserReportTOS" data-theme="a" data-position-to="window" data-rel="popup" data-role="button" data-mini="true">
+			Report offensive behavior
+		</a> 
+
+		<!-- "Waiting..." modal overlay. Disables all user controls. Hidden by default,
+		activated when the user selects a control that requires a system response. -->   
+		<div data-role="popup" id="rateOtherUserWaiting" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" data-dismissible="false">
+		
+			<!-- Inner text / graphical element --> 
+			<div class="waitingElement" id="rateOtherUserWaitingContent">
+				<img align="middle" src="./images/loadinfo.net.gif"><br>
+				<span id="rateOtherUserWaitingText">Waiting...</span>
+			</div> 
+			
+		</div>
+
+		<!-- TOS violation modal dialog. Activated by "Report offensive behavior" button. --> 
+		<div data-role='popup' id='rateOtherUserTOSdialog' class='dialog' data-overlay-theme='a' data-corners='false' data-tolerance='30,15' >
+			
+			<div class='dialogHeader'>
+				Report Offensive Behavior
+			</div>
+				
+			Reporting this person means they'll never appear on your match lists again. We can't intervene directly so if this is a serious problem please tell the owners of the party location or, in extreme cases, call 911.<p>
+				
+			<div class='center-wrapper'>
+					
+				<!-- Selection sends message to Firebase and opens 'Waiting...' dialog. --> 
+				<a href='#rateOtherUserWaiting' id='rateOtherUserConfirmTOS' data-rel="popup" data-position-to="window" data-role='button' data-inline='true' data-mini='true' onClick='usr_rateOtherUserTOS()'> 
+					Report
+				</a>
+					
+				&nbsp;&nbsp;
+				<!-- Selection closes dialog and returns user to #rateOtherUser. No system interaction. --> 
+				<a href='#rateOtherUser' id="rateOtherUserCancelTOS" data-role='button' data-inline='true' data-mini='true'> 
+					Cancel
+				</a>
+				
+			</div>
+		</div> 
+			
+		<!-- "Help" overlay. Hidden by default,
+		activated when the user selects the Help button. -->  
+		<div data-role="popup" class="overlay" id="rateOtherUserHelp" data-overlay-theme="a" data-corners="false" data-tolerance="30,15">
+
+			<!-- Inner text / graphical element --> 
+				<div class="dialogHeader">
+					Interested?
+				</div>
+			<div align="right" class="closeOverlay">
+				<a href="#rateOtherUser" id="rateOtherUserReturn">
+					[X]
+				</a>
+			</div>
+
+			<p>Answer the question "How interested are you?", even if you're not interested. The "Submit and Return" button will become active and you can go back to the party list. The whole thing depends on how interested you are in others at the party, and how interested they are in you.</p> 
+		
+			<p>Please do this for everyone on your list, and check it frequently, as new people will continue to show up.</p>
+		
+			<p>If you select the "Report Offensive Behavior" button, you'll have a chance to confirm before reporting them. They'll be removed from your party list forever, and you will never be matched with them again. Please remember, we can't intervene directly so if this is a serious problem tell the owners of the venue or, in extreme cases, call 911.
+			
+			<p>If something's not working like it should, call us at at <a href="tel:1-888-XXX-XXXX">1-888-XXX-XXXX</a> or send an email to <a href="mailto:info@first30seconds">info@first30seconds.com</a>.</p>
+
+		</div>
+		
+
+	</div><!-- /content -->  
+  
+	<div data-role="footer" data-theme="d" class="center-wrapper" data-position="fixed"><!-- Footer -->
+
+	
+		<!-- Link to profile -->
+		<a href="#rateOtherUserWaiting" id="rateOtherUserProfile" data-rel="popup" data-position-to="window" data-role="button" data-transition="fade" data-theme="b"  onClick="usr_openProfile()">
+			 Profile
+		</a>
+
+		<!-- Link to #rateOtherUser help -->	
+		<a href="#rateOtherUserHelp" id="rateOtherUserHelpButton" data-rel="popup" data-position-to="window" data-theme="b" data-role="button" data-transition="fade">
+			Help
+		</a>
+		
+	</div><!-- /footer -->
+  
+</div>
+
+<!-- ************************************ END #RATEOTHERUSER ************************************* -->
+<!-- ********************************** START #MATCH ****************************************** -->
+  
+<div data-role="page" id="match" data-close-btn="none" data-theme="d">
+
+	<div data-role="header" data-theme="b"><!-- header -->
+		<h1>
+			You have a match!
+		</h1>
+		
+	</div><!-- /header -->
+
+	<div data-role="content" style="padding:0px"><!-- content. Spans entire width of display. -->
+
+	 
+		<!-- Inline alert. Hidden by default.
+		Body text of alert is generated dynamically by system or in response to user actions. 
+		User can close manually, otherwise alert closes when user initiates an action on the page 
+		or when alert is supplanted by a newer system alert. -->
+		<div id="matchAlertWrapper" class="alertWrapper rateMatchAlertWrapper" onClick="usr_closeAlerts()">
+			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
+			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
+			<div class="alert" id="matchAlertText"><!-- System-generated alert copy goes here -->
+			</div>
+			<div class="spacer10px"></div><!-- Spacer between alert and page content -->
+		</div>
+	
+	
+		<img id="matchImage" class="fullScreenImage" src=""><!-- Image source populated by system. -->         
+
+		<div class="descCopy">
+		
+			<b>
+			
+			<span id="matchUID" style="display:none"><!-- Unique ID. Not displayed. -->
+			</span>
+
+			<span id='matchName'><!-- Match name populated by system. -->  
+			</span>,
+			
+			<span id='matchAge'><!-- Match age populated by system. --> 
+			</span>
+			
+			</b>
+		
+			<div id='matchDesc'><!-- Match description populated by system --> 
+			</div>
+			
+			<hr>
+			
+			Other matches are paused until you close this match.
+			
+		</div>
+
+		<!-- Sends 'match complete' message to close match and opens 'Waiting...' overlay.
+		Hidden on page load and appears after a predetermined amount of time. For test purposes, 
+		the delay is one second. -->
+		<a href="#matchDone" id="matchClose" data-rel="popup" data-role="button" data-position-to="window">
+			Close match
+		</a>
+	  
+		<!-- Sends 'can't find' message to close match and opens 'Waiting...' overlay.
+		Hidden on page load and appears after a predetermined amount of time. For test purposes, 
+		the delay is two seconds. 		-->
+		<a href="#cantFindMatch" id="cantFindMatchButton" data-rel="popup" data-role="button" data-position-to="window">
+			I can't find this person
+		</a>
+	
+		<br>
+		
+		<!-- TOS violation button. Opens TOS violation modal dialog. --> 		
+		<a href="#matchTOSDialog" id="matchTOSDialogButton" data-position-to="window" data-rel="popup" data-role="button" data-mini="true" data-theme="a">
+			Report offensive behavior
+		</a>       
+
+		<!-- Confirmation dialog for 'Close match' --> 		     
+		<div data-role="popup" id="matchDone" class="dialog" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" >
+			<div class="dialogHeader">
+				Are you sure?
+			</div>
+				
+			Please confirm that you want to close this match.<p>
+
+			<a href="#matchWaiting" id="matchDoneConfirm" data-position-to="window" data-rel="popup" data-role="button" data-theme="d" data-inline="true" data-mini="true" onClick="usr_matchClose()">
+				Close match
+			</a>
+
+			<a href="#match" id="matchDoneCancel" data-role="button" data-theme="d" data-inline="true" data-mini="true">
+				Cancel
+			</a>        
+
+		</div>
+
+		<!-- Confirmation dialog for 'I can't find this person' --> 		     
+		<div data-role="popup" id="cantFindMatch" class="dialog" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" >
+			<div class="dialogHeader">
+				They're Not Here
+			</div>
+				
+			We're sorry you're having trouble. If you're sure you can't find them, we'll close this match and return you to the party.<p>
+
+			<a href="#matchWaiting" id="cantFindConfirm" data-position-to="window" data-rel="popup" data-role="button" data-theme="d" data-inline="true" data-mini="true" onClick="usr_matchCantFind()">
+				I'm sure
+			</a>
+
+			<a href="#match" id="cantFindCancel" data-role="button" data-theme="d" data-inline="true" data-mini="true">
+				Cancel
+			</a>        
+
+		</div>
+ 
+	   <!-- "Waiting..." modal overlay. Disables all user controls. Hidden by default,
+		activated when the user selects a control that requires a system response. -->   
+		<div data-role="popup" id="matchWaiting" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" data-dismissible="false">
+		
+			<!-- Inner text / graphical element --> 
+			<div class="waitingElement" id="matchWaitingContent">
+				<img align="middle" src="./images/loadinfo.net.gif"><br>
+				<span id="matchWaitingText">Waiting...</span>
+			</div> 
+			
+		</div>
+
+		<!-- TOS violation modal dialog. Activated by "Report offensive behavior" button. --> 
+		<div data-role='popup' id='matchTOSDialog' class='dialog' data-overlay-theme='a' data-corners='false' data-tolerance='30,15' >
+			
+			<div class='dialogHeader'>
+				Report Offensive Behavior
+			</div>
+			
+			Reporting this person means they'll never appear on your match lists again. We can't intervene directly so if this is a serious problem please tell the owners of the party location or, in extreme cases, call 911.<p>
+				
+			<div class='center-wrapper'>
+					
+				<!-- Selection sends message to Firebase and opens 'Waiting...' dialog. --> 
+				<a href='#matchWaiting' id='matchConfirmTOS' data-rel="popup" data-position-to="window" data-role='button' data-inline='true' data-mini='true' onClick='usr_matchTOS()'> 
+					Report
+				</a>
+					
+				&nbsp;&nbsp;
+				<!-- Selection closes dialog and returns user to #rateOtherUser. No system interaction. --> 
+				<a href='#match' id="matchCancelTOS" data-role='button' data-inline='true' data-mini='true'> 
+					Cancel
+				</a>
+
+			</div>
+		</div> 
+			
+		<!-- "Help" overlay. Hidden by default,
+		activated when the user selects the Help button. -->  
+		<div data-role="popup" class="overlay" id="matchHelp" data-overlay-theme="a" data-corners="false" data-tolerance="30,15">
+
+			<!-- Inner text / graphical element --> 
+				<div class="dialogHeader">
+					Match help
+				</div>
+			<div align="right" class="closeOverlay">
+				<a href="#match" id="matchReturn">
+					[X]
+				</a>
+			</div>
+
+			<p>Congratulations, you've been matched! That means you've both expressed interest in each other, and they're here at the party right now. Find them and introduce yourself, and when you're ready, "Return to the party", keep rating the newcomers, and have fun until your next match.</p> 
+		
+			<p>Depending on the venue, it may take a few minutes to find them. If you're really tried and they're nowhere to be found, click "I can't find this person." This returns you to the party and lets us know that your match may have gone AWOL. You will have done your part to preserve the sanctity of our beloved process, and reduce the odds of this from happening again in the future.</p>
+
+			<p>If something's not working like it should, call us at at <a href="tel:1-888-XXX-XXXX">1-888-XXX-XXXX</a> or send an email to <a href="mailto:info@first30seconds">info@first30seconds.com</a>.</p>
+			
+		</div>
+		
+		
+	</div><!-- /content -->
+
+	  
+	<div data-theme="d" class="center-wrapper" data-position="fixed" data-role="footer"><!-- footer -->
+	
+	
+		<!-- Link to profile -->
+		<a href="#matchWaiting" id="matchProfile" data-rel="popup" data-position-to="window" data-role="button" data-transition="fade" data-theme="b"  onClick="usr_openProfile()">
+			 Profile
+		</a>
+
+		<a href="#matchHelp" id="matchHelpButton" data-rel="popup" data-position-to="window" data-role="button" data-transition="fade" data-theme="b">
+			Help
+		</a>
+
+	</div><!-- /footer -->
+  
+</div>
+  
+<!-- ************************************ END #MATCH **************************************** -->
+<!-- ********************************** START #PROFILE ******************************************** -->
+
+<div data-role="page" id="profile" data-theme="d"> 
+
+	<div data-role="header" data-theme="b"><!-- header -->
+		<h1>Profile</h1>
+	</div><!-- /header -->
+	
+	<div data-role="content">
+
+		<!-- Inline alert. Hidden by default.
+		Body text of alert is generated dynamically by system or in response to user actions. 
+		User can close manually, otherwise alert closes when user initiates an action on the page 
+		or when alert is supplanted by a newer system alert. -->
+		<div id="profileAlertWrapper" class="alertWrapper profileAlertWrapper" onClick="usr_closeAlerts()">
+	
+			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
+			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
+			<div class="alert" id="profileAlertText"><!-- System-generated alert copy goes here -->
+			</div>
+		</div>
+		
+		<!-- Profile submission form. Initial values will be populated by system via Firebase. -->
+		<form name="profileFormName" action="" class="formText" onsubmit="return usr_profileUpdate( this );" id="profileForm" data-ajax="false">
+
+			<ul data-role="listview" data-inset="false" data-theme="c">
+				<li>
+					<img id="profileImage" src="">
+					<div> 
+						<a href="#profileWaiting" data-role="button" data-mini="true" data-rel="popup" data-position-to="window" data-transition="fade" id="profileUploadButton">
+							Change image
+						</a>					
+					</div>
+				</li>
+			</ul>
+			
+			<div class="spacer5px"><!-- Spacer between photo and other form content -->
+			</div><br>
+ 
+			<label for="profileName">User name:</label>
+			<input type="text" name="profileName" id="profileName" value="" placeholder="Required field" data-mini="true">
+			<div class="spacer5px"></div>
+
+			<label for="ageSlider">Age (required field):</label>
+			<input type="range" name="ageSlider" id="profileAge" min="18" max="75" value="" data-theme="d">
+			<div class="spacer5px"></div>
+
+			<label for="minSlider">Preferred age range for a match:</label>                
+			<div data-role="rangeslider">
+				<input type="range" name="minSlider" id="minAge" min="18" max="65" value="18" data-theme="d">
+				<input type="range" name="maxSlider" id="maxAge" min="18" max="65" value="65" data-theme="d">
+			</div>
+ 			<div class="spacer5px"></div>
+  
+			<textarea cols="40" name="textarea" id="profileDesc" placeholder="Description (max 500 characters)" data-mini="true"></textarea>         
+			<div class="spacer5px"></div>
+
+			<div class="center-wrapper">
+				<input type="submit" name="profileSubmitButton" id="profileFormSubmit" data-inline="true" value="Submit"" data-mini="true">
+				<a href="#profileWaiting" id="profileClose" data-rel="popup" data-position-to="window" data-role="button" data-inline="true" data-theme="d" onClick="usr_profileClose()" data-mini="true">Close and return</a>
+			</div>
+		</form>
+				
+		<!-- "Waiting..." modal overlay. Disables all user controls. Hidden by default,
+		activated when the user selects a control that requires a system response. -->   
+		<div data-role="popup" id="profileWaiting" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" data-dismissible="false">
+		
+			<!-- Inner text / graphical element --> 
+			<div class="waitingElement" id="profileWaitingContent">
+				<img align="middle" src="./images/loadinfo.net.gif"><br>
+				<span id="profileWaitingText">Waiting...</span>
+			</div> 
+		
+		</div>
+		
+
+		<!-- "Help" overlay. Hidden by default,
+		activated when the user selects the Help button. -->  
+		<div data-role="popup" class="overlay" id="profileHelp" data-overlay-theme="a" data-corners="false" data-tolerance="30,15">
+
+			<!-- Inner text / graphical element --> 
+				<div class="dialogHeader">
+					Profile help
+				</div>
+			<div align="right" class="closeOverlay">
+				<a href="#profile" id="profileReturn">
+					[X]
+				</a>
+			</div>
+
+			<p>It's simple. Make changes to the form and hit 'submit'. You'll see a confirmation alert to let you know that we received the changes.</p>
+
+			<p>Note: You MUST hit submit to change your profile. 'Close and return' will only close the profile form and return you to the previous page.</p>
+
+			<p>If something's not working like it should, call us at at <a href="tel:1-888-XXX-XXXX">1-888-XXX-XXXX</a> or send an email to <a href="mailto:info@first30seconds">info@first30seconds.com</a>.</p>
+			
+		</div>
+
+	</div><!-- /content -->
+
+   
+	<div data-theme="d" class="center-wrapper" data-position="fixed" data-role="footer"><!-- footer -->		
+
+		<!-- Link to #profile help -->	
+		<a href="#profileHelp" id="profileHelpButton" data-role="button" data-rel="popup" data-position-to="window" data-transition="fade" data-theme="b">
+			Help
+		</a>
+	</div><!-- /footer -->
+  
+</div>
+  
+<!-- ************************************ END #PROFILE **************************************** -->
+	<!-- ********************************** START #IMAGEUPLOAD ******************************************** -->
+
+<div data-role="page" id="imageUpload" data-theme="d"> 
+
+	<div data-role="header" data-theme="b"><!-- header -->
+		<h1>Upload Profile Photo</h1>
+	</div><!-- /header -->
+
+	<div data-role="content" style="padding:0px"><!-- content. Spans entire width of display. -->
+	 
+		<!-- Inline alert. Hidden by default.
+		Body text of alert is generated dynamically by system or in response to user actions. 
+		User can close manually, otherwise alert closes when user initiates an action on the page 
+		or when alert is supplanted by a newer system alert. -->
+		<div id="imageUploadAlertWrapper" class="alertWrapper" onClick="usr_closeAlerts()" style="margin-top: 20px">
+			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
+			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
+			<div class="alert" id="imageUploadAlertText"><!-- System-generated alert copy goes here -->
+			</div>
+		</div>
+	
+	   <div class="image-editor center-wrapper" id="uploadContainer" style="padding-top:10px; padding-left:15px; padding-right:15px">
+		   <input type="file" class="cropit-image-input" id="fileChanger">
+		   <div class="cropit-image-preview" id="previewWindow">
+		   </div>
+			<div id="zoomElement" style="width:95%">
+				<div class="image-size-label">
+					Swipe image to drag, use slider to zoom
+				</div>
+			<input type="range" class="cropit-image-zoom-input ui-hidden-accessible" id="zoomslider" data-theme="d">
+		</div>
+
+		<div class="spacer5px"></div>
+		
+		<div>
+			<a href="#imageUploadWaiting" class="export" id="imageUploadSave" data-rel="popup" data-position-to="window" data-role="button" data-inline="true" data-theme="d">     
+				Save profile photo
+			</a>
+			<a href="#imageUploadWaiting" id="imageUploadCancel" data-rel="popup" data-position-to="window" data-role="button" data-theme="d" data-inline="true" style="margin-top: 10px" onClick="usr_imageUploadCancel()">
+				Cancel
+			</a>
+		</div>
+
+        <!-- "Waiting..." modal overlay. Disables all user controls. Hidden by default,
+		activated when the user selects a control that requires a system response. -->   
+        <div data-role="popup" id="imageUploadWaiting" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" data-dismissible="false">
+		
+		    <!-- Inner text / graphical element --> 
+            <div class="waitingElement" id="imageUploadWaitingContent">
+                <img align="middle" src="./images/loadinfo.net.gif"><br>
+				<span id="imageUploadWaitingText">Waiting...</span>
+            </div> 
+		
+		</div>
+		
+
+		<!-- "Help" overlay. Hidden by default,
+		activated when the user selects the Help button. -->  
+		<div data-role="popup" class="overlay" id="imageUploadHelp" data-overlay-theme="a" data-corners="false" data-tolerance="30,15">
+
+			<!-- Inner text / graphical element --> 
+				<div class="dialogHeader">
+					Profile help
+				</div>
+			<div align="right" class="closeOverlay">
+				<a href="#imageUpload" id="imageUploadReturn">
+					[X]
+				</a>
+			</div>
+
+			<p>Here's where you can upload a new profile image. It's very simple:</p>
+			<ul>
+				<li>Select 'choose file'.</li>
+				<li>Choose the new image you want to use.</li>
+				<li>Use the slider to zoom in and out and swipe the image in the image window to line it up. The way it appears in this window is exactly how it will appear in your profile and how others will see it.</li> 
+				<li>If the image is already at full size when loaded, the zoom slider won't appear.</li>
+				<li>Click 'Save profile photo'. You'll return to the Profile page where you'll be able to see the new image.</li>
+			</ul>
+
+			<p>If you change your mind, click 'cancel' to keep your old profile photo and return to the Profile screen.</p>
+			
+			<p>If something's not working like it should, call us at at <a href="tel:1-888-XXX-XXXX">1-888-XXX-XXXX</a> or send an email to <a href="mailto:info@first30seconds">info@first30seconds.com</a>.</p>
+
+		</div>
+
+	</div><!-- /content -->
+   
+	<div data-theme="d" class="center-wrapper" data-position="fixed" data-role="footer"><!-- footer -->   
+
+	<!-- Link to #imageUpload help -->  
+	<a href="#imageUploadHelp" data-role="button" data-rel="popup" data-position-to="window" data-transition="fade" id="imageUploadHelpButton" data-theme="b">
+		Help
+		</a>
+
+	</div><!-- /footer -->
+  
+</div>
+</body>
+</html>
