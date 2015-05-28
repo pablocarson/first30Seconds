@@ -1,25 +1,8 @@
 function unitTests() {
     var allTests = [
-        // Put this at the top of the allTests array if you want a step-by-step walkthrough of the unit test while it runs.
+        // Function to automatically clear walkthrough alerts (to facilitate debugging)
             function() {
                 descAlert = function() {};
-                var alertstop = confirm("Click 'OK' to show walkthrough text as alerts on the phone  / Click 'Cancel' to show walkthrough text in the Javascript console.");
-                if (alertstop == true)
-                    // {}
-                    descAlert = function( txt ) { window.alert (txt) };
-                else {
-                    // descAlert = function() {};
-                    descAlert = function( txt ) { console.log (txt); alert ("click to continue"); }
-                };
-            },
-            function () {
-                // Check whether Cordova is active
-                    platform = (window.cordova === undefined);
-                // If it's not, this means it's running on a desktop or other non-Android device, so notify the user that certain tests that require the test to be run on an actual phone will be skipped.
-                    if (platform == true) {
-                        alert ("Phonegap is not running. This may be because the unit test is being run on a desktop. The following tests will be skipped: Tests for Android version, Phonegap device.uuid, Google Cloud Messaging (GCM) registration ID and geolocation test.")
-                        return (0);
-                    };
             },
         // P3. imageUpload page
             // Send imageUpload page data for first time user
@@ -334,7 +317,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_imageUploadImage = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkImageUploadClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/imageUpload/clientEvents/' );
                         checkImageUploadClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -422,7 +405,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_imageUploadCancel = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkImageUploadClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/imageUpload/clientEvents/' );
                         checkImageUploadClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -618,7 +601,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
                         GLOB.usr_profileCloseAlert = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -890,7 +873,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
                         GLOB.usr_profileUpdate = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkProfileClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/profile/clientEvents' );
                         checkProfileClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -973,7 +956,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_profileReturn = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkProfileClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/profile/clientEvents' );
                         checkProfileClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -1122,7 +1105,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
                         GLOB.usr_homeCloseAlert = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -1260,7 +1243,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_homeBuyCredits = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkHomeClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/home/clientEvents' );
                         checkHomeClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -1297,7 +1280,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_checkoutOpened = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         stripeClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
                             GLOB.usr_checkoutOpened = JSON.stringify(val);
@@ -1339,7 +1322,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_checkoutClosed = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkStripeClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/Stripe/clientEvents' );
                         checkStripeClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -1396,7 +1379,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.tokenString = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkStripeTokenRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/Stripe/payTokens' );
                         checkStripeTokenRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -1469,7 +1452,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
                         GLOB.usr_homeOpenProfile = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -1548,7 +1531,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
                         GLOB.usr_homeFindParty = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkHomeClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/home/clientEvents' );
                         checkHomeClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -1609,7 +1592,7 @@ function unitTests() {
                     // Initialize and assign variables to hold the values stored in the geolocation part of the data map
                         GLOB.sys_startGeoLat = "0";
                         GLOB.sys_startGeoLong = "0";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         globalClientGeoRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
                             latVal = val.latitude;
@@ -1667,7 +1650,7 @@ function unitTests() {
                         stopLocation();
                     // Initialize and assign a variable to hold the values stored in the geolocation part of the data map
                         GLOB.locationCycle = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkGlobalClientGeoRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/geolocation' );
                         checkGlobalClientGeoRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -1840,7 +1823,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
                         GLOB.usr_inviteCloseAlert = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -1977,7 +1960,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_declineInvitation = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkInviteClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/invite/clientEvents' );
                         checkInviteClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -2065,7 +2048,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_inviteOpenProfile = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -2178,7 +2161,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_inviteAccept = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkInviteClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/invite/clientEvents' );
                         checkInviteClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -2219,7 +2202,7 @@ function unitTests() {
                                 partyStateMsg : "NY",
                                 partyPhoneMsg : "212-555-2368",
                                 partyPhoneLinkMsg : "212-555-2368",
-                                partyMapLinkMsg:"geo:40.764083,-73.988117(First30Seconds gathering at Xai Xai Wine Bar)"  ,
+                                partyMapLinkMsg:"https://goo.gl/maps/Pi6qG"  ,
                                 // map image
                                     partyMapImageMsg:"data:image/gif;base64,R0lGODlh+gDIAPcAAOnl3P////v6+LrCyr7GzszQ1OXn6cfg98PZ7MrR1cDIzLzEyMrfqtHittjiwoSEeqKilrS0qO3t5enp4u7u6eHh3Pj49Pb28vLy7u3t6fT08eLi3+Hh3tjY1fj49u/v7dTU0s7OzLq6uP39/Pz8+/b29ejo58DAv62trMbFvtzb1Hh1Z2xoWIB8bIqGdpualsTDv+7t6evq5ujn43ZyY356a9/c0Xp2aeXi2OLf1W1nV2llWYiEeJKOgpCMgJyYjJqWiqSglK6qntTQxNjUyNXRxrm2rtnWzcnGvunm3ern3+Hf2c3LxbKxrvHw7e/u69/e293c2WZhVIaBdOHc0NjUyu3p3+nl26yqpcPBvLa0r9/d2NjW0fHv6ufj2ubi2eXh2OTg1+Pf1uDc09HOx+Xi2+He1+nm31VOQGRcTHhwYKyooL66srayqszIwMbCusC8tOrm3unl3dzY0K+spqeknu3p4bWyrMK/ueXi3OPg2uzp46mno9PRzcnHw/Px7e3r5+Lg3KWkovb18/Tz8fHw7vDv7e7t6+zr6eXk4oN9cuLc0cTAud/b1O3p4omDedjRxtzVyuHc1O3q5enm4d/Yzt7XzbKuqMG9t9vX0evn4enl36GfnOLc1O7p4rKvq/Tx7cK7sru3svLu6eXf2NzUzNjQyN/Y0dzVztjRysjEwPHt6e3p5evn4+nl4fPx7/r5+Pb19PX08+7t7O3s6+Lh4Nva2efc0uje1dvUztPEueXZ0O7p5fj08e3p5uTOxe/j3uHFvPTn4/Ls6t69s+nSy/ny8Pjw7telm9OUi/Th3shwZcmBeLk7MblCOPdgVPdoXPdsYPtwZPt0aMJdVLljXN+mofru7VwUEHAgHMhANvNMQ+FIPvZVSs9KQKA5M/dbUdtWTfdjWMBORuGppfDT0fby8vLu7mppafz7+/r5+cjHx8XExJKRkf7+/vv7+/j4+Pf39/T09PPz8/Hx8e7u7u3t7erq6ubm5rS0tIGBgXV1dVlZWUxMTEhISERERCwAAAAA+gDIAAAI/wABCBxIsKAkIpI0CBCgocCCBQp8CVCgwReROWAKatzIsaPHjyAHUiFCycLCkygFWKBkikrIlwBKEXkXYIiFDQkSENgQoKe5Io1gwlwEiZSHlEg9ValURqhTp1RMgTEpYJWCh1fnqKREhMoqUKB8PR1L1iOYOUQkIkWpAYwpSWUJghniqyeYABsI6PXQM0AnSFfidrzSqMqmo2sXetgEaVFgwZAForVzEt/VhwoZAvA1BAyoyKCfgilVClTik6AOZoxLpFRfmnn1JrgQgEKRHKE3lqlUhdfphRdIQcKdu+zoUqsWSnq4oMDJdxZ8RAALalXx6x3BIDT9exXp1U+pDP/R0Ldn7AQYArzLFQm7RhyRcp37LeBcYRzuRSNcVaA/mKkLvaMBC5L44osq1eWnoECSSJXZaXZcBB5Mb5VnHnp9TVAEfgsOlEMVjZhDHwXscdghSA2C8eBzQ7TwzjtBsDDEKjRad+J1I5X020otCTXHEAJYqF55AhRRyY0E/UXKBfQpxRSSH0WlY4AwrgFjCyxURIlnYkEZ2llp0dfWWyHNRYmQQgrXlJcAXLGIYYgltlhjj7FZEJiUCfBiC0MEwQMcPrwjwA8trNKlnZEdx91pqREx4UYy0YRmXz8FhSgAu/VGX3DDXXonaaC8A4YafmqwRgQwqkEjRmCtQomnxm3/R593pTw6kCQzTlpeLlXAKhB88tFnXxUmwnrWKnC0wIMG7/AwRwRqgPGiL5Qc2KqvZKW44loRYqRRV7r2xctt2Ar0YYgjloitHavw0EKoA6oS7Yt6vrOGGj4MAZYd5YZHElWJ8eiSSOOFq14V7fUrkJJM/sbLUmteakdYlFCiwRA8zCuonqO61UIQ1dnBr8IvganWaWPCNdddBm+yIckCuQnnb4tV4Zin7K7C7hoy0qunBjxYKegcGlAHysgwf6QofY3KFGS4HgCV9ECZ+vYbp534OvEQqqyS2Ytg/BBEC9IGYKoPa/hy9NQgaSfJool5d6bBf9XJNrDzIYXBSeYU/0bcpV8djZAF7/jy4jtw/ECTKjyUsgYPCbKNooP0SaorBkVkLTlB54p4kgcEJJB3fepiS8UcoPwAx4tDBKre4SyocujmHuUIcErhSsor7RoxvBAGBAwwAHoLnfPwk1qv8gOq70h3+ItzZNkWXLxnh9bJz4U798vVE+QmJIctlJfwKgA/Qc03wxoWDz4oSx7YQaihSgBgCODLf91ztPRJ4QowhHpHyl9BMuUJxahAeMIjwFGwBquJgWII4xEQHNwVAfKsQkZToYS3BHgnWVkOTXMJgCuKxcFfxYcCv0sAAjfAN7/hrEYWUAULfjCHF/XkB9LxQRDesQoJOdBGAkxRT/80AIc1sKwvAqDMEOgEAE94ooS/AtF8NoBAAuztJOdgD7bCsoYWqEJSc1CD4QZUl6qAwUBwCAsHzdQTZfkgDUc8yVwu8KEJYAADo9gEFAGQg6KoYAMb4MU5rogSXqwLLGDwU114wLww2kUroFiDD9QowEjVhAcBYJzZ7oKSPJ3DNkLAAAWcCMXvhe80/QrcjOCgBmY1LwIBiJ8PeAAGGd1PgHOpSwASp4Fo1cQHAUjMO9rgAl7cUZR7JCAqFeY1AagCDquIYSsj0AJmqaIFitNAKSRRIyCyrTV98UUaePCDG65uLS/qARsuwIs2FAEDT9wjsFCIlKQFbhVg8GIA1FD/w3cMgQWG+xlnPLO2qeFqFWb7nyrGuQZCUUKY5tDBBt7xBh1AgALHNCQUcSDFlExNZIYCGRFYcDjnCUpAysKm2thWoQDMIQ3/88UPyFmxOUzpOUWoAUVpQIN3trMMGNijuYrSMAFIzoErIdA75MWsAAFKUA2lEdL6JR7y9ESGcdySyZ7zDiEI4Q00UIEOzPEOCPT0HADYBClLaMqj0I5doEiWD2Lns6XyYFosMNpUjSUVC8nQqtoZyGhM0ggPvKMGZt2AClyw0w14gBSVwCge9VhCAlYvcGDgQXLq9aI/FW4NAVAeGLwJqx8FyRdroEssq6kBMhGECKxYxCY2oIMa/0y0DV+lwUQFhQFefPWOedxowngH1+rMAQACgMMXNaDPWLJPAxrEFhsv2YI0jDMNQfDFcT8FgFHkIqzpbIMO3kCvFxWBBi7owTtHIVQB2sEX/DqjSR0ZWhbwSVQ9wpkuLaRd5b6qI5KlAC8uwFPybuwd5uhpkVyggguMYhQUoGx7q0eJBxaqcCy4YRA00FQNHIR6bKJWBDozqdlxhAKjpEAVxlvXdwChBgYWwAXOQQrgSnjCtPtKsggF2ugZbmMLaZStOrQlFrDAui1AG4k9POSNjAIDKuDFJjz3ojeoAAiM7UkPeBpK9uYPIXv8CmdUwSyTrsUXpdjgiSRBBQuAIf8Nc+DMXKvLg/++ZBNPHkUfjWIOAx9WBep5gzku0INQxrN6QoZizr5iiiwBGSkr6cqNwJVJFtyFB/MLgCTs/BQ3uYyxCNbt84bZgwjbbXMLoVWTLwsKRm4L0m4ZWH6q2hc4xK4FPXEzZPJYg0aU1QU96ao7exoADGyCFNVDiUXU7F5Eahd7a/EwmN3T0r78AKY9aRBkPAHlGujABRsQMIIhwOAAFIENAqBAGYhDgQffuFz4AEN/CoAPrsjavTS6X5rhthZQzKFW1zGtkNqnkPwKxpgYMJ4H2gCBF6mgBj2pARB6oAIPlKEM3AaqlxWGD+YoYCFuNvgeP/zqlCx71aL/IbGQmPsD7YbGEyjGaE71RMwAsKEGKmgDbd7BzkaEdeP9mghziLYQaYN4j1EB0Gkife+4WBJNROR0bp4shBpseQMEfoN5eqCDHmCA3CiGmf0gghWlJ7q9aHnob1ImmOmWeK+hwTMGylAEUgigDT2gyQUQ22eu2zESi4A5it9tJxUVwGtzwAo+TqLqzcC3hMeBNlLO/hRXSYImc2DfHMqDZpQLZhPtHkVwdFCEnuD9cIh90QUmwIsn3/HQiEo6VfjzEOecxCIAoA7cq+c2fk/+O06h0VTMxoIgXNsHdXnHRW705CiPwgMuMLAKaEDWeoFVB0AwJuwLn3bGK2DxKLEA/yhM8S5Dmbh7JKfPyWGyiiGk4QcamEMQ7MID7KbG83F/8Cg8wQsXFOFFNdAG5RVRDUZMeCRdpCF5KPEOEYB8gfMZUCQltwNpLNF0HWEHXIElPpBpPSF/Uock3AZWbfBi1acnvDBWL+J/GeUro4E66NQ8cCAAqQMyBrJ7tIMnYuIWR8cRc4BQmaQG8lMernIpT0Z30VdeLwIEDfcOPeBYb1Bj5fJh/CYgAJUq2UUdpNU9x7FZjKIaHbFpNMFhGhAB9rV5AiAJO+gl7TZ3EcYLCEZe5uACQkATKmBWRcALf+Mr2sIiLuInfOJmGwiBUNR7swJ8d/I2POAnmaYBx4dP2P/SeqMAH5tQBaCWYDwRAC6gA2zwWMRCVaZQEi+yBmtQKo7GA7R0P+9FLSW0h7/RLQUxB5cXRmkAS+EEBxUDM7xQBjQwAeEVACeoWIJCIpFAQpcCJqvwDkm2LJkHI8tSOMiBhRH4iROYEiEnayrSRmQYhAayEkkTgjXABmygAxQQAD2whEDmJBFjLJQgCSzQjBEgitV0YK3mAwRlg5uzVWunGgYyBHBgIGZDhi3QAmmDf4hShF5VetNXgiiBPqeGKK4SBKDoAz+gMfUyQclyhY+3RqDCNNSCJdXVcj3hC0GQNvaILZKFR+cABAL4aCjBQA3UKpSwCmpANnVVS9JiARH/IAnity+QJyunwYDA5FJYQosBIIi84wnnAAE9YFgpkXDncA6KxRt5aCeUgIGu0gKloCdU4gNq8APSIiit1o8FxUGsiBTNA1o90TrtGExp1j1y9wZS5jm/g0ADoAKkM4y+ojbVsWmEMy3xJ0aHUwoBSUkR+C9IsUut1BPvOCBnJBX5I3cYIBxLchJURD6IcTzpaCepaIwaECgvki8n1UuyQ5CScxalAG09wQPFFyOLJBUWmD8yEz6gU0UToBiTmD4syBIuQoVfaS+eGWvt1YLcYTmqIJF3MSDbNWFVIwB5cQ4qNDx5wymLUC5foUOZpzh41U9giT9CRXKTwohB4GbM/yZP8SFIC8ELwTM8V3QBLgQrFQYKDbgGofIiQbBD0wIHc2ABaOZ4g6hyaLJ50GFvOAYAHNUIozM+hFQflYCXOIOFFSMAPvYivRQEOmQ2BgIWJTQHumANy+AMzdAMzrAM5HANwXYSIZeGULRnDeMBtYkUvJALyCMxIiMQvmBSGMYszlIRLQBNpNkvu8AMzuAN4QAN0iAN0BAO3uAMyXAMk+eFE9ZWNDOJjdCQdqI2QaAihWMvywIH/wGEHFYKLiEyJYktvzAO3hAN05Cmapqm0eAN1KAM/WaI7aVMNCMcuIkoDgQKZ7Q8MKI4ZtOVO+RmMal7U1MM4xAOa5qoahoO4/8gDImxfhMGLFZzGnRUBVOpmSIDn5M0IIrpmSclAA0YAWpzfr6CC9QQDkWaqqq6qm5qDAEjoDgGHwYqLI3AoOoDCmODTfXVTwESATwwBPfiGTCTDNqwqsa6qtpgDWungwP6ITlQVInxopGQmXYCFmgWTcbnM3piUhHQciFTLrfgDOJwrOQqDeLgDMDANE7aXt9TBnGSGJNYCVQKJb5AI9WBaUiIOJ4JKFVRYWN6I8igDdEwsAQbDUc6pAVLsNqQDG9TiAD3pLyxCfRhcUz0knOAfKaRpc2zQ20BrDxAqnayDOGQsNEwDtmADdiQDWeasOGwDGWZGN3So5JTBuW5Kc7/mpfUIQlT4SwCwkg9wTNBYD8iZyfO8AzQcLRHGw4ou7TYMKRICw3P4AwCIYE7UoEDCh+VMDqJMSzE6CViCgDvBZr+FJSSlF0C8mGX0gzi8LTQ8A1Mi7LfwLbi0AyCNRk5mBG2ukfnAq1rIYxdyyYVNgd8IgDGFwC+wALaGWTriiRUoLZs67ZvG7dPO7efUhr00RLSSq0cRBRG0SS9gi1qMwc/0I53ITbaentyeiKmULTi0LqtC7lM+w2u27pRuxGEmBhtsRDxqrmwWRinJCf9opfVkRpVCCESciLicaqzKw7gcLJLmw3gsLzhQA1fSDkpsQALYZcCMCd3WlmVkAuT/7oWClMtBtJ+F1a1krYgb5EM3rC84hAOzpsN4eC+3sAMUWKYC4EPP7AQENAGLCQAvCAcl8pBWKu1KDE1X7EGsqOAbAGc7mFa5dAMzzDBFDzB4AAOFVzBzRAMbXM9J+EcCwABIjwAzkkAE9CeQtU59TQ11GERDZuP05YbK9MTp5rBNpzB3EC9JbNvC+EKP2AOCSDCECAEEJAAd/m3+eM7J3FUI5N+v0F5kSFw+FAMzXDBVnzFWHzBzUAMTpF+tncOAyDEbJA3x3MF+kd4vBObiJE/SVdyypa6xqFyBaAA1eANWXzH4OANy0AWUaG7R7EBDCfCRmybZUAB5QN0ArScHP9kO/QRs4LxdHMsCs7QDXh8xd3gDL8QFwnBG7ywAWwgPDlhwKSgA42AR6OgUQQcH5Bnt+j7miUzBHMTAHOsAMygDd1wy7icy7e8sIIRFQQaHwa8gG9QAwK2CUC1ffkzwLyXgDk4tC/xdJqmAAUwDOPADbqsy9wwDriQGyqcEi8yxO9wDi5QA+egf8jMO2O5Rj6JMmgLE24XAPiADz0Rwdecy1uMHUpMJT0VhzSQfQF8R2i8OSvVnQjhxqixuB7RGh9kIbVcz92gDfbrHlCqJxtAA0yYXmzwDv1naBwknzUiVG2sfnCsEQelKxagC85gzdjsDLuwIMr0DmyghC5gDrb/FYcuYGydwG3IxDt0sQqok4UCxMiteLwcAU660iDEes28fCLwsSQ9IHHmwAsWTW5kdQFlMAGkAFTwRDuCwkrcNGE42MobUdLfOQRUgAvVvA1qvQ3ZvM0geIJL+AYyXYLvAH00IATGhMgws1QEsgo6WyP/yjaR18xNR2mTom0AQKxrvQ1LjSTGdIcoJARbRtcw7QLnUHWC5kQB7SvR80U8dEaoUx0fqIXrjLvtTGtlPTC/0AyL3QyZ7CV5tgn9J2oHVtG7RSIXcEzBRTLyg4SmMJMIQpirWNDq6ijVhiYyQRDUwA1qncOeglFCUATmgBgvQkw1MIc9sQlAAARvMFkk/+PZAcJcQyAJ7KM2M4p01nsaaFYwk9J+R6fYjJ0MngKZpAC+L0JW6cQG6lGORSCHW60wLYZD9EI0RcOTSIe/p+GDk5LcBBEMrL0NG+wrpNTUHkADbihsr/Mi3yVlJAMwAoI2NKkegHKFgS3YrJwY4eLeGlHN2Qwz/LeLoaYCo0ZM7zB3SMwm2wQvrkRfvuqx9QrWzGyWuqJ8pbARy6AN2rDHJOONbYBYwfYOKvDUPNFgxsy7bNIgcWWfh1tfX5kvgF2Vo807t8s/ukIJnbERAasNyJA0RdgGb8AX7VQD0dcTYKUCE2AOu1Ena2Unq9CtoQhMOnQ4LZCfNmU0IMs7Tv+80OVB5Byx2q49NZJlDuYgBHe9WwGwdxBwc+TFGI4hWXp9I2DhA6IeLWHkSkwVqmARBKjTXrKXO46sEc4gtZvDbVHeA7kgKU1uXjTQE/WBZ0XQ3efcIQ40B7ZoL0LDXGQ2uqszBGpQYRNG1pMCclZbEMug5JuDcP0NARhAYDJOapf+Bm9OAf4d7ER2T8rDPL5qNi3wjgGw7tQis0lz3ELyaEZHEMwQ0bQDmUVwAUp532F1AS7gAhMHVhvgCTeOJKAgmHAALXeR7rs06BwGBq7MO6gd7U3qKAKRDPLdPZ4geh4Q3RhQVj1AjkDwIpROXirWXTZWpXpqfJsnk5s3oV3/NAT4NfGC7Z9owpJvPJ5u6XqGLFG0hd+5vjHmkHPl899eIrw0UrgB0IAvUpyCwmT3VOKeghZPgyYWYNBbkb4l5ERzt05skHcxXl5FoANCkF7GJKMT8wPwd0H91FAHZgHAmkbpDDPvLCQycVNrcaJ7hHAXkAs1EPL9fmBAMIcCUPgPFmGXEhZwAJ7Twk8Hxuzd+rFGCTMKrSucIQke/MQILUBUZ3USdWDDVPLvUAQ9YA6jMEjkviATYxKqHirZemAmNYr5FuaeAu3z3hoCIZxMM9LVA5m5oO1HcThxSF6efAFVUGqojChYKEMBdTh+vlQ+YAH2SvWTRgXac+a3Qty//wGpHNTxd0QBkcCLECDjCVZ6AQAEd20OmyCvODMxxK42nAU0VsIZ7Yd81t8hFS8k/gMQcwAMJAiAiikwFgQsZNjQAiVTVApOpFjR4kWMGS96ouCpTA5eLoq8e1fERYAAb2jU2PCuDKRFVzTOpFnRFyhQq4gk5DHnnYYWQ1D+YBHBAphSYGouZQoADEKUUaUGkGQK4xwilBpuXajhqaSmYcXS9IThjYtz797UQFnjDcl3Ai7kqJJj7F2ClOwMpOQrKElVPlBGaNHC1ztfROYoxYt3zhABU6VqGCIRI9JSq7huBSVpZ2PQY0eZrdFDx5sAbWrAbXiuUSQcoe/aAaWqBf+ldxF+BNCgxidJAQ8jym4KZgglyVJLEaEJhogkUJsb+iqVlPh1jaMxFFFxAQMNFcC58soFGztNV3sBuGL1913gwYVZvWOlmPF5mo8jJ+ddOSNmzaRbqLPP8DNwoFVAgaMFH1hQJQDCWGOIwPsOnIk221zJbbfefovLAleGs/Ai4+zgD6XlmnsuOgEFYKW6CkeULUFQhphDgw7F2+pF62S8KMEUaqCBhg0CgKAHCRfqhRRI7PKxoFRQkUqeqSYoIraaFoGEFIUEtGATmJ7Ezo5VyqytBR0X6oCVhUAUUcyJaARFgl420WE+6UCxIRUsfVykCFCi2oCAIlESIJVKwjr/JZVNuuQqgwwmyKFJOLFbhRUfItCgoVUWWKCAAHv5qtKCHJHgVFDa6MGCuARcBRXzZGwyqncIIIBKlPK4UiwcKkGFTYYsIGAAYgkQQM9YSW2MNpxeDFAAVxTwtIBN1/QsRlJBYaWHFEDpZbNNF9oE0RFtKEIDQQnoICoLijgFLxwisYFFATYgdoAOumQF1j6VHcuVU+1wDro2K5B2gQ4+FWAVGP0FwAqcQHEEkkYbygBfedrMI0z8cCgij6jksdWCqCYNLYdUcvhWgGGLnYChcd91OLSqwFhZg4Q9XSBAO+zzd5NTN+k1FUcYmqDlfBeaYE8nr6skFQFICiABQqMC/6WIRYjTstEJBpggAWITyKBNJrOeGTQqiHClS1d0LiDYEC07O15UWLSgg2I30GAAeUA5JVnQPJ4gAJEHTeCdqFBJBbuhWdlAaaQzPpbpsxsDAys2C5gW1AoqUHLUylGedyF5wL43gYVYQbTfuyJJBXFhbS00ACtZl41uuwfluyFQ+K0cL8zoDU5aBVwZ8NrfteRyoQxMH2Ds4MY1+64cilglKltlD+CdVCKxUPSVLXiZK0dWX+x3sQamdxXNP9XMlQ4arnzRip1HnaElKR0rlVOkyr7QTexqRMpz1Ga+BIm4oU8sNVsZtA5WAAUowAI9E0jleoWKTWxAg5Aq4OT4FP8Wc6ELey0xVBES9ST6tUgA39KAZ8CiwKakbW0FO9gCPGeBPLxpZvEaXYteBTiN4GBLU0FcySBRKbo9q0WgmEOPYFiTyxEBWALQgM4kqCTPoA9lKlPhuE44k0oUYT/J0UARbKAsHKSihyqsz/meCMXqRCdnCiiA5yYEw611cCs45BhGPLaJEwVgUTObFCka6KUEvhGKK2rRE4dWtBb1gnIXcV0Rk7OKIjTNYYtglB4tUIEOFECUqwCdImdSMz0uRJG4U6HfgDiQ6rHiRNzz3u8ax5X2Iex4BTKlRmSox5nkoAGa9JHohLcZ1VWCdVEKZO1gGK9TRIdFVfSUAiqgr1L/uLGXl2niFFWpkQYwgAEO6BcOxmkhArboS6mYXghPJAATKlJ0z/lWwg5WvDa5gghy2yaJskkvjdhAnAMl50DCKU4HWIh+qcQfk+wyqxPpynYKzNpBXKEBCbKvmgE6iile2M+LuPBbGhloSceZA5M24IwGuqA3N6MnSBSBZPwp40r7GUXjLSRanrLjsZAH0oscBFsTcYBJjWrUYR6Ih8fkyioGdyKTAXUgwWOIwcLFEIZZxw7qkSpB+EkRcx5VrCVtwERls8VDciWQmCQmUAeWVq70DAwR42pXMVLUseYVoeikWCotmRzF2XUiB8kDQ9sEijwEYU5bteucymSFgoRV/6+TTShLnwbJhjRTgIItCFZyKp33tIAVNFpFV0GhgTzgpCAHnexkVarUSNSNIYGkJWcrAqDNkCQIQbCABOCgClBs1RUg1cAEasAGUBAEpa1lLgOSaiBj/lUyGpikbSeivq2Q5C+qYIEPJBAxVvQzNTWQQGkN2lz0lvVAYRxjcgbkO+tOhIEMeUcFWPAeNfAADhpgxRrmkNxtyoMGHeBvHgAgUPQmuLKM+xhtG7KvV1r3l1GDww9UoYYKYBi/QzAvY98IAR1AAAgTAEUlWJtg9C5YNuwNJDJRocz4FuRymXmHD36AYVao4T0suGYepIiTVdT1dzpoCRtWYwFzNcABS//GK4r12gDiCK7F0lknjGM8VVe4ggUtqMB7fmBfVQBHW3CAA5AVCAYIkKQDOhAzK6xkFxyc2MlIJU4lT2TYNsXsygjqQAtKEbXdqiHMraqvGn7AgyGo9ndzmM87gJDmuPzEBS6oARByINk5G9WsYane9fjDvTVSuWxXJu1FeSBo8fxEv+8wBQ9UYQGcSGBmxlHznQjNBiRpAAhAAIAD5JxpFTeGf4EMoPLgupX8Tc+2dpCAHVghARYEQUfvWIOgNRAXDSiIFTgRspgwp4EetCHVuFYzDVYh6zhneqCbboo7+QPPExpbhb3Y4pW3zWhXsIgkQxjCGnhw7QCAIgjRnpP/skoEilTQIAORJokGapAC+gAh4jlo8pyDjReI8odJ/dJSYVtZXduWiZTPoTBcEM1wH6xBAuEl1XLegZMJsCK170hBB96xARoUASVCcEEPMpDuTBOHxTQ1Y0WeVrEl2iDCnJXIEHSsXZsDRg3Z1qGPjCPLTYg8B9EEgrjf0QEaoCQDOqhBEXqBiiJY/HZFAOSJBmmRoW1ChS6Cb4zPrQYiUBtNcGkBHEhiAafAiQilQMlEsp4CF1ybFTpAiYhx9I51/vrJdX7didiaEbq51MVLlypt5tAgLsMlQnCBvARcoRQ7DNdAkuBw4eMECiHUoA0uAEIANmDrVgWHFEWQvFht/9oYKX8aVjTJ/NzLZ2XbbrtZq+jFT9QQ9XcMPCi9YE+zDLTPAFigABTZBE7y0AY2kKwHkOaKJHnvWuIwMypik4ozawJNpu7Ri+zeJsBOBQborMEHcGEFCzSQYQn4iQgoBQDDDioYAhHSAIuQE1DIAR24NgHxm/Mbq7Yaiz8JFJQwnKg4lC9aCmNSoQNSNjjBv6FqilVwBd9AHJJwtXf4gQ4YAh7gMVYoQbzwKHbRiDJxgTaYu31Ju6OCMtnIuFq5laiQqLEAn0fpAMlJtkqhAlUgAn6jQZqgEdPrhTVAQBZEl1MzigpQG5GTNbw4wJkKgArQCIhpQFZAumDRoA3ogP8EQJlfo7+lOAWZSpd1QYmaagx5YwjT2YAuobc+GpEDDBfjWJZTAQBW+IE1oA81QAmn+7+40JY8GALluwvjABk8VICZsIIycYSj2wr70b0JPKfQ8BhMJJyRMSLZ2EN5wJsBIBQLyIAO0JOUkRFVUKIhkEKmAIUKaIE1CIJGDIC+Y42vUwMfUIM1yImx0I+ogKCmKD7SuRcCGB/zCyc5rImniYwioZrZuRoR1MNOIh3TsZXn8aAKlI202YrnkI1tY4UI8K8AWJBpyxT66Dtt6TaNMA5XiAqM0sSwWCo1ecWwgR6/gYRrnIngIwCqIQBLCizGObouaZ6WMZb34jy8uMX/htAAVdBFpmCWnFgFHxi0hSCJH4gAkogAH4iYAqQJl2vG4qGelOkFkRGfyEmdFztIjIitIlrIBJgp9zuPW1qIlhmAx2EICMNJmkjHhngKA6GNIPABVokaksiwLusAv+u3gmuOITCRqGCFAggAPYSEPAgXC9Cdacwz/qEe61m/7EmA7emeEcm8o0mABOiAonywmwwNMAAuh9jIA8GJCggvVgmC+egADEMJHvBFlqOJwZMu12uMTyQdvIEesgnEpRg2tkwAXDFCGUkiEJy/xsimrWBKCxE5KoCO5zvJ3QiACxOtVai6imA9T5OM24mtKbqqhpCkWlwKd8vADNjAeBKT/zQKNQPSs7HYS9y0AL98EjLZLcAQDGFUhUbrBRfCiME7kesAyCX6m4MUIlIIpKiqlA9Up1ELC9FcSquAE5wIAl9UA6EYvdxjIicqCNbDwOQ4D7Rio7zMiKEjo6Lzl0I6ttwsTyhSBdzUSI48D5yYAzjIu96IOq5ooxixQezEj47Ds3WSGbgrgqfiD4ecmT0UEHrbzZk4T4ZoIn8hLVCIAB5IE4fQJ7kZxBNRwPViFBAk0ImwM/64vOQRSzwzx3w00IxczpnpjBbIu0j6iqcAg0Aqhbi0zY8jUVgqAln6NLiEIYj8OIs00YVA0cppRwBwtlZiPciwvCHwEe2MwLpTP//++EkFijserDsZE1KGQFD0IZPS+ic24kr+SJEnyc8WSSYc6E3JgLdegsZAlVMA4FIB8NI3EqkWCSQ7yMVKuVB1GpeMS46N6ydEFZDjwwEcAIO9LCA77SWL8qtZGjx/uax5I4X2moo8BCr4+8xUgAQi2ImtcNReiiI7UKsTmdQEZanYUiKucEypCE+pGk8vaZQZqlMivak4mq13shELUqP4e9Wp4FHBQsK524rqEKy3wlap0AltIqQtSStjRYl3GL74CtG5qxHrKoUh6IUWc5Ov2qS+ktY23ax2PdduBQX5sSsK/TT8+SgLYtVAAkus2bOB4CQ1bBEYBQCRAykZfaf/rXCkTEKJFKABHQACXNkeIN2zuPvRFcK/VUgt8zKlS3Swi8UIJQCEGHiCJ5CBPBADMJCJ61gFWEiHJUACJwgAVsg5NtCBj+UdRbWuoARBLauAczM9RWJGi23ZipADDBiEDegDJuiDDRgBdUiETAgDnAWNK8iBVwiANYCDEggANoCAAOg622uDAIjQ1WHYzCsFzaMv23g2unqiEgmkOWhWhrAITRCAV2CDO4CDFEACPMADdcAHUagCL5CNKwADQwiAF1iHeAiAIiASGqCStc09h5AehgWAeMGu7GrBRQSFH/iBnGg2BWpJ/phUzGkIi/AAWMACOkiBIxiDHLABMiCD/zq4BMi9jrIVBBBQh7ZIA7gVMFQAXWTD0T1DpYYgCQ0buB9QPmWsnKtLVSdFiv/6pomIgQBgAk54gxwIWy84AiQgg/MFgDiQAEDYAz0AW4JIgj0ABEDIA0mIXIJQAiXYBDnQhDMIgycIgCYAgU2ogXkoATZQBB1IAyFgBdx8KZDbs7Tp1ZEcAjQJAh4ISQvAFOD6nes8EVeg1IEQqYoYhADgAzo4grAdiC8Ig5sFgC6QhSXgAkQYgUSoAqXQhBKYgUwIBBIohCM43yT4gxgAhBEIABPgAjKQgQDIBxCoh6y9B3twBw4AAVeYAHm51gk52vgKHt36xX9jgfng4DwAQ/8PI5X6nNYKKoiDqIh0eAdOgAMxwIguGIEsEAVGYIRECIAOIAMvGIEtMAI4eAMyCIAPQIIxKIEnILM+CAAoWAM2QIQoPl54kIIHmOIACAEmsIsAZaO5HV3n6NUW4IEgwJkW5eBNyYNS+C5uI5WBTY4lrQkScAdOYAQaTAIdrgNMOII56AN3UAct+E06uAMymAMyoIUAyIJIZoJLcAMysGQsMAJZMGAQCIBayIcpsIV6CIEXMIIwIIg8ulR2Gt2BYAVTiLaT/MWpa5VekIAgWINtS1kfqVgy8o+aQN4mwIRxtog9AGROIAOZkARCCABRIAQ6xoNx/gKQwdpOvoQj+IL/GQgATjCCzP0BRQgAGBABEHgEOhCBSyCDCnmkVrXM+LoUOGAFVrExDWO4C2NP4LJnC1nZE6kKP6KIyo2CO3hjJeiCVwhqSliCAEgETiiCgfAC8W2CD3AHPngDxnjoTwgAeqCDKriCV5iFHwiBzBWEEwgAW5CCHUCDFQCBxXjhgfDMpJNS62KW0loFFnjpkcwxm8sDHigFDQiYEYFadR3XITBYikjLgiBqd8AEMvgCgjADMqjcLGAEruUDgh6IVyCBFygSGIADJ0EOEaiDPniHJpaBV9CCT0gEeLhkEiABEeiAenCFM9gEP7LWVgLjkKsAHoBQqTy1/foQlVxJ7Ohb/zykFuVgDoywAAJthIqOB92NXC9ohCL4zSa4gyIBAUy4YyXo5BdQBXeYhztwYQAghHl4AS1gAkzAg2sWgU+ggSngAMtdB3ug6inWA1JIgitA64kI5UAdZdlwAv3eb/7ub//+bwAH8FeQBVkghCd4hRKIBwX/gFeAgz6AB3iIhUDuAygo8AC/cAzfb0QAhHiI8HswAAOIBQiHh1eQAUPAcCWhnC9IBfUOgCjIBDHwgi8Ag7RtAiMgAyhwByjIhDOwWk5oAzLog3ighT4oAycI7TVwgxxQ34qOgizwASn4gADQghWQggcJAESYAUDYgjFA7Iwo52U95/zOcDIv8/5+Bf9CeAVDQARaiIVXgAIFfwcmoAV4iAIQiAVC6AMZkIWgNnMzNwTQhgdCAHEQF3F4iAdAQIQMN1rYCAMmSAEOUAd4MIQMiAEnmAEY4ARMmAPxDoEOiAIyMIIbD4Mj+C0uiAIuMFxG1oQniIEZqFx66IAagIB1OAE+uIE6eAFR6AAQyAIkOIIENelIgt6x8HNjN/YnKAQZAAEFZwUmIARaYIJXUHAOqHACT3NCIIRjB3AY+AdBgPBYIPRCgHBlP3EU35FUsIQxIANRwIJPEIEsyAI8YAPwKwIwCINUYAQ2wIM3cANgB4AvmAM3gANMeAMkKAJJ6AIS2AIkEAVOyGZ86AP/GuABEJCCdSgBE8iCTzhcMhgD/kXIYY3Sc1yK/raFfhCB/UYBdFB0Mjf5f/iHlTd2QigEMsCHWOCBKICHPuCAEtiHl395fcAHWYgFApeFbe9vRNiHEKAHeAgBfTCAD9cHeygBGaAFMmcIeQCWKmNuN3iDFHADJiiCKrCBGfYCMZiDI7CBGCeIyW2EOZgDSfiCgFYBSg4FTOiAeyiBE+ACHbiBKVAHd2gFMqgCYKZfphhOL65IpKSIku8HfdBvWuCHmG/5fbiHelB5lufvyJ+B/x5wQ+iAPgiCWJCBPoiFEqiHyxeBergHaweBRDD6o99vE9gHE4DwdXj6EigBfbgH/0A393MXALxJgHDJHyqY8TCQYS+g75qYhE7mA7A/A3Wgh3vIh0TgAB1gA5S4UrywbwERVLEoeXTYhz5wgnV4gX1AhCfw+X9A+XVAh5fnhP22hfN3glkQ//R/eRG4/35IBPUHCBFOBr6SZZBVCQ5Q4sWLRQaFCA5MQLz456/POnT9OGn8l4/fP05Onuz7F3Kgk3YmRcRQ6a8DPHb6PsAroc/EjJInXfZBiVIA0AkEBgzoYAHoBhupcgBo6vQp1KhQwXgI4IdRKnfv1K07cS9AhzQpNNjAIfUsWqeLIG06CvQtXAubUi1Ki9anE1v7TohsF2Ifoigg6nUAvE5fvXv8Zv8M1Ito5L4Qggnvo6U40eTCjwcWekXIDqFEHRh2AAGRjAyZlNmhu8f63rp+iRTPOFyP8EDbiivQ0pdoHiGZ8Wr6Vk3Ytma8NkABtbCBKIENGwhYAIUqklm72sH0gTLv0KsS9Gyts1UiQIAUNCZobw8VR6VUjuDSB9qLFKRFq0CBYtUer14m7AOCPogARgtI/6CDyGFOHBJZY4BBFgKCJi2ICD+JVKjgZj4BQIgsUfQxYiwo5AMCPCiYpKBMhxxWiGYYJvLgP7INhIJID4Ygiz73wOOaPvAQx4GBNSaiooUdDpQDJKT0ApQ8HRBF1AZAsZJKJdm5F9UVNrwRBCfrhAD/Agi1yDMCegFsMgF7W26JQySorFIffaCQwkoReYDyn0+OoYCOCAYigiNhCzaIYAgRPvbnoJwUioiMhHawIF5OAOCEQYbIQEg8KDTxCjy20dLBCfq8IlNegMlYiD31NOhEgzLadE8hBnTAjz3whNDPBqy6qo+oHRSCV1NrtQVUBkMNQF1zc9XlJlReVMGILfiYUAs98LiTpgV5QPstDqksR+db71jgghD8gbLKJnf1CdikkMLbj0myrbMiJ4Y0Rq+CtHbAr2wP9tMHwIlUeqkThCisMBb5CJmISgqKoE88L0axTz0fZIjkPwI58UHEIsgzKzyvzHOvRSF8wLEIICdJ/2xT8MkngDxTFgXXffl9C8Amq7DCCnoppJEGEECjx+TO3zLpJLnvaKBDB6xkkMK67qJUSD2FYF2IIfZofdtthth229VgZ+0E1mAb4usHZutLLF4F0ZKILLSQ0XY9s5hQTzz01FOCCXNvjXfGKIFNUzx/CwnPPGAf8vHhTpg9rIdPwYlKDhtMkAHn9YGiFFNurpIBGxoEIA/URbhAtDwW5PBs0tAa6xZc7xRRwzvvAKFDEequElWlwQf/qvDFGw83XiAWEksfHDD0AROvxFNCCfEkghoUfRgiS/GAILI4+IsXIsPbx1f+nrjMkQuUddhtuUoONOjQRhEQpNlBDTrk0VZu7DvLPF+53iEECLwDAvnrzyZ655+nmE94bWsgBIOHsOTJogTkI0QJQLCQ6VUPBM6LBwc6sDDKoeQJMjgAAlKowhQeIBYyoIUTPLMwQshQYa/wySsCAgA7"
                             }
@@ -2526,7 +2509,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
                         GLOB.usr_inTransitCloseAlert = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -2690,7 +2673,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
                         GLOB.clientCancelInvite = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkInTransitClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/inTransit/clientEvents' );
                         checkInTransitClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -2738,7 +2721,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
                         GLOB.usr_inTransitOpenProfile = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -2818,7 +2801,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
                         GLOB.clientProxTime = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkInTransitClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/inTransit/clientEvents' );
                         checkInTransitClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -2930,7 +2913,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
                         GLOB.usr_atPartyCloseAlert = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -3287,7 +3270,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_atPartyLeave = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkAtPartyClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/atParty/clientEvents' );
                         checkAtPartyClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -3336,7 +3319,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_atPartyPause = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkAtPartyClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/atParty/clientEvents' );
                         checkAtPartyClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -3430,7 +3413,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_atPartyResume = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkAtPartyClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/atParty/clientEvents' );
                         checkAtPartyClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -3530,7 +3513,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_atPartyBetterDecline = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkAtPartyClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/atParty/clientEvents' );
                         checkAtPartyClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -3592,7 +3575,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_atPartyBetterAccept = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                             var checkAtPartyClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/atParty/clientEvents' );
                         checkAtPartyClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -3664,7 +3647,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_atPartyOpenProfile = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -3741,7 +3724,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_atPartyRateOtherUser = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkAtPartyClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/atParty/clientEvents' );
                         checkAtPartyClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -4008,7 +3991,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_rateOtherUserSubmit = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkRateOtherUserClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/rateOtherUser/clientEvents' );
                         checkRateOtherUserClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -4082,7 +4065,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
                         GLOB.usr_rateOtherUserCloseAlert = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -4251,7 +4234,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_rateOtherUserTOS = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkRateOtherUserClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/rateOtherUser/clientEvents' );
                         checkRateOtherUserClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -4298,7 +4281,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_rateOtherUserOpenProfile ="";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -4570,7 +4553,7 @@ function unitTests() {
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
                         GLOB.usr_matchCloseAlert = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
                         checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -4738,7 +4721,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_matchClose = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkMatchClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/match/clientEvents' );
                         checkMatchClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -4816,7 +4799,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_matchCantFind = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkMatchClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/match/clientEvents' );
                         checkMatchClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -4901,7 +4884,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_matchTOS = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         var checkMatchClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/pages/match/clientEvents' );
                         checkMatchClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
@@ -4948,7 +4931,7 @@ function unitTests() {
                         };
                     // Initialize and assign a variable to hold the most recent value stored in the clientEvents part of the data map
                         GLOB.usr_matchOpenProfile = "";
-                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. 
+                        // Use a listener to confirm that the value was properly stored in Firebase. The child_added function iterates through all children of clientEvents, so when the last iteration is complete, the last child added is assigned to the global variable. Since the push reference has no listeners attached to it, we can open and close a listener using the same reference.
                         globalClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
                             GLOB.usr_matchOpenProfile = JSON.stringify(val);
