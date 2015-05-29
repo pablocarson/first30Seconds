@@ -34,6 +34,8 @@
 
     <!-- Plugins -->
 
+    <!-- Platform -->
+    <gap:platform name="winphone" />
 
 
     <!-- Core plugins -->
