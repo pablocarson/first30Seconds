@@ -1340,6 +1340,8 @@
 	       	    // Remove any previous listeners
 					first30SecondsRef.off();
 					first30SecondsRef.remove();
+					window.localStorage.setItem ('f30sUserId','uniqueUserId12345')
+
 				// Send the pageReady message to the new Firebase reference
         	    //	userIdRef.push( {"PageReadyMsg" : GLOB.currentUserId} )					
 				// };
