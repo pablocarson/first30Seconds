@@ -1186,10 +1186,10 @@
 						$('#imageUploadSave').removeClass('ui-disabled');
 					}
 				});
-				if (val.disableCancelMsg == true) {
+				if (val.hideCancelButtonMsg == true) {
 					$('#imageUploadCancel').hide();
 				};
-				if (val.disableCancelMsg == false) {
+				if (val.hideCancelButtonMsg == false) {
 					$('#imageUploadCancel').show();
 				};
 			});
@@ -1219,10 +1219,10 @@
 						$('#imageUploadSave').removeClass('ui-disabled');
 					}
 				});
-				if (val.disableCancelMsg == true) {
+				if (val.hideCancelButtonMsg == true) {
 					$('#imageUploadCancel').hide();
 				};
-				if (val.disableCancelMsg == false) {
+				if (val.hideCancelButtonMsg == false) {
 					$('#imageUploadCancel').show();
 				};
 			});
