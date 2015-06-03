@@ -96,7 +96,7 @@
 				// internal code (HTML, javascript, css, etc.) to reset the DOM based on the 
 				if (GLOB.currentUserId == null) {
 					$.mobile.changePage("#newUser")
-					GLOB.newUserIdResponseRef.on('child_added', function(childSnapshot, prevChildName) {
+					newUserIdResponseRef.on('child_added', function(childSnapshot, prevChildName) {
 						var val = childSnapshot.val();
 						window.localStorage.setItem("f30sUserId", val);
 						$.mobile.changePage("#splash")
