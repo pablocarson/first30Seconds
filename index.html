@@ -73,11 +73,13 @@
 		<H2>New users</H2>
 		<div>Join now and get some free credits!</div>			
 		
-			<input type="button" id="newUserSubmitButton" data-mini="true" value="Join the party" onClick="newUserConfirmation()">    
+			<a href="#newUserWaiting" id="newUserSubmitButton" data-rel="popup" data-position-to="window" data-role="button" data-mini="true" data-transition="fade" data-theme="b"  onClick="newUserConfirmation()">
+				Join the party
+			</a>
 
 		<div class="spacer10px"></div>
 		<H2>Paid subscribers</H2>
-		<div>We need to confirm your subscription to restore your credits and profile information.</div>
+		<div>We need to confirm your subscription to restore your credits and profile information.</div><p>
 		<form name="restorePaidUserFormName" action="" class="formText" onsubmit="return restorePaidUser( this );" id="restorePaidUserForm" data-ajax="false">
 
 
