@@ -45,6 +45,7 @@
 	};
 
 // SCRIPTS TO SUPPORT PLUGINS AND AUTHENTICATION
+
 	// Set the initial Firebase reference based on whether the client is authenticated or not.
 		// Retrieve the value stored with the key "f30sUserId" in localStorage. This is a value sent 
 		// by the f30s server to the client via Firebase as an authentication token.
@@ -70,22 +71,14 @@
 		// to Firebase in a common public directory. We use Phonegap's 'device.uuid' call which returns 
 		// the Android_ID.
 
-	// Google Cloud Messagking device registration and push notifications
-		// Main device reference. We use a placeholder until we're sure we can retrieve an f30sID from localStorage.
-		// This prevents errors when 
-		// When we have that we replace 'placholder' with the value of f30sID.	
- 		// Reference for the public Firebase directory to which a new user's device will send its device ID.
-
-
 		// Phonegap's deviceReady event listener. 
-			// The event fires when Phonegap's device APIs have loaded.
-			// register mobile device with Google Cloud Messaging for push notifications.
-			// check localStorage for a device ID assigned by F30s and if one isn't send a new user request
+			// The event fires when Phonegap's device APIs have loaded and is the last event fired during initialization.
+			// It registers the device with Google Cloud Messaging for push notifications and performs initial authentication 
+			// functions based on the device's UUID.
 			document.addEventListener("deviceready", function() {
 				// Firebase reference for a device that hasn't been authenticated. If no authentication token exists in localStorage, 
-				// the client's device ID will be sent to this reference. This directory will be used by all new clients so proper security 
-				// restrictions should be imposed on this directory to prevent exploits.
-				var newUserIDResponseRef = new Firebase('https://f30s.firebaseio.com/deviceId/' );
+				// the client's device ID will be sent to this reference when the user interacts with the newUser page. 
+				// This directory will be used by all new clients so proper security restrictions should be imposed on this directory to prevent exploits.
 				// Take the device's universal unique identifier (UUID) and place it in a global variable
 				GLOB.deviceUuid = device.uuid;
 				// Create a Firebase reference based on the device ID. This creates a unique Firebase reference that's unique for this device 
@@ -93,55 +86,58 @@
 				// listener remains viable after the deviceReady function has closed.
 				GLOB.newUserIdResponseRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid);
 				// If there is no authentication token in localStorage, open the newUser page and create a Firebase
-				// listener that can receive the new token and deposit it in localStorage. Once received, the client reboots the 
-				// internal code (HTML, javascript, css, etc.) to reset the DOM based on the 
+				// listener that can receive one and deposit it in localStorage. The client then initializes the 
+				// web code (HTML, javascript, css, etc.) to reset all Firebase references using the token as the primary identifier. 
 				if (GLOB.currentUserId == null) {
 					$.mobile.changePage("#newUser")
+				var newUserIDResponseRef = new Firebase('https://f30s.firebaseio.com/deviceId/' );
 					GLOB.newUserIdResponseRef.on('child_added', function(childSnapshot, prevChildName) {
 						var val = childSnapshot.val();
 						window.localStorage.setItem("f30sUserId", val);
 						$.mobile.changePage("#splash")
 						document.location.reload(true);
 					});
+				// If an authentication token already exists in localStorage, register with Google Cloud Messaging (GCM) and retrieve a GCM
+				// ID for pushnotifications. 
 				} else {
 					var pushNotification = window.plugins.pushNotification;
 					pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
-
 				};
-
-				// Set up the function to process event handlers for Google Cloud Messaging push notifications
 			});
 
  		var globalClientDeviceIDRef = first30SecondsRef.child('global/clientEvents/GCMPushNotificationsID');
 			
-		// Success handler. Result should be "OK". This is not assessed by the unit test, 
-		// since the return of a Registration ID is sufficient proof of successful registration.
+		// Success handler for GCM registration. Result should be "OK".
 			function successHandler (result) {
-			// We can send a notification to Firebase that registration succeeded, but since the Registration ID
-			// proves this, and we have a handler for registration errors, this becomes a redundant message that only adds
-			// to our Firebase overhead. So we'll keep it but comment it out in case it turns out there's a reason to keep it. 
+			// We can send this notification to Firebase, but since the Registration ID is only sent as a success condition, 
+			// and we have error handlers (below), this becomes a redundant message that only adds to our Firebase overhead. 
+			// So we'll keep it but comment it out in case we decide to include it later. 
 			//	deviceRef.push( { "GCM_registration" : result } );
 			}
 
-		// Error handler. Sends any error message to Firebase. This is not included in the unit test, 
+		// Error handler for GCM registration. Sends any error message to Firebase. This is not included in the unit test, 
 		// since the return of a Registration ID is sufficient proof of a successful registration.
 			function errorHandler (error) {
 				globalClientDeviceIDRef.push( { "GCM_registration_error" : error } );
 			}
 
-		// Event handler . Several cases are documented as listed. 
+		// Notification event handler for GCM registration and push notifications. 
 			function onNotificationGCM(e) {
 				switch( e.event ) {
-					// If a Registration ID is successfully generated, send it to Firebase and use it as the identifying
-					// label for all other subsequent messages from this device.
+					// If a Registration ID is successfully generated, send it to Firebase. The server will need this ID to
+					// generate push notifications via GCM.
 					case 'registered':
 						if ( e.regid.length > 0 ) {
 							GLOB.GCMId = e.regid;
-						//	alert ("GLOB.GCMId is " + GLOB.GCMId)
+							// Send the result to Firebase. Since this will be the first authenticated client to Firebase, 
+							// and the reference name includes the authentication token sent by the server, sending of the 
+							// GCH push notification ID using this reference provides all information needed by the server'
+							// to engage the user. deviceReady is also the last event fired on initialization. 
+							// This is therefore sent as the 'Page Ready' message.
  							pageReadyRef.push( { "GCM_Push_Notifications_Id" : e.regid } );
 						}
 					break;
-					// this is the actual push notification. its format depends on the data model from the push server
+					// this is case for an actual push notification.
 					case 'message':
 						alert('message = ' + e.message + ' msgcnt = ' + e.msgcnt);
 					break;
@@ -155,15 +151,6 @@
 					break;
 				}
 			}
-
-
-
-
-
-
-
-
-
 
 	// Stripe Checkout 
 		// Firebase reference for Stripe-related messages generated by the client.
