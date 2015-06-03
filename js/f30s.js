@@ -64,47 +64,46 @@
 			var first30SecondsRef = new Firebase('https://f30s.firebaseio.com/placeholder');
 		};
 
-	// Authenticate the user
-	// Check if there is a value in localStorage for an f30sId. 
-		// If this value is null, then this is the first time the device has connected to our servers via Firebase. 
-		// (A factory reset or OS upgrade may also reset this value.) In that case, the client sends a device id 
-		// to Firebase in a common public directory. We use Phonegap's 'device.uuid' call which returns 
-		// the Android_ID.
-
-		// Phonegap's deviceReady event listener. 
-			// The event fires when Phonegap's device APIs have loaded and is the last event fired during initialization.
-			// It registers the device with Google Cloud Messaging for push notifications and performs initial authentication 
-			// functions based on the device's UUID.
-			document.addEventListener("deviceready", function() {
-				// Firebase reference for a device that hasn't been authenticated. If no authentication token exists in localStorage, 
-				// the client's device ID will be sent to this reference when the user interacts with the newUser page. 
-				// This directory will be used by all new clients so proper security restrictions should be imposed on this directory to prevent exploits.
-				// Take the device's universal unique identifier (UUID) and place it in a global variable
-				GLOB.deviceUuid = device.uuid;
-				// If there is no authentication token in localStorage, open the newUser page and create a Firebase
-				// listener that can receive one and deposit it in localStorage. The client then initializes the 
-				// web code (HTML, javascript, css, etc.) to reset all Firebase references using the token as the primary identifier. 
-				if (GLOB.currentUserId == null) {
-					$.mobile.changePage("#newUser")
-				// Create a Firebase reference based on the device ID. This creates a unique Firebase reference for this device 
-				// so the server knows where to send an authentication token.  It needs to be global so that the listener remains viable 
-				// after the deviceReady function has closed.
+	// Phonegap's deviceReady event listener
+		// The event fires when Phonegap's device APIs have loaded and is the last event fired during initialization.
+		// It registers the device with Google Cloud Messaging for push notifications and performs initial authentication 
+		// functions based on the device's UUID.
+		document.addEventListener("deviceready", function() {
+		// Firebase reference for a device that hasn't been authenticated. If no authentication token exists in localStorage, 
+		// the client's device ID will be sent to this reference when the user interacts with the newUser page. 
+		// This directory will be used by all new clients so proper security restrictions should be imposed on this directory to prevent exploits.
+			// Take the device's universal unique identifier (UUID) and place it in a global variable
+			GLOB.deviceUuid = device.uuid;
+			// If there is no authentication token in localStorage, we need to authenticate the user.
+			if (GLOB.currentUserId == null) {
+				// change to the newUser page. The client will send the device UUID based on user interaction with this page.
+				$.mobile.changePage("#newUser")
+				// Create a unique Firebase reference based on the device UUID. We set this as a global function so the reference remains
+				// accessible after the deviceReady event functions are complete.
 				GLOB.newUserIdResponseRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid);
-
-					GLOB.newUserIdResponseRef.on('child_added', function(childSnapshot, prevChildName) {
-						var val = childSnapshot.val();
-						window.localStorage.setItem("f30sUserId", val);
-						$.mobile.changePage("#splash")
-						document.location.reload(true);
-					});
-				// If an authentication token already exists in localStorage, register with Google Cloud Messaging (GCM) and retrieve a GCM
-				// ID for pushnotifications. 
-				} else {
-					var pushNotification = window.plugins.pushNotification;
-					pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
-				};
+				// Create a listener based on this reference. Since it's unique, the server will use it to send an authentication
+				// token to the device. 
+				GLOB.newUserIdResponseRef.on('child_added', function(childSnapshot, prevChildName) {
+					var val = childSnapshot.val();
+					// Place the received authentication token in localStorage
+					window.localStorage.setItem("f30sUserId", val);
+					// For test purposes, change to the splash page. Refer to the first30Seconds logic table to determine which page
+					// should be the destination on completion of this function.
+					$.mobile.changePage("#splash")
+					// Re-initialize the web code (HTML, javascript, css, etc.) to reset all Firebase references 
+					// using the token as the top-level identifier. 
+					document.location.reload(true);
 			});
+			// If an authentication token already exists in localStorage, register with Google Cloud Messaging (GCM) and retrieve a GCM
+			// ID for pushnotifications. 
+			} else {
+				var pushNotification = window.plugins.pushNotification;
+				pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
+			};
+		});
 
+	// Push notification functions called by the deviceReady event
+		// Reference for push notifications.	
  		var globalClientDeviceIDRef = first30SecondsRef.child('global/clientEvents/GCMPushNotificationsID');
 			
 		// Success handler for GCM registration. Result should be "OK".
@@ -115,8 +114,7 @@
 			//	deviceRef.push( { "GCM_registration" : result } );
 			}
 
-		// Error handler for GCM registration. Sends any error message to Firebase. This is not included in the unit test, 
-		// since the return of a Registration ID is sufficient proof of a successful registration.
+		// Error handler for GCM registration. Sends a received error message to Firebase. 
 			function errorHandler (error) {
 				globalClientDeviceIDRef.push( { "GCM_registration_error" : error } );
 			}
@@ -137,7 +135,7 @@
  							pageReadyRef.push( { "GCM_Push_Notifications_Id" : e.regid } );
 						}
 					break;
-					// this is case for an actual push notification.
+					// this is the case for an actual push notification.
 					case 'message':
 						alert('message = ' + e.message + ' msgcnt = ' + e.msgcnt);
 					break;
@@ -160,9 +158,9 @@
 
 		// Function to handle Stripe checkout process
 			var handler = StripeCheckout.configure({
-				// When you create a Stripe account, you're given two publishable keys: one for test and one for 
-				// when your app is live. Below is the test key that was used for development. This should be replaced
-				// with a test / live key from the final Stripe account.
+				// When a Stripe merchant account is created, you're given two publishable keys: one for testing and one for 
+				// when the app is live. Below is the test key that was used for development. This should be replaced
+				// with a test / live key from the Stripe account to be used in production.
 				key: 'pk_test_9hivJ7TpkhcQkukMYt57spj1',
 				// The name, description and purchase amount will be presented in the Stripe overlay. Currently this is
 				// set for one purchase type: ten credits for ten dollars.
@@ -194,15 +192,14 @@
 		// an image from their device and then zoom, pan, crop, and upload it to Firebase. For API and details 
 		// on its use, refer to http://scottcheng.github.io/cropit/
 
-		// The cropit plugin must be called within the Firebase function that provides initial page data. Refer
-		// to the imageUpload section for specifics of the plugin implementation.
+		// The cropit plugin must be called within the Firebase function that provides page data for the imageUpload page. 
+		// Refer to the imageUpload section for specifics of the plugin implementation.
 
 // GLOBAL FUNCTIONS
 	// Global functions can occur on multiple pages or all pages.
  	
-
 	// Server updates rating of an otherUser
-		// The function updates the rating associated with the UID, updates the parent thumbnail
+		// The function updates the rating associated with the unique ID of the otherUser, updates the parent thumbnail
 		// display on the #party page and returns the user to that page.
 		function sys_globalRateDisplay( jsonRating, UID ) {
 			// Change the rating on the #Party page to reflect what the user selected. 
@@ -211,14 +208,13 @@
 			if (jsonRating == '-1') {
 				$('#rating' + UID).html("Please review");
 			};
-			// If the user's selected the "Not Interested" element from the pulldown, the value
-			// of the pulldown will be zero and the corresponding element's rating text will
-			// change to say "Not interested"
+			// If the user's selected the "Not Interested" element from the pulldown, the pulldown value
+			// is zero and the corresponding element's rating text will change to say "Not interested"
 			if (jsonRating == '0') {
 				$('#rating' + UID).html("Not interested");
 			};
 			// Otherwise, the value will be 1 - 5, which will be converted to a string of the symbol 
-			// '♥' of the corresponding length, so a rating of 3 will display ♥♥♥.
+			// '♥' of the corresponding length. For example, a rating of 3 will display as ♥♥♥.
 			if ( (jsonRating > '0') && (jsonRating < '6') ) {
 				var newHearts = Array(+ jsonRating + 1).join("♥");
 				// Display the string created on the atParty page.
@@ -226,205 +222,212 @@
 			}		
 		}
 
-	// Firebase reference for currentPage messages. These set the currently displayed page within the app.
-	var globalServerRef = first30SecondsRef.child('global/serverEvents');
+	// changePage functions
+		// Firebase reference for currentPage messages. These set the currently displayed page within the app.
+		var globalServerRef = first30SecondsRef.child('global/serverEvents');
 
-	// Server sets initial page to be displayed
-		globalServerRef.child('currentPage').on('child_added', function(childSnapshot, prevChildName) {
-			// Retrieve the JSON string stored in alertMsg	
-			var val = childSnapshot.val();
-			// If a message to change the current page is received, change to that page.	
-			$.mobile.changePage("#" + val);					
-		});
+		// Server sets initial page to be displayed
+			globalServerRef.child('currentPage').on('child_added', function(childSnapshot, prevChildName) {
+				// Retrieve the JSON string stored in alertMsg	
+				var val = childSnapshot.val();
+				// If a message to change the current page is received, change to that page.	
+				$.mobile.changePage("#" + val);					
+			});
 
-	// Server changes page to be displayed
-		globalServerRef.child('currentPage').on('child_changed', function(childSnapshot, prevChildName) {
-			// Retrieve the JSON string stored in alertMsg	
-			var val = childSnapshot.val();
-			$.mobile.changePage("#" + val);
-		});
+		// Server changes page to be displayed
+			globalServerRef.child('currentPage').on('child_changed', function(childSnapshot, prevChildName) {
+				// Retrieve the JSON string stored in alertMsg	
+				var val = childSnapshot.val();
+				$.mobile.changePage("#" + val);
+			});
 
-	// User or server opens 'Waiting...' overlay.
-		// Uses current page ID to close the proper instance of the overlay.
-		// if this were the Home page, the div being closed would have ID "homeWaiting"
-		function usr_sys_openWaiting() {
-			// Determine the current page and append 'Waiting' to it to get the ID
-			// of the waiting overlay to be opened.
-			var currentWaiting = '#' +  $.mobile.activePage.attr('id') + "Waiting"
-			// Append 'Text' to the result to get the ID of the text presented in the 
-			// Waiting overlay, which has a separate ID. We'll need this to customize 
-			// or reset the text.
-			var currentWaitingText = currentWaiting + "Text"
-			// Reset the "Waiting..." overlay text in case it was customized on the previous use.  
-			$(currentWaitingText).html('Waiting...');			
-			// Open the overlay.
-			$(currentWaiting).popup('open');				
-		}
-
-	// Server closes 'Waiting...' overlay 
-		// Uses current page as ID to close the proper instance of the overlay.
-		// if this were the Home page, the div being closed would have ID "homeWaiting"
-		function sys_closeWaiting() {
-			// User the current page's name to determine which Waiting overlay we're checking.
-			var currentWaiting = '#' +  $.mobile.activePage.attr('id') + "Waiting"
-			// Check if the Waiting overlay is active. This prevents errors in 
-			// the unit test when testing only segments of code. If it's active,
-			// close the overlay.
-			if ($(currentWaiting).parent().hasClass('ui-popup-active')) {
-				$(currentWaiting).popup('close');
+	// Waiting overlay functions
+		// User or server opens Waiting overlay.
+			// Uses current page ID to open the proper instance of the overlay. The waiting overlay is unique for each
+			// page and includes the page ID in its own ID. For example, if the client is on the Home page, the div 
+			// being opened would have the ID "homeWaiting"
+			function usr_sys_openWaiting() {
+				// Determine the current page and append 'Waiting' to it to derive the ID of the waiting overlay to be opened.
+				var currentWaiting = '#' +  $.mobile.activePage.attr('id') + "Waiting"
+				// Append 'Text' to the result to get the ID of the text presented in the Waiting overlay, which 
+				// has a separate ID. We'll need this to customize or reset the text.
+				var currentWaitingText = currentWaiting + "Text"
+				// Reset the "Waiting..." overlay text in case it was customized in a previous use.  
+				$(currentWaitingText).html('Waiting...');			
+				// Open the overlay.
+				$(currentWaiting).popup('open');				
 			}
-		}
 
-	// Firebase reference for server alert messages
-	var globalServerAlertRef = first30SecondsRef.child('global/alerts');
-	
-	// Server creates an alert
-		globalServerAlertRef.on('child_added', function(childSnapshot, prevChildName) {
-			// Retrieve the JSON string stored in alertMsg	
-			var val = childSnapshot.val();
-			// If the server set the removeWaiting flag to true, close any open 'Waiting...' overlay.
-			// If a waiting overlay isn't open, the command will be ignored.
-			if (val.removeWaitingMsg == true) {
-				sys_closeWaiting();
-			};
-			// If the alert message is empty, close the alert.
-			if (val.alertMsg == "") {
-				$('.alertWrapper').hide();
-			} else {
-				// Extract the alert text from the message		
-				var jsonAlert = JSON.stringify( val.alertMsg );
-				// Populate the text in the alert. By specifying the entire class, we ensure that 
-				// the current page alert text is populated regardless of what that page is.
-				$('.alert').html(val.alertMsg);
-				// Use a slight timeout to avoid collision with the command to populate the alert
-				setTimeout (function() {
-					// Display the alert component. By specifying the entire class, we ensure that 
-					// the alert is displayed on the page that's currently active.
-					$('.alertWrapper').show();
-					// Derive the current page ID
-					var currentPage = $.mobile.activePage.attr('id')
-					// Convert this to the alert ID for the current page. For example,
-					// if the page ID is inTransit, the relevant alert ID is #inTransiTAlertText				
-					var currentAlertId = "#" + currentPage + "AlertText";
-					// Derive the height of the populated alert box and adjust the height of the 
-					// space allocated to the alert so that it never covers the page text or elements 
-					// below it, regardless of how many lines of text may be in the alert.
-					var containerHeight = $(currentAlertId).height()
-					var containerHeightTrim = parseInt(containerHeight) + 37;			
-					$('.alertWrapper').css("height", containerHeightTrim);
-				}, 10);		
-			};		
-		});
+		// Server closes Waiting overlay 
+			// Uses current page ID to close the proper instance of the overlay. The waiting overlay is unique for each
+			// page and includes the page ID in its own ID. For example, if the client is on the Home page, the div 
+			// being opened would have the ID "homeWaiting"
+			function sys_closeWaiting() {
+				// Determine the current page and append 'Waiting' to it to derive the ID of the waiting overlay to be closed.
+				var currentWaiting = '#' +  $.mobile.activePage.attr('id') + "Waiting"
+				// Check if the Waiting overlay is active. This prevents errors in the unit test when testing only 
+				// segments of code. If it's active, close the overlay.
+				if ($(currentWaiting).parent().hasClass('ui-popup-active')) {
+					$(currentWaiting).popup('close');
+				}
+			}
 
-	// Server changes an alert
-		globalServerAlertRef.on('child_changed', function(childSnapshot, prevChildName) {
-			// Retrieve the JSON string stored in alertMsg	
-			var val = childSnapshot.val();
-			// If the server set the removeWaiting flag to true, close any open 'Waiting...' overlay.
-			// If a waiting overlay isn't open, the command will be ignored.
-			if (val.removeWaitingMsg == true) {
-					sys_closeWaiting();
-			};
-			// If the alert message is empty, close the alert.
-			if (val.alertMsg == "") {
-				$('.alertWrapper').hide();
-			} else {
-				// Extract the alert text from the message		
-				var jsonAlert = JSON.stringify( val.alertMsg );
-				// Populate the text in the alert. By specifying the entire class, we ensure that 
-				// the current page alert text is populated regardless of what that page is.
-				$('.alert').html(val.alertMsg);
-				// Use a slight timeout to avoid collision with the command to populate the alert
-				setTimeout (function() {
-					// Display the alert component. By specifying the entire class, we ensure that 
-					// the alert is displayed on the page that's currently active.
-					$('.alertWrapper').show();
-					// Derive the current page ID
-					var currentPage = $.mobile.activePage.attr('id')
-					// Convert this to the alert ID for the current page. For example,
-					// if the page ID is inTransit, the relevant alert ID is #inTransiTAlertText				
-					var currentAlertId = "#" + currentPage + "AlertText";
-					// Derive the height of the populated alert box and adjust the height of the 
-					// space allocated to the alert so that it never covers the page text or elements 
-					// below it, regardless of how many lines of text may be in the alert.
-					var containerHeight = $(currentAlertId).height()
-					var containerHeightTrim = parseInt(containerHeight) + 37;			
-					$('.alertWrapper').css("height", containerHeightTrim);
-				}, 10);		
-			};		
-		});
-
-	// Manually close an alert. We need this for automatic alerts generated by faulty form submission 
-	// before the user is authenticated.
-	function manualAlertClose() {
-		$('.alertWrapper').hide();
-		$('.alert').html("");
-	};
-
-	// Firebase reference for server messages for the Stripe Checkout overlay
-	var globalServerStripeRef = first30SecondsRef.child('Stripe/serverEvents');
-
-	// Server opens the Stripe overlay
-		globalServerStripeRef.on('child_added', function(childSnapshot, prevChildName) {
-			// Retrieve the JSON string stored in alertMsg	
-			var val = childSnapshot.val();
-			// If "stripeMsg" message is sent by the server with a flag of "true", close 
-			// the Waiting overlay and open the Stripe credit card overlay. Note that once triggered, any 
-			// prior stripeMsg message must be removed from Firebase before sending a subsequent
-			// 'stripeMsg: true' message, or else the child_added listener won't be triggered.
-			if (val == true) {		
-				sys_closeWaiting();
-				handler.open();	
-			};
-		});
-
-	// Firebase references for server and client messages related to geolocation functions
-	var globalServerGeoRef = first30SecondsRef.child('global/serverEvents/geolocation');	
-	var globalClientGeoRef = first30SecondsRef.child('global/geolocation');
-
-	// Server requests geolocation data from the client
-		globalServerGeoRef.on('child_added', function(childSnapshot, prevChildName) {
-			// Retrieve the JSON string stored in alertMsg	
-			var val = childSnapshot.val();
-			// If geoMsg is true, call the getLocation function immediately and then every 30 seconds. For test 
-			// purposes, the interval has been set to 10 seconds but should be a minimum of 30 seconds in production.
-			if (val == true){
-				// getLocation is the actual geolocation polling function. We want to call it immediately first 
-				// to get an initial user location ASAP.
-				getLocation();
-				// Call the setInterval 
-				cycleLocation();
-			};
-			// If geoMsg is false, stop the geolocation function.
-			if (val == false){
-				// getLocation is the actual geolocation polling function. We want to call it immediately first 
-				// to get an initial user location ASAP.
-				stopLocation();
-			};
-		});
-	
-	// Server changes cilent geolocation request
-		globalServerGeoRef.on('child_changed', function(childSnapshot, prevChildName) {
-			// Retrieve the JSON string stored in alertMsg	
-			var val = childSnapshot.val();
-			// If geoMsg is true, call the getLocation function immediately and then every 30 seconds. For test 
-			// purposes, the interval has been set to 10 seconds but should be a minimum of 30 seconds in production.
-			if (val == true){
-				// getLocation is the actual geolocation polling function. We want to call it immediately first 
-				// to get an initial user location ASAP.
-				getLocation();
-				// Call the setInterval 
-				cycleLocation();
-			};
-			// If geoMsg is false, stop the geolocation function.
-			if (val == false){
-				// getLocation is the actual geolocation polling function. We want to call it immediately first 
-				// to get an initial user location ASAP.
-				stopLocation();
-			};
-		});
+	// Alert functions
+		// Firebase reference for server alert messages
+		var globalServerAlertRef = first30SecondsRef.child('global/alerts');
 		
-	// Geolocation functions called by the Firebase geolocation listeners above 
+		// Server creates an alert
+			globalServerAlertRef.on('child_added', function(childSnapshot, prevChildName) {
+				// Retrieve the JSON string stored in alertMsg	
+				var val = childSnapshot.val();
+				// If the server set the removeWaiting flag to true, close any open 'Waiting...' overlay.
+				// If a waiting overlay isn't open, the command will be ignored.
+				if (val.removeWaitingMsg == true) {
+					sys_closeWaiting();
+				};
+				// If the alert message is empty, close the alert.
+				if (val.alertMsg == "") {
+					$('.alertWrapper').hide();
+				} else {
+					// Extract the alert text from the message		
+					var jsonAlert = JSON.stringify( val.alertMsg );
+					// Populate the text in the alert. By specifying the entire class, we ensure that 
+					// the current page alert text is populated regardless of what that page is.
+					$('.alert').html(val.alertMsg);
+					// Use a slight timeout to avoid collision with the command to populate the alert
+					setTimeout (function() {
+						// Display the alert component. By specifying the entire class, we ensure that 
+						// the alert is displayed on the page that's currently active.
+						$('.alertWrapper').show();
+						// Derive the current page ID
+						var currentPage = $.mobile.activePage.attr('id')
+						// Convert this to the alert ID for the current page. For example,
+						// if the page ID is inTransit, the relevant alert ID is #inTransiTAlertText				
+						var currentAlertId = "#" + currentPage + "AlertText";
+						// Derive the height of the populated alert box and adjust the height of the 
+						// space allocated to the alert so that it never covers the page text or elements 
+						// below it, regardless of how many lines of text may be in the alert.
+						var containerHeight = $(currentAlertId).height()
+						var containerHeightTrim = parseInt(containerHeight) + 37;			
+						$('.alertWrapper').css("height", containerHeightTrim);
+					}, 10);		
+				};		
+			});
+
+		// Server changes an alert
+			globalServerAlertRef.on('child_changed', function(childSnapshot, prevChildName) {
+				// Retrieve the JSON string stored in alertMsg	
+				var val = childSnapshot.val();
+				// If the server set the removeWaiting flag to true, close any open 'Waiting...' overlay.
+				// If a waiting overlay isn't open, the command will be ignored.
+				if (val.removeWaitingMsg == true) {
+						sys_closeWaiting();
+				};
+				// If the alert message is empty, close the alert.
+				if (val.alertMsg == "") {
+					$('.alertWrapper').hide();
+				} else {
+					// Extract the alert text from the message		
+					var jsonAlert = JSON.stringify( val.alertMsg );
+					// Populate the text in the alert. By specifying the entire class, we ensure that 
+					// the current page alert text is populated regardless of what that page is.
+					$('.alert').html(val.alertMsg);
+					// Use a slight timeout to avoid collision with the command to populate the alert
+					setTimeout (function() {
+						// Display the alert component. By specifying the entire class, we ensure that 
+						// the alert is displayed on the page that's currently active.
+						$('.alertWrapper').show();
+						// Derive the current page ID
+						var currentPage = $.mobile.activePage.attr('id')
+						// Convert this to the alert ID for the current page. For example,
+						// if the page ID is inTransit, the relevant alert ID is #inTransiTAlertText				
+						var currentAlertId = "#" + currentPage + "AlertText";
+						// Derive the height of the populated alert box and adjust the height of the 
+						// space allocated to the alert so that it never covers the page text or elements 
+						// below it, regardless of how many lines of text may be in the alert.
+						var containerHeight = $(currentAlertId).height()
+						var containerHeightTrim = parseInt(containerHeight) + 37;			
+						$('.alertWrapper').css("height", containerHeightTrim);
+					}, 10);		
+				};		
+			});
+
+		// Manually close an alert. 
+			// We need this for the newUser page: since there's no way for the server to know
+			// if a faulty form submission was executed by an unauthenticated user, the user must close the alert manually.
+			function manualAlertClose() {
+				$('.alertWrapper').hide();
+				$('.alert').html("");
+			};
+
+	// Stripe checkout functions
+		// Firebase reference for server messages for the Stripe Checkout overlay. Though we're currently only using it 
+		// on the Home page, the Stripe overlay can be called from any page, therefore we'll treat it as global.
+		var globalServerStripeRef = first30SecondsRef.child('Stripe/serverEvents');
+
+		// Server opens the Stripe overlay
+			globalServerStripeRef.on('child_added', function(childSnapshot, prevChildName) {
+				// Retrieve the JSON string stored in alertMsg	
+				var val = childSnapshot.val();
+				// If "stripeMsg" message is sent by the server with a flag of "true", close the Waiting overlay and open 
+				// the Stripe credit card overlay. Note that the user closes this overlay manually, because this overlay
+				// is created by Stripe. We are notified when the user closes the overlay, but this means there's no 
+				// reason for a child_changed listener since this can only be set to true. Therefore, once triggered, any 
+				// prior stripeMsg message MUST be removed from Firebase before sending a subsequent'stripeMsg: true' message, 
+				// or else the child_added listener won't be triggered.
+				if (val == true) {		
+					sys_closeWaiting();
+					handler.open();	
+				};
+			});
+
+	// Geolocation functions
+		// Firebase references for server and client messages related to geolocation functions
+		var globalServerGeoRef = first30SecondsRef.child('global/serverEvents/geolocation');	
+		var globalClientGeoRef = first30SecondsRef.child('global/geolocation');
+
+		// Server requests geolocation data from the client
+			globalServerGeoRef.on('child_added', function(childSnapshot, prevChildName) {
+				// Retrieve the JSON string stored in geoMsg	
+				var val = childSnapshot.val();
+				// If geoMsg is true, call the getLocation function immediately and then every 30 seconds. For test 
+				// purposes, the interval has been set to 10 seconds but should be a minimum of 30 seconds in production.
+				if (val == true){
+					// getLocation is the actual geolocation polling function. We want to call it immediately first 
+					// to get an initial user location ASAP.
+					getLocation();
+					// Call the setInterval 
+					cycleLocation();
+				};
+				// If geoMsg is false, stop the geolocation function.
+				if (val == false){
+					// getLocation is the actual geolocation polling function. We want to call it immediately first 
+					// to get an initial user location ASAP.
+					stopLocation();
+				};
+			});
+		
+		// Server changes cilent geolocation request
+			globalServerGeoRef.on('child_changed', function(childSnapshot, prevChildName) {
+				// Retrieve the JSON string stored in geoMsg	
+				var val = childSnapshot.val();
+				// If geoMsg is true, call the getLocation function immediately and then every 30 seconds. For test 
+				// purposes, the interval has been set to 10 seconds but should be a minimum of 30 seconds in production.
+				if (val == true){
+					// getLocation is the actual geolocation polling function. We want to call it immediately first 
+					// to get an initial user location ASAP.
+					getLocation();
+					// Call the setInterval 
+					cycleLocation();
+				};
+				// If geoMsg is false, stop the geolocation function.
+				if (val == false){
+					// getLocation is the actual geolocation polling function. We want to call it immediately first 
+					// to get an initial user location ASAP.
+					stopLocation();
+				};
+			});
+		
 		// Retrieve the device's current latitude and longitude.
 			var getLocation = function() {
 				navigator.geolocation.getCurrentPosition(onSuccess, onError, { enableHighAccuracy: true });
@@ -445,8 +448,9 @@
 				console.log('code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
 			}
 
-		// This function is called to poll for location periodically. For test purposes, it has been set
-		// to one second. In production, this should be set to 30 seconds.		
+		// This function is called to poll for location periodically so we can track the user's progress to
+		// the party destination. For test purposes, it has been set to one second. In production, this should 
+		// be set to 30 seconds.		
 			function cycleLocation(){
 				GLOB.cycle = setInterval( getLocation, 1000)
 			}
@@ -485,7 +489,6 @@
 			// send Close_alert message with 'true' value to Firebase
 			globalClientRef.push( { Close_alert : true } );
 		}
-
 
 // NEWUSER PAGE
 
@@ -547,8 +550,7 @@
 			if (val.creditsMsg == "0"){
 				$('#homeCredits').css('color', '#990000');
 				$('#homeFindParty').addClass('ui-disabled');
-			// Else it will appear green on both pages and the "Find a party" button 
-			// will be active.
+			// Else it will appear green on both pages and the "Find a party" button will be active.
 			} else {
 				$('#homeCredits').css('color', '#009900');
 				$('#homeFindParty').removeClass('ui-disabled');
@@ -568,8 +570,7 @@
 			if (val.creditsMsg == "0"){
 				$('#homeCredits').css('color', '#990000');
 				$('#homeFindParty').addClass('ui-disabled');
-			// Else it will appear green on both pages and the "Find a party" button 
-			// will be active.
+			// Else it will appear green on both pages and the "Find a party" button will be active.
 			} else {
 				$('#homeCredits').css('color', '#009900');
 				$('#homeFindParty').removeClass('ui-disabled');
@@ -599,8 +600,7 @@
 		inviteServerRef.on('child_added', function(childSnapshot, prevChildName) {
 		// Assign snapshot JSON to a variable
 			var val = childSnapshot.val();
-		// Display the page data from the snapshot to populate start time and 
-		// distance from current location.
+		// Display the page data from the snapshot to populate start time and distance from current location.
 			$('#partyTime').html(val.partyTimeMsg);
 			$('#partyDistance').html(val.partyDistanceMsg);
 		});
@@ -609,8 +609,7 @@
 		inviteServerRef.on('child_changed', function(childSnapshot, prevChildName) {
 		// Assign snapshot JSON to a variable
 			var val = childSnapshot.val();
-		// Display the page data from the snapshot to populate start time and 
-		// distance from current location.
+		// Display the page data from the snapshot to populate start time and distance from current location.
 			$('#partyTime').html(val.partyTimeMsg);
 			$('#partyDistance').html(val.partyDistanceMsg);
 		});
@@ -929,7 +928,7 @@
 			$(betterParty).popup('close');
 			// Open the Waiting overlay on a delay to give time to close the 'Better Party' overla
 			setTimeout ("usr_sys_openWaiting();", 250);
-		// send Decline_betterParty message with 'true' value to Firebase
+			// send Decline_betterParty message with 'true' value to Firebase
 			atPartyClientRef.push( { Decline_betterParty : true } );
 		}
 
@@ -972,10 +971,8 @@
 			// Retrieve the string denoting the value for the current rating
 			var rateOtherUserRateVal = $("#ratingNumber" + UID).html()
 	 		// Populate the corresponding page element.
-	//		$("#rateOtherUserRating").val( rateOtherUserRateVal )
 			$(document).on("pageinit", "#rateOtherUser", function () {
 				$('#rateOtherUserRating').val( rateOtherUserRateVal ).selectmenu("refresh", true);
-				//$('#rateOtherUserRating').trigger('change');
 			});
 			// If rateOtherUserRatingMsg has a value of -1, that means the otherUser hasn't been rated by the user yet
 			// and the 'submit' button should be disabled.
@@ -1006,11 +1003,7 @@
 			// Retrieve the string denoting the value for the current rating
 			var rateOtherUserRateVal = $("#ratingNumber" + UID).html()
 	 		// Populate the corresponding page element.
-	//		$("#rateOtherUserRating").val( rateOtherUserRateVal )
-//			$(document).on("pageinit", "#rateOtherUser", function () {
 			$('#rateOtherUserRating').val( rateOtherUserRateVal ).selectmenu("refresh", true);
-				// $('#rateOtherUserRating').trigger('change');
-//			});
 			// If rateOtherUserRatingMsg has a value of -1, that means the otherUser hasn't been rated by the user yet
 			// and the 'submit' button should be disabled.
 			if (rateOtherUserRateVal == "-1"){
@@ -1140,9 +1133,9 @@
 				$('#profileAlertText').html("You left a required field blank. Please complete the form and submit again.");				
 				$(profileAlertWrapper).show();				
 			} else {
-				// If name and age fields are both populated:
-				// Open "Waiting..." overlay to disable user controls.
+				// If name and age fields are both populated, open "Waiting..." overlay to disable user controls.
 				usr_sys_openWaiting();
+				// Send profile data to Firebase
 				profileClientRef.push( {
 					profileUpdate : true,
 					newProfileName : $('#profileName').val(),
@@ -1155,7 +1148,7 @@
 			return false; // We don't want the form to trigger a page load. We want to do that through js. 
 		}
 
-	// User opts to closee the Profile page and requests a response from the server.
+	// User opts to close the Profile page and requests a response from the server.
 		function usr_profileClose() {
 		// send Close_profile message with a value of 'true'
 			profileClientRef.push( { Close_profile : true } );
@@ -1247,38 +1240,23 @@
 		});
 
 
-
-	// User uploads new profile message
+	// User cancels the image upload
 		function usr_imageUploadCancel() {
-			// send New_otherUserRating message with the numerical rating value to Firebase
+			// send a message to Firebase requesting return to the Profile page
 			imageUploadClientRef.push( { Return_toProfile : true } );
 		}
 
 // INITIALIZATION
 
-	// Specify which function listens for incoming messages
-	// Redirect if page id is missing
+	// Since deviceReady is now the last event called on initialization, authentication and pageReady 
+	// functions have been deferred to the deviceReady event. We will still remove any previous listeners
+	// ahead of the deviceReady event being called.
+
 		function initialize() {
-			// We don't want to allow pages without a page id. If there is no 
-			// page id, we send the user to an error page.
+			// Remove any previous listeners
+			first30SecondsRef.off();
+			first30SecondsRef.remove();
 
- 			// if( GLOB.pageId == null )
- 				// window.location.href = "missingId.html";
-
-		// Define location and remove previous listeners
-
-			// Retrieve the value stored with the key "f30sUserId" in localStorage
-				// GLOB.currentUserId = window.localStorage.getItem("f30sUserId");
-			// If there's already a value for GLOB.currentUserId in localStorage
-				// if (GLOB.currentUserId != null) {
-				// create a reference to deposit the pageReady message
-	       	    //	userIdRef = first30SecondsRef.child('pageReady');
-	       	    // Remove any previous listeners
-					first30SecondsRef.off();
-					first30SecondsRef.remove();
-				// Send the pageReady message to the new Firebase reference
-        	    //	userIdRef.push( {"PageReadyMsg" : GLOB.currentUserId} )					
-				// };
 		}
 
 		window.onload = initialize();
