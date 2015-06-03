@@ -70,10 +70,6 @@
 		// to Firebase in a common public directory. We use Phonegap's 'device.uuid' call which returns 
 		// the Android_ID.
 
-	// Retrieve Phonegap device.uuid and use as primary Firebase reference
-		// Device reference 	
-
-
 	// Google Cloud Messagking device registration and push notifications
 		// Main device reference. We use a placeholder until we're sure we can retrieve an f30sID from localStorage.
 		// This prevents errors when 
@@ -89,13 +85,13 @@
 				// Firebase reference for a device that hasn't been authenticated. If no authentication token exists in localStorage, 
 				// the client's device ID will be sent to this reference. This directory will be used by all new clients so proper security 
 				// restrictions should be imposed on this directory to prevent exploits.
-				GLOB.newUserIDResponseRef = new Firebase('https://f30s.firebaseio.com/deviceId/' );
+				var newUserIDResponseRef = new Firebase('https://f30s.firebaseio.com/deviceId/' );
 				// Take the device's universal unique identifier (UUID) and place it in a global variable
 				GLOB.deviceUuid = device.uuid;
 				// Create a Firebase reference based on the device ID. This creates a unique Firebase reference that's unique for this device 
 				// so the server knows where to send an authentication token for this particular client.  
-				GLOB.newUserIdResponseRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid);
-				// If there isn't currently an authentication token in localStorage, open the newUser page and create a Firebase
+				var newUserIdResponseRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid);
+				// If there is no authentication token in localStorage, open the newUser page and create a Firebase
 				// listener that can receive the new token and deposit it in localStorage. Once received, the client reboots the 
 				// internal code (HTML, javascript, css, etc.) to reset the DOM based on the 
 				if (GLOB.currentUserId == null) {
