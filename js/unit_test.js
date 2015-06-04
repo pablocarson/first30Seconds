@@ -1054,7 +1054,7 @@ function unitTests() {
                             },
                         })
                     //  Include a small delay for app response
-                        return( 10 );
+                        return( 1000 );
                 },
                 function() {
                     // Confirm receipt / display of alert text by app
@@ -2817,7 +2817,7 @@ function unitTests() {
                             },
                         })
                     //  Include a small delay for app response
-                        return( 10 );
+                        return( 1000 );
                 },
                 function() {
                     // Confirm receipt / display of alert text by app
