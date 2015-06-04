@@ -110,7 +110,7 @@ function unitTests() {
                             },
                         })
                     //  Include a small delay for app response
-                        return( 10 );
+                        return( 1000 );
                 },
                 function() {
                     // Confirm receipt / display of alert text by app
@@ -147,7 +147,7 @@ function unitTests() {
                     // Click on the alert
                         $(imageUploadAlertWrapper).click();
                     // Add a delay to allow for page transition
-                        return( 1000 );
+                        return( 2000 );
                 },
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
@@ -550,7 +550,7 @@ function unitTests() {
                             },
                         })
                     //  Include a small delay for app response
-                        return( 10 );
+                        return( 1000 );
                 },
                 function() {
                     // Confirm receipt / display of alert text by app
@@ -572,7 +572,6 @@ function unitTests() {
                             );
                             return( -1 );
                         };
-                    return( 50 );
                     // Confirm that the Waiting overlay is closed
                         if ($(profileWaiting).parent().hasClass('ui-popup-active')) {
                             alert(
@@ -580,6 +579,7 @@ function unitTests() {
                             );
                             return( -1 );
                         };
+                    return( 50 );
                 },
             // User selects alert to close it
                 function() {
@@ -587,7 +587,7 @@ function unitTests() {
                     // Click on the alert
                         $(profileAlertWrapper).click();
                     // Add a delay to allow for page transition
-                        return( 1000 );
+                        return( 2000 );
                 },
                 function() {
                     // Initialize and assign a variable to hold the last value stored in the clientEvents part of the data map
