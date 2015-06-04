@@ -308,7 +308,7 @@ function unitTests() {
                             checkImageUploadClientRef.off();
                         });
                     // Add a delay to allow for image upload to Firebase.
-                        return( 1100 );
+                        return( 2000 );
                 },
                 function() {
                     // We need to confirm that the image uploaded, but the output is going to vary from device to device. This could be due to any number of factors, from a device's color profile management to internal. So we'll confirm the first 50 characters (which appear to be consistent in initial tests of the test image regardless of source) and that the size of the file is between 280 and 320k, since initial tests suggest an output of ~300k.
@@ -376,7 +376,7 @@ function unitTests() {
                         descAlert( "The 'Close' link in the Help overlay works. Now select the Cancel button. This opens a Waiting overlay and sends a 'Return_toProfile: true' message to Firebase." );
                         $( "#imageUploadCancel" ).click();
                     // Add a delay to allow for page transition
-                        return( 1000 );
+                        return( 1500 );
                 },
                 // Confirm receipt of the Close_profile message
                 function() {
