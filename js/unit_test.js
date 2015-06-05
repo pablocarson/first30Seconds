@@ -3037,6 +3037,8 @@ function unitTests() {
                 function() {
                     // Clear the Waiting ovelay from the previous test element
                         sys_closeWaiting();
+                    // Add a delay to allow page transition
+                        return( 1000 );
                 },
                 function() {
                     descAlert( "The default state was restored. Now let's add an otherUser to the display. OtherUsers are users that are also attending the party. We'll also confirm that all the otherUser data elements are displayed properly: the name, age, image, and rating of the user. When the user's rating is between 1 to 5, the rating is displayed as a series of heart symbols, so for example a rating of 5 looks like this: ♥♥♥♥♥." );
