@@ -44,6 +44,31 @@
 		);
 	};
 
+
+// SCRIPTS TO HANDLE "WAITING" LOADER
+$(document).on( "click", ".show-page-loading-msg", function() {
+  var $this = $( this ),
+  msgText = $this.jqmData( "msgtext" ) || $.mobile.loader.prototype.options.text,
+  textVisible = $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
+  textonly = !!$this.jqmData( "textonly" );
+  html = $this.jqmData( "html" ) || "";
+
+$.mobile.loading( 'show', {
+  text: msgText,
+  textVisible: textVisible,
+  theme: 'a',
+  textonly: textonly,
+  html: html
+  });
+})
+
+.on( "click", ".hide-page-loading-msg", function() {
+  $.mobile.loading( "hide" );
+});
+
+
+
+
 // SCRIPTS TO SUPPORT PLUGINS AND AUTHENTICATION
 
 	// Set the initial Firebase reference based on whether the client is authenticated or not.
@@ -180,10 +205,10 @@
 				// Generate a pay token (token.id) when the purchase is successfully completed.
 				// Use the token to create the charge with a server-side script.
 				token: function(token) {
-					stripeTokenRef.push( { "payToken" : token.id , "payCard" : token.card.last4} );
+					stripeTokenRef.push( { "payToken" : token.id , "payCard" : token.card.last4 , "purchaseEmail" : token.email} );
 					// Open the waiting overlay. This allows the server to update credits before returning
 					// control to the user.
-					usr_sys_openWaiting();
+					sys_openWaiting();
 				}
 			});
 
@@ -246,16 +271,12 @@
 			// Uses current page ID to open the proper instance of the overlay. The waiting overlay is unique for each
 			// page and includes the page ID in its own ID. For example, if the client is on the Home page, the div 
 			// being opened would have the ID "homeWaiting"
-			function usr_sys_openWaiting() {
-				// Determine the current page and append 'Waiting' to it to derive the ID of the waiting overlay to be opened.
-				var currentWaiting = '#' +  $.mobile.activePage.attr('id') + "Waiting"
-				// Append 'Text' to the result to get the ID of the text presented in the Waiting overlay, which 
-				// has a separate ID. We'll need this to customize or reset the text.
-				var currentWaitingText = currentWaiting + "Text"
-				// Reset the "Waiting..." overlay text in case it was customized in a previous use.  
-				$(currentWaitingText).html('Waiting...');			
-				// Open the overlay.
-				$(currentWaiting).popup('open');				
+			function sys_openWaiting() {
+				$.mobile.loading( "show", {
+					text: "Waiting...",
+					textVisible: true,
+					theme: "a",
+				});				
 			}
 
 		// Server closes Waiting overlay 
@@ -263,13 +284,7 @@
 			// page and includes the page ID in its own ID. For example, if the client is on the Home page, the div 
 			// being opened would have the ID "homeWaiting"
 			function sys_closeWaiting() {
-				// Determine the current page and append 'Waiting' to it to derive the ID of the waiting overlay to be closed.
-				var currentWaiting = '#' +  $.mobile.activePage.attr('id') + "Waiting"
-				// Check if the Waiting overlay is active. This prevents errors in the unit test when testing only 
-				// segments of code. If it's active, close the overlay.
-				if ($(currentWaiting).parent().hasClass('ui-popup-active')) {
-					$(currentWaiting).popup('close');
-				}
+				$.mobile.loading("hide")
 			}
 
 	// Alert functions
@@ -468,7 +483,7 @@
 			// Open the "Waiting..." overlay, disabling user controls pending system response.
 			// A setTimeout is required to avoid colliding with the confirmation dialog 
 			// while it's closing.
-			setTimeout ("usr_sys_openWaiting();", 250);
+			setTimeout ("sys_openWaiting();", 250);
 			// Send logout message with 'true' value to Firebase
 			globalClientRef.push( { logout : true } );
 		}
@@ -484,7 +499,7 @@
 			// Open the waiting overlay. Unlike the other functions, this is not triggered by an anchor link.
 			// Anchor links trigger the waiting overlay using the HREF="" tag in the HTML. So we have to call 
 			// the Waiting overlay from here instead.
-			usr_sys_openWaiting();
+			sys_openWaiting();
 			var currentPage = $.mobile.activePage.attr('id')
 			// send Close_alert message with 'true' value to Firebase
 			globalClientRef.push( { Close_alert : true } );
@@ -511,6 +526,7 @@
 			// Check if either field was left blank.
 			if (($('#creditEmail').val() == "") || ($('#creditLast4').val() == "")) {
 			// If yes, display an alert notifying the user. No message is sent to Firebase.
+				$.mobile.loading('hide')
 				$('#newUserAlertText').html("You left a required field blank. Please fill in the blank and try again.");				
 				$(newUserAlertWrapper).show();
 				// Use this to adjust the height of the space allocated to the alert so that 
@@ -519,11 +535,10 @@
 				var containerHeightTrim = parseInt(containerHeight) + 37;			
 				$('.alertWrapper').css("height", containerHeightTrim);
 			} else {
-				// If email and password fields are both populated:
-				// Open "Waiting..." overlay to disable user controls.
-				usr_sys_openWaiting();
 				// Send a message to the server with the client device's UUID, the entered email address and 
 				// last 4 digits of the paid user's credit card
+				$('.alertWrapper').hide();
+				$.mobile.loading('show', {text:"Waiting...", textVisible: true});
 				newUserIdRequestRef.push( {  
 					"deviceUuid" : GLOB.deviceUuid,
 					"payEmail" : $('#creditEmail').val(),
@@ -549,11 +564,13 @@
 			// "Find a Party" button will be disabled and additional instructional copy will appear.
 			if (val.creditsMsg == "0"){
 				$('#homeCredits').css('color', '#990000');
-				$('#homeFindParty').addClass('ui-disabled');
+				$(document).on("pageinit", "#home", function () {
+					$('#homeFindParty').button('disable');
+				});
 			// Else it will appear green on both pages and the "Find a party" button will be active.
 			} else {
 				$('#homeCredits').css('color', '#009900');
-				$('#homeFindParty').removeClass('ui-disabled');
+				$('#homeFindParty').button('enable');
 			}
 		});
 
@@ -569,11 +586,11 @@
 			// "Find a Party" button will be disabled and additional instructional copy will appear.
 			if (val.creditsMsg == "0"){
 				$('#homeCredits').css('color', '#990000');
-				$('#homeFindParty').addClass('ui-disabled');
+				$('#homeFindParty').button('disable');
 			// Else it will appear green on both pages and the "Find a party" button will be active.
 			} else {
 				$('#homeCredits').css('color', '#009900');
-				$('#homeFindParty').removeClass('ui-disabled');
+				$('#homeFindParty').button('enable');
 			}
 		});
 
@@ -693,16 +710,15 @@
 	// Client's countdown stops before they arrive at the destination
 		function cli_inTransitProximityTimeout() {
 			// open Waiting overlay
-			usr_sys_openWaiting();
+			sys_openWaiting();
 			// send clientProximityTimeout message with 'true' value to Firebase
 			inTransitClientRef.push( { clientProximityTimeout : true } );
 		}
 
 	// Client cancels the party invitation
 		function usr_inTransitConfirmCancellation() {
-			// Open the Waiting overlay, disabling user controls pending system response.
-			// A setTimeout is required to avoid colliding with the dialog popup while it's closing.
-			setTimeout ("usr_sys_openWaiting();", 250);
+			// Close the confirmation popup
+			$( "#userCancel" ).popup( "close" );
 			// Send the server a message that user cancelled the party invitation
 			inTransitClientRef.push( { Cancel_invitation : true } );
 		}
@@ -918,6 +934,8 @@
 
 	// Client leaves party
 		function usr_atPartyLeave() {
+		// close the 'leave party' dialog
+			$('#leavePartyDialog').popup('close');
 		// send Leave_party message with 'true' value to Firebase
 			atPartyClientRef.push( { Leave_party : true } );
 		}
@@ -927,7 +945,7 @@
 			// Close the 'Better Party' popup
 			$(betterParty).popup('close');
 			// Open the Waiting overlay on a delay to give time to close the 'Better Party' overla
-			setTimeout ("usr_sys_openWaiting();", 250);
+			setTimeout ("sys_openWaiting();", 250);
 			// send Decline_betterParty message with 'true' value to Firebase
 			atPartyClientRef.push( { Decline_betterParty : true } );
 		}
@@ -937,7 +955,7 @@
 			// Close the 'Better Party' popup
 			$(betterParty).popup('close');
 			// Open the Waiting overlay on a delay to give time to close the 'Better Party' overla
-			setTimeout ("usr_sys_openWaiting();", 250);
+			setTimeout ("sys_openWaiting();", 250);
 			// send Accept_betterParty message with 'true' value to Firebase
 			atPartyClientRef.push( { Accept_betterParty : true } );
 		}
@@ -945,7 +963,7 @@
 	// Client selects an otherUser to open the rateOtherUser page
 		function usr_atPartyRateOtherUser( jsonUID ) {
 			// Open the Waiting overlay
-			usr_sys_openWaiting();
+			sys_openWaiting();
 			// send Rate_otherUser message with the selected otherUser ID value to Firebase
 			atPartyClientRef.push( { Rate_otherUser : jsonUID } );
 		}
@@ -1029,7 +1047,9 @@
 
 	// User reports offensive behavior
 		function usr_rateOtherUserTOS() {
-			// Retrieve the otherUser's unique ID
+		// close the TOS dialog
+			$('#rateOtherUserTOSDialog').popup('close')
+		// Retrieve the otherUser's unique ID
 			var UID = $('#rateOtherUserUID').html();
 			// send New_otherUserRating message with the numerical rating value to Firebase
 			rateOtherUserClientRef.push( { rateOtherUser_TOSViolation : UID } );
@@ -1072,21 +1092,27 @@
 
 	// User closes a match
 		function usr_matchClose() {
+		// close the confirmation dialog
+			$('#matchDone').popup('close')
 		// send Close_match message to Firebase with value 'true'
 			matchClientRef.push( { Close_match : true } );
 		}
 
 	// User can't find a match
 		function usr_matchCantFind() {
+		// close the confirmation dialog
+			$('#cantFindMatch').popup('close')
 		// send Cant_find_match message to Firebase with value 'true'
 			matchClientRef.push( { Cant_find_match : true } );
 		}
 
 	// User reports offensive behavior
 		function usr_matchTOS() {
-			// Retrieve the otherUser's unique ID
+		// close the TOS dialog
+			$('#matchTOSDialog').popup('close')
+		// Retrieve the otherUser's unique ID
 			var UID = $('#matchUID').html();
-			// send match_TOSViolation message with the otherUser's ID to Firebase
+		// send match_TOSViolation message with the otherUser's ID to Firebase
 			matchClientRef.push( { match_TOSViolation : UID } );
 		}
 
@@ -1129,14 +1155,14 @@
 			// Send the data in the form to Firebase
 			// Check if either field was left blank.
 			if (($('#profileName').val() == "") || ($('#profileAge').val() == "")) {
-			// If yes, display an alert notifying the user.
+			// If yes, hide the waiting overlay and display an alert notifying the user.
+				$.mobile.hidePageLoadingMsg();
 				$('#profileAlertText').html("You left a required field blank. Please complete the form and submit again.");				
 				$(profileAlertWrapper).show();				
 			} else {
-				// If name and age fields are both populated, open "Waiting..." overlay to disable user controls.
-				usr_sys_openWaiting();
 				// Send profile data to Firebase
-				profileClientRef.push( {
+				$(profileAlertWrapper).hide();
+					profileClientRef.push( {
 					profileUpdate : true,
 					newProfileName : $('#profileName').val(),
 					newProfileAge : $('#profileAge').val(),
@@ -1146,6 +1172,12 @@
 				}); 
 			};
 			return false; // We don't want the form to trigger a page load. We want to do that through js. 
+		}
+
+	// User requests to upload a new profile image.
+		function usr_changeImage() {
+		// send Change_image message with a value of 'true'
+			profileClientRef.push( { Change_image : true } );
 		}
 
 	// User opts to close the Profile page and requests a response from the server.
@@ -1183,14 +1215,14 @@
 					},
 					// The 'Save profile photo' button is enabled when a new image is uploaded.
 					onFileChange:function(){								
-						$('#imageUploadSave').removeClass('ui-disabled');
+						$('#imageUploadSave').button('enable');
 					}
 				});
 				if (val.hideCancelButtonMsg == true) {
-					$('#imageUploadCancel').hide();
+					$('#imageUploadCancel').button('disable');
 				};
 				if (val.hideCancelButtonMsg == false) {
-					$('#imageUploadCancel').show();
+					$('#imageUploadCancel').button('enable');
 				};
 			});
 
@@ -1216,14 +1248,14 @@
 					},
 					// The 'Save profile photo' button is enabled when a new image is uploaded.
 					onFileChange:function(){								
-						$('#imageUploadSave').removeClass('ui-disabled');
+						$('#imageUploadSave').button('enable');
 					}
 				});
 				if (val.hideCancelButtonMsg == true) {
-					$('#imageUploadCancel').hide();
+					$('#imageUploadCancel').button('disable');
 				};
 				if (val.hideCancelButtonMsg == false) {
-					$('#imageUploadCancel').show();
+					$('#imageUploadCancel').button('enable');
 				};
 			});
 
@@ -1236,7 +1268,7 @@
 			});
 
 			// Disable the 'Save profile photo' button when the plugin is initialized.
-			$('#imageUploadSave').addClass('ui-disabled');
+			$('#imageUploadSave').button('disable');
 		});
 
 
