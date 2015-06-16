@@ -42,6 +42,8 @@
 <div data-role="page" id="newUser" data-theme="d"><!-- header -->
 
 	<div data-role="header" data-theme="b"><!-- header -->
+	<!-- Click this to run the unit test. This button should be removed in production. -->
+	<button type="button" id="newUnitTest" onClick="unitTests()" data-mini="true">Unit test</button>
 		<h1>
 			First 30 Seconds
 		</h1>  
@@ -70,7 +72,7 @@
 
 		<!-- Paid users will use this form to restore profile and credits. -->
 		<H2>New users</H2>
-		<div>Join now and get some free credits!</div>			
+		<div>Join now and get some free credits!</div>
 		
 		<button type="button" id="joinParty" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." onClick="newUserConfirmation()" data-mini="true">Join the party</button>
 		
