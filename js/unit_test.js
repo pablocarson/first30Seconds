@@ -120,8 +120,8 @@ function unitTests() {
                             };
                 },
             // send an irrelevant message and confirm that the page ignores it
-                descAlert( "We're on the Profile page and the profile name, age, preferred age range, description and image are displayed. Now we'll send a message that's not meant for this page and confirm that the page ignores it." );
                 function() {
+                    descAlert( "We're on the rateOtherUser page and the profile name, age, preferred age range, description and image are displayed. Now we'll send a message that's not meant for this page and confirm that the page ignores it." );
                     // irrelevant message
                         atPartyServerRef.child('pause').set( {
                             pauseMsg: true
