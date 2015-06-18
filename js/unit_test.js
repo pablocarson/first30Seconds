@@ -1,8 +1,25 @@
 function unitTests() {
     var allTests = [
-        // Run unit test with walkthrough displayed in the console (no pauses)
+        //  Step-by-step walkthrough of the unit test.
             function() {
-                descAlert = function( txt ) { console.log (txt); }
+                descAlert = function() {};
+                var alertstop = confirm("Click 'OK' to show walkthrough text as alerts on the phone  / Click 'Cancel' to show walkthrough text in the Javascript console.");
+                if (alertstop == true)
+                    // {}
+                    descAlert = function( txt ) { window.alert (txt) };
+                else {
+                    // descAlert = function() {};
+                    descAlert = function( txt ) { console.log (txt); alert ("click to continue"); }
+                };
+            },
+            function () {
+                // Check whether Cordova is active
+                    platform = (window.cordova === undefined);
+                // If it's not, this means it's running on a desktop or other non-Android device, so notify the user that certain tests that require the test to be run on an actual phone will be skipped.
+                    if (platform == true) {
+                        alert ("Phonegap is not running. This may be because the unit test is being run on a desktop. The following tests will be skipped: Tests for Android version, Phonegap device.uuid, Google Cloud Messaging (GCM) registration ID and geolocation test.")
+                        return (0);
+                    };
             },
         // P7. atParty page
             // change display to atParty page
@@ -344,7 +361,7 @@ function unitTests() {
                 },
             // Server adds a second otherUser
                 function() {
-                    descAlert( "The page data hasn't changed and the page is still displayed. Let's add a second otherUser to demonstrate that we can display multiple users. Since we already tested that the 'add otherUser' function adds the proper data elements within the otherUser thumbnail container, we only need to test that the second thumbnail container appears. We use the otherUser's unique ID to do this.");
+                    descAlert( "The page data hasn't changed and the page is still displayed.. Note that if this test is run with the Javascript console open, the console may display an error. Let's add a second otherUser to demonstrate that we can display multiple users. Since we already tested that the 'add otherUser' function adds the proper data elements within the otherUser thumbnail container, we only need to test that the second thumbnail container appears. We use the otherUser's unique ID to do this.");
                     // Add a second otherUser to the party. The unique ID is used as the identifier of the thumbnail element containing the data.
                         atPartyOtherUserRef.child('UID2').set ( { 
                             otherUserNameMsg:"Marcus",
