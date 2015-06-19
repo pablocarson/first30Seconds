@@ -888,7 +888,7 @@
 
 		<!-- Select menu for rating. Must have a value from 0 to 5 (user must select a rating) for submit button 
 		to become active. --> 
-		<select name='rateOtherUserRating1' id='rateOtherUserRating' data-theme='b' data-native-menu='false' onChange="$('#ratingSubmit').removeClass('ui-disabled');">
+		<select name='rateOtherUserRating1' id='rateOtherUserRating' data-theme='b' data-native-menu='false' onChange="$('#ratingSubmit').button('enable')">
 			<option value="-1" data-placeholder="true">How interested are you?</option>
 			<option value="0" data-theme="a">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I'm not interested</option>
 			<option value="1">♥&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I'm not *not* interested...</option>

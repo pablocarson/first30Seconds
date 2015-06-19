@@ -991,17 +991,17 @@ $.mobile.loading( 'show', {
 	 		// Populate the corresponding page element.
 			$(document).on("pageinit", "#rateOtherUser", function () {
 				$('#rateOtherUserRating').val( rateOtherUserRateVal ).selectmenu("refresh", true);
+				// If rateOtherUserRatingMsg has a value of -1, that means the otherUser hasn't been rated by the user yet
+				// and the 'submit' button should be disabled.
+				if (rateOtherUserRateVal == "-1"){
+					$('#ratingSubmit').button('disable');
+				};
+				// Otherwise the value must be between 0 and 5 inclusive. If rateOtherUserRatingMsg falls in that range,
+				// the user has previously rated this otherUser and the 'submit' button should be enabled.
+				if ( (rateOtherUserRateVal > "-1") && (rateOtherUserRateVal < "6") ) {
+					$('#ratingSubmit').button('enable');
+				};
 			});
-			// If rateOtherUserRatingMsg has a value of -1, that means the otherUser hasn't been rated by the user yet
-			// and the 'submit' button should be disabled.
-			if (rateOtherUserRateVal == "-1"){
-				$('#ratingSubmit').button('disable');
-			};
-			// Otherwise the value must be between 0 and 5 inclusive. If rateOtherUserRatingMsg falls in that range,
-			// the user has previously rated this otherUser and the 'submit' button should be enabled.
-			if ( (rateOtherUserRateVal > "-1") && (rateOtherUserRateVal < "6") ) {
-				$('#ratingSubmit').button('enable');
-			};
 		});
 
 	// Server sends a new unique ID which is used to repopulate the rateOtherUser page.
