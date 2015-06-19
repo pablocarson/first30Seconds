@@ -995,12 +995,12 @@ $.mobile.loading( 'show', {
 			// If rateOtherUserRatingMsg has a value of -1, that means the otherUser hasn't been rated by the user yet
 			// and the 'submit' button should be disabled.
 			if (rateOtherUserRateVal == "-1"){
-				$('#ratingSubmit').addClass('ui-disabled');
+				$('#ratingSubmit').button('disable');
 			};
 			// Otherwise the value must be between 0 and 5 inclusive. If rateOtherUserRatingMsg falls in that range,
 			// the user has previously rated this otherUser and the 'submit' button should be enabled.
 			if ( (rateOtherUserRateVal > "-1") && (rateOtherUserRateVal < "6") ) {
-				$('#ratingSubmit').removeClass('ui-disabled');
+				$('#ratingSubmit').button('enable');
 			};
 		});
 
@@ -1025,12 +1025,12 @@ $.mobile.loading( 'show', {
 			// If rateOtherUserRatingMsg has a value of -1, that means the otherUser hasn't been rated by the user yet
 			// and the 'submit' button should be disabled.
 			if (rateOtherUserRateVal == "-1"){
-				$('#ratingSubmit').addClass('ui-disabled');
+				$('#ratingSubmit').button('disable');
 			};
 			// Otherwise the value must be between 0 and 5 inclusive. If rateOtherUserRatingMsg falls in that range,
 			// the user has previously rated this otherUser and the 'submit' button should be enabled.
 			if ( (rateOtherUserRateVal > "-1") && (rateOtherUserRateVal < "6") ) {
-				$('#ratingSubmit').removeClass('ui-disabled');
+				$('#ratingSubmit').button('enable');
 			};
 		});
 
