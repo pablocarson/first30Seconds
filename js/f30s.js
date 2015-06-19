@@ -558,10 +558,10 @@ $.mobile.loading( 'show', {
 			sys_closeWaiting();
 			// Assign snapshot JSON to a variable
 			var val = childSnapshot.val();
-				// Update number of credits
-			$('#homeCredits').html(val.creditsMsg);
+			// Update number of credits
 			// If user has zero credits, the number of credits will be color coded red, the
 			// "Find a Party" button will be disabled and additional instructional copy will appear.
+			$('#homeCredits').html(val.creditsMsg);
 			if (val.creditsMsg == "0"){
 				$('#homeCredits').css('color', '#990000');
 				$(document).on("pageinit", "#home", function () {
