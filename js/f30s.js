@@ -45,30 +45,6 @@
 	};
 
 
-// SCRIPTS TO HANDLE "WAITING" LOADER
-$(document).on( "click", ".show-page-loading-msg", function() {
-  var $this = $( this ),
-  msgText = $this.jqmData( "msgtext" ) || $.mobile.loader.prototype.options.text,
-  textVisible = $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
-  textonly = !!$this.jqmData( "textonly" );
-  html = $this.jqmData( "html" ) || "";
-
-$.mobile.loading( 'show', {
-  text: msgText,
-  textVisible: textVisible,
-  theme: 'a',
-  textonly: textonly,
-  html: html
-  });
-})
-
-.on( "click", ".hide-page-loading-msg", function() {
-  $.mobile.loading( "hide" );
-});
-
-
-
-
 // SCRIPTS TO SUPPORT PLUGINS AND AUTHENTICATION
 
 	// Set the initial Firebase reference based on whether the client is authenticated or not.
@@ -267,7 +243,29 @@ $.mobile.loading( 'show', {
 			});
 
 	// Waiting overlay functions
-		// User or server opens Waiting overlay.
+
+		// Client opens Waiting overlay (loader)
+		$(document).on( "click", ".show-page-loading-msg", function() {
+			var $this = $( this ),
+			msgText = $this.jqmData( "msgtext" ) || $.mobile.loader.prototype.options.text,
+			textVisible = $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
+			textonly = !!$this.jqmData( "textonly" );
+			html = $this.jqmData( "html" ) || "";
+
+			$.mobile.loading( 'show', {
+				  text: msgText,
+				  textVisible: textVisible,
+				  theme: 'a',
+				  textonly: textonly,
+				  html: html
+			});
+		})
+
+/*		.on( "click", ".hide-page-loading-msg", function() {
+		  $.mobile.loading( "hide" );
+		});
+*/
+		// Server opens Waiting overlay.
 			// Uses current page ID to open the proper instance of the overlay. The waiting overlay is unique for each
 			// page and includes the page ID in its own ID. For example, if the client is on the Home page, the div 
 			// being opened would have the ID "homeWaiting"
@@ -370,10 +368,10 @@ $.mobile.loading( 'show', {
 		// Manually close an alert. 
 			// We need this for the newUser page: since there's no way for the server to know
 			// if a faulty form submission was executed by an unauthenticated user, the user must close the alert manually.
-			function manualAlertClose() {
-				$('.alertWrapper').hide();
+			$(document).on( "click", "#newUserAlertWrapper", function() {
+				$('.manualAlertWrapper').hide();
 				$('.alert').html("");
-			};
+			});
 
 	// Stripe checkout functions
 		// Firebase reference for server messages for the Stripe Checkout overlay. Though we're currently only using it 
@@ -478,24 +476,14 @@ $.mobile.loading( 'show', {
 	// Firebase reference for global client-generated event messages. 
 	var globalClientRef = first30SecondsRef.child('global/clientEvents');
 
-	// User clicks 'Logout' and confirms via confirmation dialog, requesting a logout.
-		function usr_logout() {
-			// Open the "Waiting..." overlay, disabling user controls pending system response.
-			// A setTimeout is required to avoid colliding with the confirmation dialog 
-			// while it's closing.
-			setTimeout ("sys_openWaiting();", 250);
-			// Send logout message with 'true' value to Firebase
-			globalClientRef.push( { logout : true } );
-		}
-
 	// User clicks 'profile', requesting access to the Profile page.
-		function usr_openProfile() {
+		$(document).on( "click", ".profileButton", function() {
 			// send Open_profile message with 'true' value to Firebase
 			globalClientRef.push( { Open_profile : true } );
-		}
+		});
 
 	// User clicks on an inline alert to request that it be closed.
-		function usr_closeAlerts() {
+		$(document).on( "click", ".alertWrapper", function() {
 			// Open the waiting overlay. Unlike the other functions, this is not triggered by an anchor link.
 			// Anchor links trigger the waiting overlay using the HREF="" tag in the HTML. So we have to call 
 			// the Waiting overlay from here instead.
@@ -503,7 +491,7 @@ $.mobile.loading( 'show', {
 			var currentPage = $.mobile.activePage.attr('id')
 			// send Close_alert message with 'true' value to Firebase
 			globalClientRef.push( { Close_alert : true } );
-		}
+		});
 
 // NEWUSER PAGE
 
@@ -513,9 +501,9 @@ $.mobile.loading( 'show', {
 
 	// Send a message to Firebase with the client device's unique ID. 
 		//	This function is called when the user clicks "Join the party" from the newUser page.
-		function newUserConfirmation() {
+		$(document).on( "click", "#joinParty", function() {
 			newUserIdRequestRef.push( { "deviceUuid" : GLOB.deviceUuid } );
-		};
+		});
 
 	// Paid user authentication
 		// If a paid user migrates to a new device or factory resets an existing device, or otherwise removes the authentication
@@ -598,16 +586,16 @@ $.mobile.loading( 'show', {
 	var homeClientRef = first30SecondsRef.child('pages/home/clientEvents');
 
 	// User selects 'Buy credits', requesting server response
-		function usr_homeBuyCredits() {
+		$(document).on( "click", "#homeBuyCredits", function() {
 			// send homeBuyCredits message with 'true' value to Firebase
 			homeClientRef.push( { homeBuyCredits : true } );
-		}
+		});
 
 	// User selects 'Find a party', requesting server response
-		function usr_homeFindParty() {
+		$(document).on( "click", "#homeFindParty", function() {
 			// send Find_party message with 'true' value to Firebase
 			homeClientRef.push( { Find_party : true } );
-		}
+		});
 
 // INVITE PAGE
 	// Firebase reference for page data for Invite page
@@ -635,16 +623,16 @@ $.mobile.loading( 'show', {
 	var inviteClientRef = first30SecondsRef.child('pages/invite/clientEvents');
 
 	// User selects 'Decline invitation', requests server response
-		function usr_inviteDecline() {
+		$(document).on( "click", "#inviteDecline", function() {
 		// send Decline_invitation message with 'true' value to Firebase
 			inviteClientRef.push( { Decline_invitation : true } );
-		}
+		});
 
 	// User accepts an invitation
-		function usr_inviteAccept() {
+		$(document).on( "click", "#inviteAccept", function() {
 		// send Accept_invitation message with 'true' value to Firebase
 			inviteClientRef.push( { Accept_invitation : true } );
-		}
+		});
 
 // INTRANSIT PAGE
 	// Firebase reference for page data for inTransit page
@@ -707,7 +695,7 @@ $.mobile.loading( 'show', {
 	// Firebase reference for client-generated event messages. 
 	var inTransitClientRef = first30SecondsRef.child('pages/inTransit/clientEvents');
 
-	// Client's countdown stops before they arrive at the destination
+	// This function is triggered when client countdown reaches zero before the user arrives at the destination
 		function cli_inTransitProximityTimeout() {
 			// open Waiting overlay
 			sys_openWaiting();
@@ -716,12 +704,18 @@ $.mobile.loading( 'show', {
 		}
 
 	// Client cancels the party invitation
-		function usr_inTransitConfirmCancellation() {
+		$(document).on( "click", "#confirmCancelInvite", function() {
 			// Close the confirmation popup
 			$( "#userCancel" ).popup( "close" );
 			// Send the server a message that user cancelled the party invitation
 			inTransitClientRef.push( { Cancel_invitation : true } );
-		}
+		});
+
+	// Client opened the 'cancel party' overlay but decides to close the overlay instead
+		$(document).on( "click", "#returnToinTransit", function() {
+			// Close the confirmation popup
+			$( "#userCancel" ).popup( "close" );
+		});
 
 // ATPARTY PAGE
 	// There is no page data required before loading this page.
@@ -920,47 +914,54 @@ $.mobile.loading( 'show', {
 	var atPartyClientRef = first30SecondsRef.child('pages/atParty/clientEvents');
 
 	// Client pauses matches at the party
-		function usr_atPartyPause() {
+		$(document).on( "click", "#pause", function() {
 			// send Pause_matches message with 'true' value to Firebase
 			atPartyClientRef.push( { Pause_matches : true } );
-		}
+		});
 
 	// Client pauses matches at the party
-		function usr_atPartyEndPause() {
+		$(document).on( "click", "#endPause", function() {
 			// send Pause_matches message with 'false' value to Firebase
 			atPartyClientRef.push( { Pause_matches : false } );
 			return false;
-		}
+		});
 
 	// Client leaves party
-		function usr_atPartyLeave() {
+		$(document).on( "click", "#leavePartyConfirm", function() {
 		// close the 'leave party' dialog
 			$('#leavePartyDialog').popup('close');
 		// send Leave_party message with 'true' value to Firebase
 			atPartyClientRef.push( { Leave_party : true } );
-		}
+		});
+
+	// Client opens 'leave party' dialog but chooses not to leave party
+		$(document).on( "click", "#leavePartyCancel", function() {
+		// close the 'leave party' dialog
+			$('#leavePartyDialog').popup('close');
+		});
 
 	// Client declines a 'Better Party' invitation 
-		function usr_atPartyBetterPartyDeclined() {
+		$(document).on( "click", "#stayHere", function() {
 			// Close the 'Better Party' popup
 			$(betterParty).popup('close');
 			// Open the Waiting overlay on a delay to give time to close the 'Better Party' overla
 			setTimeout ("sys_openWaiting();", 250);
 			// send Decline_betterParty message with 'true' value to Firebase
 			atPartyClientRef.push( { Decline_betterParty : true } );
-		}
+		});
 
 	// Client accepts a 'Better Party' invitation
-		function usr_atPartyBetterPartyAccepted() {
+		$(document).on( "click", "#goBetterParty", function() {
 			// Close the 'Better Party' popup
 			$(betterParty).popup('close');
 			// Open the Waiting overlay on a delay to give time to close the 'Better Party' overla
 			setTimeout ("sys_openWaiting();", 250);
 			// send Accept_betterParty message with 'true' value to Firebase
 			atPartyClientRef.push( { Accept_betterParty : true } );
-		}
+		});
 
-	// Client selects an otherUser to open the rateOtherUser page
+	// Client selects an otherUser to open the rateOtherUser page. Because the thumbnails that execute
+	// this are dynamically created, we use the onClick event to call this function.
 		function usr_atPartyRateOtherUser( jsonUID ) {
 			// Open the Waiting overlay
 			sys_openWaiting();
@@ -1038,22 +1039,30 @@ $.mobile.loading( 'show', {
 	var rateOtherUserClientRef = first30SecondsRef.child('pages/rateOtherUser/clientEvents');
 
 	// User rates an otherUser
-		function usr_rateOtherUserSendRating() {
+		$(document).on( "click", "#ratingSubmit", function() {
 			// Retrieve the new rating from the selected value of the Rating select menu
 			var newRating = $('#rateOtherUserRating').val();
 			// send New_otherUserRating message with the numerical rating value to Firebase
 			rateOtherUserClientRef.push( { New_otherUserRating : newRating } );
-		}
+		});
 
 	// User reports offensive behavior
-		function usr_rateOtherUserTOS() {
+		$(document).on( "click", "#rateOtherUserConfirmTOS", function() {
 		// close the TOS dialog
 			$('#rateOtherUserTOSDialog').popup('close')
 		// Retrieve the otherUser's unique ID
 			var UID = $('#rateOtherUserUID').html();
 			// send New_otherUserRating message with the numerical rating value to Firebase
 			rateOtherUserClientRef.push( { rateOtherUser_TOSViolation : UID } );
-		}
+		});
+
+	// User opens 'report offensive behavior' dialog but decides to close the dialog instead
+		$(document).on( "click", "#rateOtherUserCancelTOS", function() {
+		// close the TOS dialog
+			$('#rateOtherUserTOSDialog').popup('close')
+		// Retrieve the otherUser's unique ID
+			var UID = $('#rateOtherUserUID').html();
+		});
 
 // MATCH PAGE
 	// Firebase reference for page data for rateOtheruser page
@@ -1091,30 +1100,48 @@ $.mobile.loading( 'show', {
 	var matchClientRef = first30SecondsRef.child('pages/match/clientEvents');
 
 	// User closes a match
-		function usr_matchClose() {
+		$(document).on( "click", "#matchDoneConfirm", function() {
 		// close the confirmation dialog
 			$('#matchDone').popup('close')
 		// send Close_match message to Firebase with value 'true'
 			matchClientRef.push( { Close_match : true } );
-		}
+		});
+
+	// User opened the 'close match dialog' but stays on the match page instead
+		$(document).on( "click", "#matchDoneCancel", function() {
+		// close the confirmation dialog
+			$('#matchDone').popup('close')
+		});
 
 	// User can't find a match
-		function usr_matchCantFind() {
+		$(document).on( "click", "#cantFindConfirm", function() {
 		// close the confirmation dialog
 			$('#cantFindMatch').popup('close')
 		// send Cant_find_match message to Firebase with value 'true'
 			matchClientRef.push( { Cant_find_match : true } );
-		}
+		});
+
+	// User opens the 'can't find match' dialog but decides to close the dialog instead
+		$(document).on( "click", "#cantFindCancel", function() {
+		// close the confirmation dialog
+			$('#cantFindMatch').popup('close')
+		});
 
 	// User reports offensive behavior
-		function usr_matchTOS() {
+		$(document).on( "click", "#matchConfirmTOS", function() {
 		// close the TOS dialog
 			$('#matchTOSDialog').popup('close')
 		// Retrieve the otherUser's unique ID
 			var UID = $('#matchUID').html();
 		// send match_TOSViolation message with the otherUser's ID to Firebase
 			matchClientRef.push( { match_TOSViolation : UID } );
-		}
+		});
+
+	// User opens 'report offensive behavior' dialog but chooses to cancel instead
+		$(document).on( "click", "#matchCancelTOS", function() {
+		// close the TOS dialog
+			$('#matchTOSDialog').popup('close')
+		});
 
 // PROFILE PAGE
 	// Firebase reference for page data for inTransit page
@@ -1175,16 +1202,16 @@ $.mobile.loading( 'show', {
 		}
 
 	// User requests to upload a new profile image.
-		function usr_changeImage() {
+		$(document).on( "click", "#profileUploadButton", function() {
 		// send Change_image message with a value of 'true'
 			profileClientRef.push( { Change_image : true } );
-		}
+		});
 
 	// User opts to close the Profile page and requests a response from the server.
-		function usr_profileClose() {
+		$(document).on( "click", "#profileClose", function() {
 		// send Close_profile message with a value of 'true'
 			profileClientRef.push( { Close_profile : true } );
-		}
+		});
 
 // IMAGEUPLOAD PAGE
 	// Firebase reference for page data for imageUpload page
@@ -1273,10 +1300,10 @@ $.mobile.loading( 'show', {
 
 
 	// User cancels the image upload
-		function usr_imageUploadCancel() {
+		$(document).on( "click", "#imageUploadCancel", function() {
 			// send a message to Firebase requesting return to the Profile page
 			imageUploadClientRef.push( { Return_toProfile : true } );
-		}
+		});
 
 // INITIALIZATION
 

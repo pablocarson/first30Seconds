@@ -54,7 +54,7 @@
 		Body text of alert is generated dynamically by system or in response to user actions. 
 		User can close manually, otherwise alert closes when user initiates an action on the page 
 		or when alert is superceded by a newer system alert. -->
-		<div id="newUserAlertWrapper" class="alertWrapper" onClick="manualAlertClose();">
+		<div id="newUserAlertWrapper" class="manualAlertWrapper">
 		
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the 
 			element communicates this to the user.-->
@@ -71,7 +71,7 @@
 		<H2>New users</H2>
 		<div>Join now and get some free credits!</div>
 		
-		<button type="button" id="joinParty" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." onClick="newUserConfirmation()" data-mini="true">Join the party</button>
+		<button type="button" id="joinParty" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">Join the party</button>
 		
 		<div class="spacer10px"></div>
 		
@@ -134,7 +134,9 @@
 	  
 		<p>So after you provide a photo and some very basic preference info, you'll be ready to go. We'll give you enough credits to try a few parties for free. Good luck!</p>
 	
-		<a href="#newUser" id="aboutReturn" data-role="button" data-inline="true" data-mini="true">Return</a> 
+		<a href="#newUser" id="aboutReturn" data-role="button" data-inline="true" data-mini="true">
+			Return
+		</a> 
 
 	</div><!-- /content. No footer for this page. -->
   
@@ -155,7 +157,7 @@
 		Body text of alert is generated dynamically by system or in response to user actions. 
 		User can close manually, otherwise alert closes when user initiates an action on the page 
 		or when alert is supplanted by a newer system alert. -->
-		<div id="imageUploadAlertWrapper" class="alertWrapper" onClick="usr_closeAlerts()" style="margin-top: 20px">
+		<div id="imageUploadAlertWrapper" class="alertWrapper" style="margin-top: 20px">
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
 			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
 			<div class="alert" id="imageUploadAlertText"><!-- System-generated alert copy goes here -->
@@ -177,10 +179,14 @@
 		<div class="spacer5px"></div>
 			<div class="ui-grid-a"><!-- Save preview image -->
 				<div class="ui-block-a">
-					<button type="button" id="imageUploadSave" data-theme="b" class="export show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">Save profile photo</button>
+					<button type="button" id="imageUploadSave" data-theme="b" class="export show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+						Save profile photo
+					</button>
 				</div>
 				<div class="ui-block-b"><!-- Cancel image upload -->
-					<button type="button" id="imageUploadCancel" data-theme="b" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_imageUploadCancel()" data-mini="true">Cancel</button>
+					<button type="button" id="imageUploadCancel" data-theme="b" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+						Cancel
+					</button>
 				</div>
 			</div>	
 
@@ -219,7 +225,7 @@
 	<!-- Link to #imageUpload help -->  
 	<a href="#imageUploadHelp" data-role="button" data-rel="popup" data-position-to="window" data-transition="fade" id="imageUploadHelpButton" data-theme="b">
 		Help
-		</a>
+	</a>
 
 	</div><!-- /footer -->
 </div>
@@ -238,7 +244,7 @@
 		Body text of alert is generated dynamically by system or in response to user actions. 
 		User can close manually, otherwise alert closes when user initiates an action on the page 
 		or when alert is supplanted by a newer system alert. -->
-		<div id="profileAlertWrapper" class="alertWrapper profileAlertWrapper" onClick="usr_closeAlerts()">
+		<div id="profileAlertWrapper" class="alertWrapper profileAlertWrapper">
 	
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
 			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
@@ -251,7 +257,9 @@
 			<ul data-role="listview" data-inset="false" data-theme="c">
 				<li>
 					<img id="profileImage" src="">
-					<button type="button" id="profileUploadButton" class="show-page-loading-msg" data-textvisible="true" data-theme="b" data-msgtext="Waiting..." onClick="usr_changeImage()" data-mini="true">Change image</button>					
+					<button type="button" id="profileUploadButton" class="show-page-loading-msg" data-textvisible="true" data-theme="b" data-msgtext="Waiting..." data-mini="true">
+						Change image
+					</button>					
 				</li>
 			</ul>
 			
@@ -282,7 +290,9 @@
 					<input type="submit" class="show-page-loading-msg" data-theme="b" data-textvisible="true" data-msgtext="Waiting..." name="profileSubmitButton" id="profileFormSubmit" value="Submit" data-mini="true">
 				</div>
 				<div class="ui-block-b"><!-- Leave the party -->
-					<button type="button" id="profileClose" class="show-page-loading-msg" data-theme="b" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_profileClose()" data-mini="true">Close and return</button>
+					<button type="button" id="profileClose" class="show-page-loading-msg" data-theme="b" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+						Close and return
+					</button>
 				</div>
 			</div>
 		</form>
@@ -338,7 +348,7 @@
 		Body text of alert is generated dynamically by system or in response to user actions. 
 		User can close manually, otherwise alert closes when user initiates an action on the page 
 		or when alert is supplanted by a newer system alert. -->
-		<div id="homeAlertWrapper" class="alertWrapper" onClick="usr_closeAlerts()">
+		<div id="homeAlertWrapper" class="alertWrapper">
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
 			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
 			<div class="alert" id="homeAlertText"></div><!-- System-generated alert copy goes here -->
@@ -352,10 +362,14 @@
 		credits remaining.<br>
 			<div class="ui-grid-a">
 				<div class="ui-block-a">
-					<button type="button" id="homeBuyCredits" class="show-page-loading-msg" data-theme="b" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_homeBuyCredits()" data-mini="true">Buy credits</button>
+					<button type="button" id="homeBuyCredits" class="show-page-loading-msg" data-theme="b" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+						Buy credits
+					</button>
 				</div>
 				<div class="ui-block-b"> 
-					<button type="button" id="homeFindParty" class="show-page-loading-msg" data-theme="b" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_homeFindParty()" data-mini="true">Find a party</button>
+					<button type="button" id="homeFindParty" class="show-page-loading-msg" data-theme="b" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+						Find a party
+					</button>
 				</div>
 			</div>
 				<div class="spacer5px"></div>
@@ -387,7 +401,9 @@
 	<div data-theme="d" class="center-wrapper" data-position="fixed" data-role="footer"><!-- footer -->
 	
 		<!-- Link to profile -->
-		<button type="button" data-theme="b" id="homeProfile" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_openProfile()" data-mini="true">Profile</button>
+		<button type="button" data-theme="b" id="homeProfile" class="profileButton show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+			Profile
+		</button>
 		
 		<!-- Link to #invite help -->
 		<a href="#homeHelp" id="homeHelpButton" data-theme="b" data-rel="popup" data-position-to="window" data-role="button" data-theme="d">
@@ -417,7 +433,7 @@
 		Body text of alert is generated by system or in response to user actions. 
 		User can close manually, otherwise alert closes when user initiates an action on the page 
 		or when alert is supplanted by a newer system alert. -->
-		<div id="inviteAlertWrapper" class="alertWrapper" onClick="usr_closeAlerts()">
+		<div id="inviteAlertWrapper" class="alertWrapper">
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the 
 			element communicates this to the user.-->
 			<input type="button" data-mini="true" data-icon="delete" value="Close" data-iconpos="notext" class="ui-btn-right">
@@ -473,10 +489,14 @@
 			
 		<div class="ui-grid-a">
 			<div class="ui-block-a">
-				<button type="button" id="inviteAccept" data-theme="b" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_inviteAccept()" data-mini="true">Accept (1 credit)</button>
+				<button type="button" id="inviteAccept" data-theme="b" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+					Accept (1 credit)
+				</button>
 			</div>
 			<div class="ui-block-b"> 
-				<button type="button" id="inviteDecline" data-theme="b" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_inviteDecline()" data-mini="true">Decline</button>
+				<button type="button" id="inviteDecline" data-theme="b" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+					Decline
+				</button>
 			</div>
 		</div>
 
@@ -531,7 +551,9 @@
 	<div data-theme="d" class="center-wrapper" data-position="fixed" data-role="footer"><!-- footer -->
 	
 		<!-- Link to profile -->
-		<button type="button" data-theme="b" id="inviteProfile" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_openProfile()" data-mini="true">Profile</button>
+		<button type="button" data-theme="b" id="inviteProfile" class="profileButton show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+			Profile
+		</button>
 
 		<!-- Link to #invite help -->
 		<a href="#inviteHelp" id="inviteHelpButton" data-theme="b" data-rel="popup" data-position-to="window" data-role="button" data-theme="d">
@@ -559,7 +581,7 @@
 		Body text of alert is generated dynamically by system or in response to user actions. 
 		User can close manually, otherwise alert closes when user initiates an action on the page 
 		or when alert is supplanted by a newer system alert. -->
-		<div id="inTransitAlertWrapper" class="alertWrapper" onClick="usr_closeAlerts()">
+		<div id="inTransitAlertWrapper" class="alertWrapper">
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
 			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
 			<div class="alert" id="inTransitAlertText"><!-- System-generated alert copy goes here -->
@@ -595,7 +617,7 @@
 			You're expected in the next
 				<span id="countdownTimer" class="timer"><!-- Countdown timer with time remaining populated by system -->
 				</span> 
-				minutes.				
+			minutes.				
 			
 				<a href="" id="mapLink" target="_blank"><!-- URL to Google Maps link. Refer to f30s.js for link construction. -->
 					<img id="partyMap" src=""><!-- Google Maps thumbnail image of venue. Will be provided by system via Firebase message. -->
@@ -622,10 +644,14 @@
 
 			<div class="ui-grid-a">
 				<div class="ui-block-a">
-					<button type="button" id="confirmCancelInvite" data-theme="b" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_inTransitConfirmCancellation()" data-mini="true">Yes, cancel</button>
+					<button type="button" id="confirmCancelInvite" data-theme="b" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+						Yes, cancel
+					</button>
 				</div>
 				<div class="ui-block-b"> 
-					<button type="button" id="returnToinTransit" data-theme="b" data-textvisible="true" data-msgtext="Waiting..." onClick="$( '#userCancel' ).popup( 'close' );" data-mini="true">No, return</button>
+					<button type="button" id="returnToinTransit" data-theme="b" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+						No, return
+					</button>
 				</div>
 			</div>
 		</div>
@@ -657,7 +683,9 @@
 	<div data-theme="d" class="center-wrapper" data-position="fixed" data-role="footer"><!-- footer -->
 	
 		<!-- Link to profile -->
-		<button type="button" data-theme="b" id="inTransitProfile" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_openProfile()" data-mini="true">Profile</button>
+		<button type="button" data-theme="b" id="inTransitProfile" class="profileButton show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+			Profile
+		</button>
 
 		
 		<!-- Link to #inTransit help -->
@@ -691,7 +719,7 @@
 			Body text of alert is generated dynamically by system or in response to user actions. 
 			User can close manually, otherwise alert closes when user initiates an action on the page 
 			or when alert is supplanted by a newer system alert. -->
-			<div id="atPartyAlertWrapper" class="alertWrapper" onClick="usr_closeAlerts()">
+			<div id="atPartyAlertWrapper" class="alertWrapper">
 	
 				<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
 				<input type="button" data-mini="true" data-icon="delete" value="Close" data-iconpos="notext" class="ui-btn-right">
@@ -707,7 +735,9 @@
 				</div>			
 				<div class="ui-grid-a"><!-- Pause party participation -->
 					<div class="ui-block-a">
-						<button type="button" data-theme="b" id="pause" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_atPartyPause()" data-mini="true">Pause matches</button>
+						<button type="button" data-theme="b" id="pause" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+							Pause matches
+						</button>
 					</div>
 					<div class="ui-block-b"><!-- Leave the party -->
 						<a href="#leavePartyDialog" data-theme="b" id="leaveParty" data-position-to="window" data-rel="popup" data-role="button" data-theme="d" data-transition="fade" data-mini="true">
@@ -728,7 +758,9 @@
 				
 				<div class="ui-grid-a">
 					<div class="ui-block-a"><!-- Close pause state and return to the party -->
-						<button type="button" data-theme="b" id="endPause" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_atPartyEndPause()" data-mini="true" onclick="usr_atPartyEndPause();">Resume matches</button>
+						<button type="button" data-theme="b" id="endPause" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+							Resume matches
+						</button>
 					</div>
 					<div class="ui-block-b"><!-- Leave the party -->
 						<a href="#leavePartyDialog" id="leavePartyPaused" data-position-to="window" data-rel="popup" data-role="button" data-transition="fade" data-mini="true" data-theme="b">
@@ -799,12 +831,12 @@
 			<p>
 			
 			<!-- "Better party" confirmation. Opens Waiting overlay and sends message to Firebase. -->			
-			<a href="#atPartyWaiting" id="goBetterParty" data-rel="popup" data-position-to="window" data-role="button" data-theme="d" data-inline="true" data-mini="true" onClick="usr_atPartyBetterPartyAccepted();">
+			<a href="#atPartyWaiting" id="goBetterParty" data-rel="popup" data-position-to="window" data-role="button" data-theme="d" data-inline="true" data-mini="true">
 				Check it out
 			</a>
 			
 			<!-- Cancels and returns user to party view -->
-			<input type="button" id="stayHere" data-theme="d" data-inline="true" value="Stay here" data-mini="true" onClick="usr_atPartyBetterPartyDeclined()">      
+			<input type="button" id="stayHere" data-theme="d" data-inline="true" value="Stay here" data-mini="true">      
 		</div>
 
 			<!-- Leave Party dialog. Confirms that user wishes to leave party. Hidden by default, active when
@@ -819,10 +851,14 @@
 			
 			<div class="ui-grid-a">
 				<div class="ui-block-a">
-					<button type="button" data-theme="b" id="leavePartyConfirm" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..."data-mini="true" onclick="usr_atPartyLeave();">I'm sure</button>
+					<button type="button" data-theme="b" id="leavePartyConfirm" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..."data-mini="true">
+						I'm sure
+					</button>
 				</div>
 				<div class="ui-block-b"> 
-					<button type="button" data-theme="b" id="leavePartyCancel" data-textvisible="true" data-msgtext="Waiting..." onClick="$('#leavePartyDialog').popup('close');" data-mini="true">Cancel</button>
+					<button type="button" data-theme="b" id="leavePartyCancel" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+						Cancel
+					</button>
 				</div>
 			</div>
 	 
@@ -834,7 +870,9 @@
 	<div data-theme="d" class="center-wrapper" data-position="fixed" data-role="footer"><!-- footer -->
 	
 		<!-- Link to profile -->
-		<button type="button" data-theme="b" id="atPartyProfile" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_openProfile()" data-mini="true">Profile</button>
+		<button type="button" data-theme="b" id="atPartyProfile" class="profileButton show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
+			Profile
+		</button>
 		
 		<!-- Link to #inTransit help -->
 		<a href="#atPartyHelp" id="atPartyHelpButton" data-role="button" data-rel="popup" data-position-to="window" data-transition="fade" data-theme="b">
@@ -872,7 +910,7 @@
 		Body text of alert is generated dynamically by system or in response to user actions. 
 		User can close manually, otherwise alert closes when user initiates an action on the page 
 		or when alert is supplanted by a newer system alert. -->
-		<div id="rateOtherUserAlertWrapper" class="alertWrapper rateMatchAlertWrapper"  onClick="usr_closeAlerts()">
+		<div id="rateOtherUserAlertWrapper" class="alertWrapper rateMatchAlertWrapper">
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
 			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
 			<div class="alert" id="rateOtherUserAlertText"><!-- System-generated alert copy goes here -->
@@ -899,7 +937,7 @@
 		</select>
 		
 		<!-- Rating submit button. Inactive by default, selection of a rating activates the button. --> 
-		<button type="button" data-theme="b" id="ratingSubmit" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." onClick="usr_rateOtherUserSendRating()">
+		<button type="button" data-theme="b" id="ratingSubmit" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting...">
 			Submit and return to list
 		</button><br>
 		
@@ -919,12 +957,14 @@
 				
 			<div class="ui-grid-a">
 				<div class="ui-block-a">
-					<button type="button" data-theme="b" id="rateOtherUserConfirmTOS" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..."data-mini="true" onclick="usr_rateOtherUserTOS()">
+					<button type="button" data-theme="b" id="rateOtherUserConfirmTOS" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..."data-mini="true">
 						I'm sure
 					</button>
 				</div>
 				<div class="ui-block-b"> 
-					<button type="button" data-theme="b" id="rateOtherUserCancelTOS" onClick="$('#rateOtherUserTOSDialog').popup('close');" data-mini="true">Cancel</button>
+					<button type="button" data-theme="b" id="rateOtherUserCancelTOS" data-mini="true">
+						Cancel
+					</button>
 				</div>
 			</div>
 		</div> 
@@ -960,7 +1000,7 @@
 
 	
 		<!-- Link to profile -->
-		<button type="button" data-theme="b" id="rateOtherUserProfile" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true" onClick="usr_openProfile()">
+		<button type="button" data-theme="b" id="rateOtherUserProfile" class="profileButton show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
 			Profile
 		</button>
 
@@ -992,7 +1032,7 @@
 		Body text of alert is generated dynamically by system or in response to user actions. 
 		User can close manually, otherwise alert closes when user initiates an action on the page 
 		or when alert is supplanted by a newer system alert. -->
-		<div id="matchAlertWrapper" class="alertWrapper rateMatchAlertWrapper" onClick="usr_closeAlerts()">
+		<div id="matchAlertWrapper" class="alertWrapper rateMatchAlertWrapper">
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
 			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
 			<div class="alert" id="matchAlertText"><!-- System-generated alert copy goes here -->
@@ -1058,12 +1098,12 @@
 
 			<div class="ui-grid-a">
 				<div class="ui-block-a">
-					<button type="button" data-theme="b" id="matchDoneConfirm" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..."data-mini="true" onclick="usr_matchClose()">
+					<button type="button" data-theme="b" id="matchDoneConfirm" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..."data-mini="true">
 						Close match
 					</button>
 				</div>
 				<div class="ui-block-b"> 
-					<button type="button" data-theme="b" id="matchDoneCancel" onClick="$('#matchDone').popup('close');" data-mini="true">
+					<button type="button" data-theme="b" id="matchDoneCancel" data-mini="true">
 						Cancel
 					</button>
 				</div>
@@ -1081,12 +1121,12 @@
 
 			<div class="ui-grid-a">
 				<div class="ui-block-a">
-					<button type="button" data-theme="b" id="cantFindConfirm" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..."data-mini="true" onclick="usr_matchCantFind()">
+					<button type="button" data-theme="b" id="cantFindConfirm" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..."data-mini="true">
 						I'm sure
 					</button>
 				</div>
 				<div class="ui-block-b"> 
-					<button type="button" data-theme="b" id="cantFindCancel" onClick="$('#cantFindMatch').popup('close');" data-mini="true">
+					<button type="button" data-theme="b" id="cantFindCancel" data-mini="true">
 						Cancel
 					</button>
 				</div>
@@ -1105,12 +1145,12 @@
 				
 			<div class="ui-grid-a">
 				<div class="ui-block-a">
-					<button type="button" data-theme="b" id="matchConfirmTOS" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..."data-mini="true" onclick="usr_matchTOS()">
+					<button type="button" data-theme="b" id="matchConfirmTOS" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..."data-mini="true">
 						I'm sure
 					</button>
 				</div>
 				<div class="ui-block-b"> 
-					<button type="button" data-theme="b" id="matchCancelTOS" onClick="$('#matchTOSDialog').popup('close');" data-mini="true">
+					<button type="button" data-theme="b" id="matchCancelTOS" data-mini="true">
 						Cancel
 					</button>
 				</div>
@@ -1147,7 +1187,7 @@
 	
 	
 		<!-- Link to profile -->
-		<button type="button" data-theme="b" id="matchProfile" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true" onClick="usr_openProfile()">
+		<button type="button" data-theme="b" id="matchProfile" class="profileButton show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
 			Profile
 		</button>
 
@@ -1159,8 +1199,8 @@
   
 </div>
 <!-- ************************************ END #MATCH **************************************** -->
-		<!-- Waiting overlay. Works for all pages. This allows the jQuery Mobile Loader 
-		element to include a translucent overlay that effectively disables user controls. -->
+<!-- Waiting overlay. Works for all pages. This allows the jQuery Mobile Loader 
+element to include a translucent overlay that effectively disables user controls. -->
 <div class="ui-loader-background"> </div>
 </body>
 </html>

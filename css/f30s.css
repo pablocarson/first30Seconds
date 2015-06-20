@@ -95,6 +95,17 @@ h2 {
     padding-bottom:0px;
  }
 
+.manualAlertWrapper{
+    width:100%; 
+    display: none;
+    margin-right:auto; 
+    margin-left:auto;
+	margin-top:0px;
+	margin-bottom:0px;
+    padding-top:0px;
+    padding-bottom:0px;
+ }
+
 .profileAlertWrapper{
 	padding-bottom:20px;
 }
