@@ -104,7 +104,7 @@
 					// Re-initialize the web code (HTML, javascript, css, etc.) to reset all Firebase references 
 					// using the token as the top-level identifier. 
 //					document.location.reload(true);
-					first30SecondsRef.off();
+//					first30SecondsRef.off();
 					var first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + val)
 					var pushNotification = window.plugins.pushNotification;
 					pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
