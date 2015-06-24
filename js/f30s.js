@@ -105,7 +105,8 @@
 					// using the token as the top-level identifier. 
 //					document.location.reload(true);
 //					first30SecondsRef.off();
-					var first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + val)
+					var first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + val);
+					var pageReadyRef = first30SecondsRef.child('pageReady');
 					var pushNotification = window.plugins.pushNotification;
 					pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
 			});
