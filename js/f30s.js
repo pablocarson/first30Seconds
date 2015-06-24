@@ -73,7 +73,7 @@
 			// be reset once the client is authenticated.
 			GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/placeholder');
 		};
-			GLOB.pageReadyRef = first30SecondsRef.child('pageReady');
+			GLOB.pageReadyRef = GLOB.first30SecondsRef.child('pageReady');
 
 	// Phonegap's deviceReady event listener
 		// The event fires when Phonegap's device APIs have loaded and is the last event fired during initialization.
