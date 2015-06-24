@@ -107,7 +107,7 @@
 //					GLOB.first30SecondsRef.off();
 					GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + val);
 					GLOB.pageReadyRef = GLOB.first30SecondsRef.child('pageReady');
-					GLOB.atPartyServerRef = GLOB.first30SecondsRef.child('pages/atParty/serverEvents/');
+					GLOB.atPartyServerRef = GLOB.first30SecondsRef.child('pages/atParty/serverEvents/'); 
 					var pushNotification = window.plugins.pushNotification;
 					pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
 			});
