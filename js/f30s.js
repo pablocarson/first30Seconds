@@ -65,15 +65,15 @@
 		if (GLOB.currentUserId != null) {
 			// Redefine the primary reference to use the f30UserID value as the primary Firebase reference for all 
 			// client-server communications.
-			var first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + GLOB.currentUserId)
+			GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + GLOB.currentUserId)
 		// If there's no value, the user has not been authenticated, so we'll create an arbitrary Firebase reference
 		// so the DOM can load.
 		} else {
 			// create an arbitrary reference so the DOM can load. This reference won't be used by the client and will
 			// be reset once the client is authenticated.
-			var first30SecondsRef = new Firebase('https://f30s.firebaseio.com/placeholder');
+			GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/placeholder');
 		};
-			var pageReadyRef = first30SecondsRef.child('pageReady');
+			GLOB.pageReadyRef = first30SecondsRef.child('pageReady');
 
 	// Phonegap's deviceReady event listener
 		// The event fires when Phonegap's device APIs have loaded and is the last event fired during initialization.
@@ -105,8 +105,8 @@
 					// using the token as the top-level identifier. 
 //					document.location.reload(true);
 //					first30SecondsRef.off();
-					var first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + val);
-					var pageReadyRef = first30SecondsRef.child('pageReady');
+					GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + val);
+					GLOB.pageReadyRef = first30SecondsRef.child('pageReady');
 					var pushNotification = window.plugins.pushNotification;
 					pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
 			});
@@ -147,7 +147,7 @@
 							// GCH push notification ID using this reference provides all information needed by the server'
 							// to engage the user. deviceReady is also the last event fired on initialization. 
 							// This is therefore sent as the 'Page Ready' message.
- 							pageReadyRef.push( { "GCM_Push_Notifications_Id" : e.regid } );
+ 							GLOB.pageReadyRef.push( { "GCM_Push_Notifications_Id" : e.regid } );
 						}
 					break;
 					// this is the case for an actual push notification.
