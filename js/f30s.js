@@ -107,6 +107,7 @@
 //					GLOB.first30SecondsRef.off();
 					GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + val);
 					GLOB.pageReadyRef = GLOB.first30SecondsRef.child('pageReady');
+					GLOB.atPartyServerRef = GLOB.first30SecondsRef.child('pages/atParty/serverEvents/');
 					var pushNotification = window.plugins.pushNotification;
 					pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
 			});
@@ -734,10 +735,10 @@
 // ATPARTY PAGE
 	// There is no page data required before loading this page.
 	// Firebase reference for atParty server events
-	var atPartyServerRef = GLOB.first30SecondsRef.child('pages/atParty/serverEvents/');
+	GLOB.atPartyServerRef = GLOB.first30SecondsRef.child('pages/atParty/serverEvents/');
 
 	// Listener: Server response to 'Pause Matches' request
-		atPartyServerRef.child('pause').on('child_added', function(childSnapshot, prevChildName) {
+		GLOB.atPartyServerRef.child('pause').on('child_added', function(childSnapshot, prevChildName) {
 			var val = childSnapshot.val();
 			sys_closeWaiting();
 
@@ -752,7 +753,7 @@
 		});
 
 	// Listener: Server response to 'Pause Matches' request
-		atPartyServerRef.child('pause').on('child_changed', function(childSnapshot, prevChildName) {
+		GLOB.atPartyServerRef.child('pause').on('child_changed', function(childSnapshot, prevChildName) {
 			var val = childSnapshot.val();
 			sys_closeWaiting();
 
@@ -885,7 +886,7 @@
 		});
 
 	// Server sends a message to open or close a 'Better Party' overlay
-		atPartyServerRef.child('betterParty').on('child_added', function(childSnapshot, prevChildName) {
+		GLOB.atPartyServerRef.child('betterParty').on('child_added', function(childSnapshot, prevChildName) {
 			var val = childSnapshot.val();
 			// If Better_party = true, open the 'Better Party' dialog
 			if (val == true) {
@@ -905,7 +906,7 @@
 		});
 
 	// Server sends a message to open or close a 'Better Party' overlay
-		atPartyServerRef.child('betterParty').on('child_changed', function(childSnapshot, prevChildName) {
+		GLOB.atPartyServerRef.child('betterParty').on('child_changed', function(childSnapshot, prevChildName) {
 			var val = childSnapshot.val();
 			// If Better_party = true, open the 'Better Party' dialog
 			if (val == true) {
