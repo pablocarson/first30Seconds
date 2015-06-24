@@ -56,7 +56,6 @@
 			// Redefine the primary reference to use the f30UserID value as the primary Firebase reference for all 
 			// client-server communications.
 			var first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + GLOB.currentUserId)
-			var pageReadyRef = first30SecondsRef.child('pageReady');
 		// If there's no value, the user has not been authenticated, so we'll create an arbitrary Firebase reference
 		// so the DOM can load.
 		} else {
@@ -64,6 +63,7 @@
 			// be reset once the client is authenticated.
 			var first30SecondsRef = new Firebase('https://f30s.firebaseio.com/placeholder');
 		};
+			var pageReadyRef = first30SecondsRef.child('pageReady');
 
 	// Phonegap's deviceReady event listener
 		// The event fires when Phonegap's device APIs have loaded and is the last event fired during initialization.
