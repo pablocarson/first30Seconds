@@ -97,14 +97,13 @@
 					var first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + val)
 					first30SecondsRef.off();
 					first30SecondsRef.on();
-
+					var pushNotification = window.plugins.pushNotification;
+					pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
 			});
 			};
 			// If an authentication token already exists in localStorage, register with Google Cloud Messaging (GCM) and retrieve a GCM
 			// ID for pushnotifications. 
 //			} else {
-				var pushNotification = window.plugins.pushNotification;
-				pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
 //			};
 		});
 
