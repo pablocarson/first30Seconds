@@ -44,6 +44,16 @@
 		);
 	};
 
+// DISABLE THE BACK BUTTON
+	// We need to disable Android's 'back' button within the client, otherwise
+	// the user could subvert the perceived state of the client by changing pages, etc.
+	// This is a Phonegap event.
+
+	document.addEventListener("backbutton", onBackKeyDown, false);
+	function onBackKeyDown(e) {
+		e.preventDefault();
+	}
+
 
 // SCRIPTS TO SUPPORT PLUGINS AND AUTHENTICATION
 
@@ -94,9 +104,8 @@
 					// Re-initialize the web code (HTML, javascript, css, etc.) to reset all Firebase references 
 					// using the token as the top-level identifier. 
 //					document.location.reload(true);
-					var first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + val)
 					first30SecondsRef.off();
-					first30SecondsRef.on();
+					var first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + val)
 					var pushNotification = window.plugins.pushNotification;
 					pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
 			});
