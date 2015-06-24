@@ -98,7 +98,7 @@
 					first30SecondsRef.off();
 					first30SecondsRef.on();
 
-			});
+//			});
 			// If an authentication token already exists in localStorage, register with Google Cloud Messaging (GCM) and retrieve a GCM
 			// ID for pushnotifications. 
 //			} else {
