@@ -285,7 +285,7 @@ function unitTests() {
                 },
                 function() {
                     if (GLOB.f30sUserId == null) {
-                        // Confirm the link brought us to the proper page
+                        // Confirm the link brought us to the About page
                             var expectedPage = "about"
                             var currentPage = $.mobile.activePage.attr("id");
                             if (expectedPage != currentPage) {
@@ -306,23 +306,6 @@ function unitTests() {
                             return( 1000 );
                     };
                 },
-            // Confirm that we're on the About page
-                function() {
-                    if (GLOB.f30sUserId == null) {
-                        var expectedPage = "about"
-                        var currentPage = $.mobile.activePage.attr("id");
-                        if (expectedPage != currentPage) {
-                            alert(
-                                "Expecting page: [ " +
-                                expectedPage +
-                                " ]. Got page: [ "+
-                                currentPage +
-                                " ]"
-                            );
-                            return( -1 );
-                        };
-                    };
-                },
             // Click the 'return' button
                 function() {
                     if (GLOB.f30sUserId == null) {
@@ -334,22 +317,22 @@ function unitTests() {
                             return( 1000 );
                     };
                 },
-            // Confirm that we're back on the newUser page
                 function() {
-                    if (GLOB.f30sUserId == null) {
-                        var expectedPage = "newUser"
-                        var currentPage = $.mobile.activePage.attr("id");
-                        if (expectedPage != currentPage) {
-                            alert(
-                                "Expecting page: [ " +
-                                expectedPage +
-                                " ]. Got page: [ "+
-                                currentPage +
-                                " ]"
-                            );
-                            return( -1 );
+                    // Confirm that we're back on the newUser page
+                        if (GLOB.f30sUserId == null) {
+                            var expectedPage = "newUser"
+                            var currentPage = $.mobile.activePage.attr("id");
+                            if (expectedPage != currentPage) {
+                                alert(
+                                    "Expecting page: [ " +
+                                    expectedPage +
+                                    " ]. Got page: [ "+
+                                    currentPage +
+                                    " ]"
+                                );
+                                return( -1 );
+                            };
                         };
-                    };
                 },
             // server sends an authentication token
                 function() {
