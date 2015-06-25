@@ -364,7 +364,7 @@ function unitTests() {
                 },
                 function() {
                     // Confirm that a 'page ready' message was received by Firebase. If one wasn't, GLOB.usr_existingUserId will be null. We can't specify the exact value returned because the GCM push notifications ID, which is passed at this time, is unique to each device.
-                        if (GLOB.usr_existingUserId == null) {
+                        if (GLOB.usr_existingUserId != null) {
                             alert(
                                 'There was an f30sUserId in localStorage, but a pageReady message was not received from Firebase.'
                             );
