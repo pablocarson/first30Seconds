@@ -66,41 +66,15 @@
 			// Redefine the primary reference to use the f30UserID value as the primary Firebase reference for all 
 			// client-server communications.
 			GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + GLOB.currentUserId)
+			GLOB.pageReadyRef = GLOB.first30SecondsRef.child('pageReady');
 		// If there's no value, the user has not been authenticated, so we'll create an arbitrary Firebase reference
 		// so the DOM can load.
 		} else {
 			// create an arbitrary reference so the client can initialize. This reference will
 			// be reset once the client is authenticated.
 			GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/placeholder');
-		};
-
 			GLOB.pageReadyRef = GLOB.first30SecondsRef.child('pageReady');
-			GLOB.stripeClientRef = GLOB.first30SecondsRef.child('Stripe/clientEvents');
-			GLOB.stripeTokenRef = GLOB.first30SecondsRef.child('Stripe/payTokens');
-			GLOB.globalServerRef = GLOB.first30SecondsRef.child('global/serverEvents');
-			GLOB.globalServerAlertRef = GLOB.first30SecondsRef.child('global/alerts');
-			GLOB.globalServerStripeRef = GLOB.first30SecondsRef.child('Stripe/serverEvents');
-			GLOB.globalServerGeoRef = GLOB.first30SecondsRef.child('global/serverEvents/geolocation');
-			GLOB.globalClientGeoRef = GLOB.first30SecondsRef.child('global/geolocation');
-			GLOB.newUserIdRequestRef = new Firebase('https://f30s.firebaseio.com/newUserIdRequests/' );
-			GLOB.homeServerRef = GLOB.first30SecondsRef.child('pages/home/serverEvents');
-			GLOB.homeClientRef = GLOB.first30SecondsRef.child('pages/home/clientEvents');
-			GLOB.inviteServerRef = GLOB.first30SecondsRef.child('pages/invite/serverEvents');
-			GLOB.inviteClientRef = GLOB.first30SecondsRef.child('pages/invite/clientEvents');
-			GLOB.inTransitServerRef = GLOB.first30SecondsRef.child('pages/inTransit/serverEvents')
-			GLOB.inTransitClientRef = GLOB.first30SecondsRef.child('pages/inTransit/clientEvents');
-			GLOB.atPartyServerRef = GLOB.first30SecondsRef.child('pages/atParty/serverEvents/');
-			GLOB.atPartyOtherUserRef = GLOB.first30SecondsRef.child('pages/atParty/otherUser');
-			GLOB.atPartyClientRef = GLOB.first30SecondsRef.child('pages/atParty/clientEvents');
-			GLOB.rateOtherUserServerRef = GLOB.first30SecondsRef.child('pages/rateOtherUser/serverEvents');
-			GLOB.rateOtherUserClientRef = GLOB.first30SecondsRef.child('pages/rateOtherUser/clientEvents');
-			GLOB.matchServerRef = GLOB.first30SecondsRef.child('pages/match/serverEvents');	
-			GLOB.matchClientRef = GLOB.first30SecondsRef.child('pages/match/clientEvents');
-			GLOB.profileServerRef = GLOB.first30SecondsRef.child('pages/profile/serverEvents');	
-			GLOB.profileClientRef = GLOB.first30SecondsRef.child('pages/profile/clientEvents');	
-			GLOB.imageUploadServerRef = GLOB.first30SecondsRef.child('pages/imageUpload/serverEvents');
-			GLOB.imageUploadClientRef = GLOB.first30SecondsRef.child('pages/imageUpload/clientEvents');	
-			updateListeners();	
+		};
 
 	// Phonegap's deviceReady event listener
 		// The event fires when Phonegap's device APIs have loaded and is the last event fired during initialization.
@@ -157,7 +131,7 @@
 					GLOB.profileClientRef = GLOB.first30SecondsRef.child('pages/profile/clientEvents');	
 					GLOB.imageUploadServerRef = GLOB.first30SecondsRef.child('pages/imageUpload/serverEvents');
 					GLOB.imageUploadClientRef = GLOB.first30SecondsRef.child('pages/imageUpload/clientEvents');		
-					updateListeners();
+
 					var pushNotification = window.plugins.pushNotification;
 					pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
 				});
@@ -289,6 +263,25 @@
 			}		
 		}
 
+	// changePage functions
+		// Firebase reference for currentPage messages. These set the currently displayed page within the app.
+		GLOB.globalServerRef = GLOB.first30SecondsRef.child('global/serverEvents');
+
+		// Server sets initial page to be displayed
+			GLOB.globalServerRef.child('currentPage').on('child_added', function(childSnapshot, prevChildName) {
+				// Retrieve the JSON string stored in alertMsg	
+				var val = childSnapshot.val();
+				// If a message to change the current page is received, change to that page.	
+				$.mobile.changePage("#" + val);					
+			});
+
+		// Server changes page to be displayed
+			GLOB.globalServerRef.child('currentPage').on('child_changed', function(childSnapshot, prevChildName) {
+				// Retrieve the JSON string stored in alertMsg	
+				var val = childSnapshot.val();
+				$.mobile.changePage("#" + val);
+			});
+
 	// Waiting overlay functions
 		// Client opens Waiting overlay (loader)
 		$(document).on( "click", ".show-page-loading-msg", function() {
@@ -306,29 +299,6 @@
 				  html: html
 			});
 		})
-
-
-function updateListeners() {	
-
-	// changePage listeners
-		// Firebase reference for currentPage messages. These set the currently displayed page within the app.
-
-		// Server sets initial page to be displayed
-			GLOB.globalServerRef.child('currentPage').on('child_added', function(childSnapshot, prevChildName) {
-				// Retrieve the JSON string stored in alertMsg	
-				var val = childSnapshot.val();
-				// If a message to change the current page is received, change to that page.	
-				$.mobile.changePage("#" + val);					
-			});
-
-		// Server changes page to be displayed
-			GLOB.globalServerRef.child('currentPage').on('child_changed', function(childSnapshot, prevChildName) {
-				// Retrieve the JSON string stored in alertMsg	
-				var val = childSnapshot.val();
-				$.mobile.changePage("#" + val);
-			});
-
-};
 
 /*		.on( "click", ".hide-page-loading-msg", function() {
 		  $.mobile.loading( "hide" );
