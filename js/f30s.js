@@ -66,14 +66,15 @@
 			// Redefine the primary reference to use the f30UserID value as the primary Firebase reference for all 
 			// client-server communications.
 			GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + GLOB.currentUserId)
+			GLOB.pageReadyRef = GLOB.first30SecondsRef.child('pageReady');
 		// If there's no value, the user has not been authenticated, so we'll create an arbitrary Firebase reference
 		// so the DOM can load.
 		} else {
-			// create an arbitrary reference so the DOM can load. This reference won't be used by the client and will
+			// create an arbitrary reference so the client can initialize. This reference will
 			// be reset once the client is authenticated.
 			GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/placeholder');
-		};
 			GLOB.pageReadyRef = GLOB.first30SecondsRef.child('pageReady');
+		};
 
 	// Phonegap's deviceReady event listener
 		// The event fires when Phonegap's device APIs have loaded and is the last event fired during initialization.
@@ -103,8 +104,6 @@
 					$.mobile.changePage("#splash")
 					// Re-initialize the web code (HTML, javascript, css, etc.) to reset all Firebase references 
 					// using the token as the top-level identifier. 
-//					document.location.reload(true);
-//					GLOB.first30SecondsRef.off();
 					GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + val);
 					GLOB.pageReadyRef = GLOB.first30SecondsRef.child('pageReady');
 					GLOB.stripeClientRef = GLOB.first30SecondsRef.child('Stripe/clientEvents');
@@ -135,12 +134,13 @@
 
 					var pushNotification = window.plugins.pushNotification;
 					pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
-			});
-			};
+				});
 			// If an authentication token already exists in localStorage, register with Google Cloud Messaging (GCM) and retrieve a GCM
 			// ID for pushnotifications. 
-//			} else {
-//			};
+			} else {
+				var pushNotification = window.plugins.pushNotification;
+				pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
+			};
 		});
 
 	// Push notification functions called by the deviceReady event
