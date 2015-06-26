@@ -1,16 +1,9 @@
 // HOUSEKEEPING FUNCTIONS FOR PROGRAMMING PURPOSES
-
 	// Create a global variable array to separate our globals from the rest of the DOM.
 	GLOB = [];
-	// Set the global variable for android device UUID
+	// Initialize the global variable for android device UUID
 	GLOB.deviceUuid = "";
 	// Reset function: Initialize the unit test.
-	function initializeUnitTest() {
-		// Return the page to the Splash page.
-		$.mobile.changePage('#splash');
-		// Perform a page reset to clear all data.
-		document.location.reload(true);
-	};
 
 // CODE REQUIRED FOR UNIT TEST
 	// This allows us to run the unit test as an array of individual test components.
@@ -50,566 +43,533 @@
 	// This is a Phonegap event.
 
 	document.addEventListener("backbutton", onBackKeyDown, false);
+
 	function onBackKeyDown(e) {
 		e.preventDefault();
 	}
 
 
-// SCRIPTS TO SUPPORT PLUGINS AND AUTHENTICATION
-
+// CODE TO INITIALIZE CLIENT
 	// Set the initial Firebase reference based on whether the client is authenticated or not.
-		// Retrieve the value stored with the key "f30sUserId" in localStorage. This is a value sent 
-		// by the f30s server to the client via Firebase as an authentication token.
-		GLOB.currentUserId = window.localStorage.getItem("f30sUserId");
-		// If there's already a value for f30sUserId in localStorage:
-		if (GLOB.currentUserId != null) {
-			// Redefine the primary reference to use the f30UserID value as the primary Firebase reference for all 
-			// client-server communications.
-			GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + GLOB.currentUserId)
-		// If there's no value, the user has not been authenticated, so we'll create an arbitrary Firebase reference
-		// so the DOM can load.
-		} else {
-			// create an arbitrary reference so the client can initialize. This reference will
-			// be reset once the client is authenticated.
-			GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/placeholder');
-		};
+	// Retrieve the value stored with the key "f30sUserId" in localStorage. This is a value sent 
+	// by the f30s server to the client via Firebase as an authentication token.
+	GLOB.currentUserId = window.localStorage.getItem("f30sUserId");
+	// If there's already a value for f30sUserId in localStorage:
+	if (GLOB.currentUserId != null) {
+		// Redefine the primary reference to use the f30UserID value as the primary Firebase reference for all 
+		// client-server communications.
+		GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + GLOB.currentUserId)
+	// If there's no value, the user has not been authenticated, so we'll create an arbitrary Firebase reference
+	// so the DOM can load.
+	} else {
+		// create an arbitrary reference so the client can initialize. This reference will
+		// be reset once the client is authenticated.
+		GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/placeholder');
+	};
 
-			GLOB.pageReadyRef = GLOB.first30SecondsRef.child('pageReady');
-			GLOB.stripeClientRef = GLOB.first30SecondsRef.child('Stripe/clientEvents');
-			GLOB.stripeTokenRef = GLOB.first30SecondsRef.child('Stripe/payTokens');
-			GLOB.globalServerRef = GLOB.first30SecondsRef.child('global/serverEvents');
-			GLOB.globalServerAlertRef = GLOB.first30SecondsRef.child('global/alerts');
-			GLOB.globalServerStripeRef = GLOB.first30SecondsRef.child('Stripe/serverEvents');
-			GLOB.globalServerGeoRef = GLOB.first30SecondsRef.child('global/serverEvents/geolocation');
-			GLOB.globalClientGeoRef = GLOB.first30SecondsRef.child('global/geolocation');
-			GLOB.newUserIdRequestRef = new Firebase('https://f30s.firebaseio.com/newUserIdRequests/' );
-			GLOB.homeServerRef = GLOB.first30SecondsRef.child('pages/home/serverEvents');
-			GLOB.homeClientRef = GLOB.first30SecondsRef.child('pages/home/clientEvents');
-			GLOB.inviteServerRef = GLOB.first30SecondsRef.child('pages/invite/serverEvents');
-			GLOB.inviteClientRef = GLOB.first30SecondsRef.child('pages/invite/clientEvents');
-			GLOB.inTransitServerRef = GLOB.first30SecondsRef.child('pages/inTransit/serverEvents')
-			GLOB.inTransitClientRef = GLOB.first30SecondsRef.child('pages/inTransit/clientEvents');
-			GLOB.atPartyServerRef = GLOB.first30SecondsRef.child('pages/atParty/serverEvents/');
-			GLOB.atPartyOtherUserRef = GLOB.first30SecondsRef.child('pages/atParty/otherUser');
-			GLOB.atPartyClientRef = GLOB.first30SecondsRef.child('pages/atParty/clientEvents');
-			GLOB.rateOtherUserServerRef = GLOB.first30SecondsRef.child('pages/rateOtherUser/serverEvents');
-			GLOB.rateOtherUserClientRef = GLOB.first30SecondsRef.child('pages/rateOtherUser/clientEvents');
-			GLOB.matchServerRef = GLOB.first30SecondsRef.child('pages/match/serverEvents');	
-			GLOB.matchClientRef = GLOB.first30SecondsRef.child('pages/match/clientEvents');
-			GLOB.profileServerRef = GLOB.first30SecondsRef.child('pages/profile/serverEvents');	
-			GLOB.profileClientRef = GLOB.first30SecondsRef.child('pages/profile/clientEvents');	
-			GLOB.imageUploadServerRef = GLOB.first30SecondsRef.child('pages/imageUpload/serverEvents');
-			GLOB.imageUploadClientRef = GLOB.first30SecondsRef.child('pages/imageUpload/clientEvents');	
-			updateListeners();	
+// CHILD REFERENCES TO THE PRIMARY FIREBASE REFERENCE
+	// Firebase pageReady reference, used when app is fully initialized
+	GLOB.pageReadyRef = GLOB.first30SecondsRef.child('pageReady');
+	// Firebase reference for Stripe-related messages generated by the client.
+	GLOB.stripeClientRef = GLOB.first30SecondsRef.child('Stripe/clientEvents');
+	// Firebase reference for Stripe to send a pay token after a successful purchase.
+	GLOB.stripeTokenRef = GLOB.first30SecondsRef.child('Stripe/payTokens');
+	// Firebase reference for global server messages, primarly used for currentPage messages that set the displayed page.
+	GLOB.globalServerRef = GLOB.first30SecondsRef.child('global/serverEvents');
+	// Firebase reference for global client messages
+	GLOB.globalClientRef = GLOB.first30SecondsRef.child('global/clientEvents');
+	// Firebase reference for server alert messages (global)
+	GLOB.globalServerAlertRef = GLOB.first30SecondsRef.child('global/alerts');
+	// Firebase reference for server messages for the Stripe Checkout overlay. Though we're currently only using it 
+	// on the Home page, the Stripe overlay can be called from any page, therefore we'll treat it as global.
+	GLOB.globalServerStripeRef = GLOB.first30SecondsRef.child('Stripe/serverEvents');
+	// Firebase references for server and client messages related to geolocation functions
+	GLOB.globalServerGeoRef = GLOB.first30SecondsRef.child('global/serverEvents/geolocation');	
+	GLOB.globalClientGeoRef = GLOB.first30SecondsRef.child('global/geolocation');
+	// Firebase references for server and client messages for the imageUpload page
+	GLOB.imageUploadServerRef = GLOB.first30SecondsRef.child('pages/imageUpload/serverEvents');
+	GLOB.imageUploadClientRef = GLOB.first30SecondsRef.child('pages/imageUpload/clientEvents');
+	// Firebase references for server and client messages for the profile page
+	GLOB.profileServerRef = GLOB.first30SecondsRef.child('pages/profile/serverEvents');
+	GLOB.profileClientRef = GLOB.first30SecondsRef.child('pages/profile/clientEvents');
+	// Firebase references for server and client messages for the Home page
+	GLOB.homeServerRef = GLOB.first30SecondsRef.child('pages/home/serverEvents');
+	GLOB.homeClientRef = GLOB.first30SecondsRef.child('pages/home/clientEvents');
+	// Firebase references for server and client messages for Invite page
+	GLOB.inviteServerRef = GLOB.first30SecondsRef.child('pages/invite/serverEvents');
+	GLOB.inviteClientRef = GLOB.first30SecondsRef.child('pages/invite/clientEvents');
+	// Firebase references for server and client messages for the inTransit page
+	GLOB.inTransitServerRef = GLOB.first30SecondsRef.child('pages/inTransit/serverEvents')
+	GLOB.inTransitClientRef = GLOB.first30SecondsRef.child('pages/inTransit/clientEvents');
+	// Firebase references for server and client messages for the atParty page
+	GLOB.atPartyServerRef = GLOB.first30SecondsRef.child('pages/atParty/serverEvents/');
+	GLOB.atPartyClientRef = GLOB.first30SecondsRef.child('pages/atParty/clientEvents');
+	// Firebase server reference to add an otherUser to the atParty page
+	GLOB.atPartyOtherUserRef = GLOB.first30SecondsRef.child('pages/atParty/otherUser');
+	// Firebase references for server and client messages for the rateOtherUser page
+	GLOB.rateOtherUserServerRef = GLOB.first30SecondsRef.child('pages/rateOtherUser/serverEvents');
+	GLOB.rateOtherUserClientRef = GLOB.first30SecondsRef.child('pages/rateOtherUser/clientEvents');
+	// Firebase references for server and client messages for the Match page
+	GLOB.matchServerRef = GLOB.first30SecondsRef.child('pages/match/serverEvents');
+	GLOB.matchClientRef = GLOB.first30SecondsRef.child('pages/match/clientEvents');
 
+	// initialize the listeners with the above references
+	updateListeners();	
+
+	// Reference for client to send a user's unique device ID(device.uuid) to Firebase. Unlike other references,
+	// this one is not authenticated but is open for new users as part of the authentication process, so it's
+	// set as an absolute reference.
+	GLOB.newUserIdRequestRef = new Firebase('https://f30s.firebaseio.com/newUserIdRequests/' );
+
+// CODE TO SUPPORT PLUGINS AND AUTHENTICATION
 	// Phonegap's deviceReady event listener
-		// The event fires when Phonegap's device APIs have loaded and is the last event fired during initialization.
-		// It registers the device with Google Cloud Messaging for push notifications and performs initial authentication 
-		// functions based on the device's UUID.
-		document.addEventListener("deviceready", function() {
-		// Firebase reference for a device that hasn't been authenticated. If no authentication token exists in localStorage, 
-		// the client's device ID will be sent to this reference when the user interacts with the newUser page. 
-		// This directory will be used by all new clients so proper security restrictions should be imposed on this directory to prevent exploits.
-			// Take the device's universal unique identifier (UUID) and place it in a global variable
-			GLOB.deviceUuid = device.uuid;
-			// If there is no authentication token in localStorage, we need to authenticate the user.
-			if (GLOB.currentUserId == null) {
-				// change to the newUser page. The client will send the device UUID based on user interaction with this page.
-				$.mobile.changePage("#newUser")
-				// Create a unique Firebase reference based on the device UUID. We set this as a global function so the reference remains
-				// accessible after the deviceReady event functions are complete.
-				GLOB.newUserIdResponseRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid);
-				// Create a listener based on this reference. Since it's unique, the server will use it to send an authentication
-				// token to the device. 
-				GLOB.newUserIdResponseRef.on('child_added', function(childSnapshot, prevChildName) {
-					var val = childSnapshot.val();
-					// Place the received authentication token in localStorage
-					window.localStorage.setItem("f30sUserId", val);
-					// For test purposes, change to the splash page. Refer to the first30Seconds logic table to determine which page
-					// should be the destination on completion of this function.
-					$.mobile.changePage("#splash")
-					// Re-initialize the web code (HTML, javascript, css, etc.) to reset all Firebase references 
-					// using the token as the top-level identifier. 
-					GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + val);
-					GLOB.pageReadyRef = GLOB.first30SecondsRef.child('pageReady');
-					GLOB.stripeClientRef = GLOB.first30SecondsRef.child('Stripe/clientEvents');
-					GLOB.stripeTokenRef = GLOB.first30SecondsRef.child('Stripe/payTokens');
-					GLOB.globalServerRef = GLOB.first30SecondsRef.child('global/serverEvents');
-					GLOB.globalServerAlertRef = GLOB.first30SecondsRef.child('global/alerts');
-					GLOB.globalServerStripeRef = GLOB.first30SecondsRef.child('Stripe/serverEvents');
-					GLOB.globalServerGeoRef = GLOB.first30SecondsRef.child('global/serverEvents/geolocation');
-					GLOB.globalClientGeoRef = GLOB.first30SecondsRef.child('global/geolocation');
-					GLOB.newUserIdRequestRef = new Firebase('https://f30s.firebaseio.com/newUserIdRequests/' );
-					GLOB.homeServerRef = GLOB.first30SecondsRef.child('pages/home/serverEvents');
-					GLOB.homeClientRef = GLOB.first30SecondsRef.child('pages/home/clientEvents');
-					GLOB.inviteServerRef = GLOB.first30SecondsRef.child('pages/invite/serverEvents');
-					GLOB.inviteClientRef = GLOB.first30SecondsRef.child('pages/invite/clientEvents');
-					GLOB.inTransitServerRef = GLOB.first30SecondsRef.child('pages/inTransit/serverEvents')
-					GLOB.inTransitClientRef = GLOB.first30SecondsRef.child('pages/inTransit/clientEvents');
-					GLOB.atPartyServerRef = GLOB.first30SecondsRef.child('pages/atParty/serverEvents/');
-					GLOB.atPartyOtherUserRef = GLOB.first30SecondsRef.child('pages/atParty/otherUser');
-					GLOB.atPartyClientRef = GLOB.first30SecondsRef.child('pages/atParty/clientEvents');
-					GLOB.rateOtherUserServerRef = GLOB.first30SecondsRef.child('pages/rateOtherUser/serverEvents');
-					GLOB.rateOtherUserClientRef = GLOB.first30SecondsRef.child('pages/rateOtherUser/clientEvents');
-					GLOB.matchServerRef = GLOB.first30SecondsRef.child('pages/match/serverEvents');	
-					GLOB.matchClientRef = GLOB.first30SecondsRef.child('pages/match/clientEvents');
-					GLOB.profileServerRef = GLOB.first30SecondsRef.child('pages/profile/serverEvents');	
-					GLOB.profileClientRef = GLOB.first30SecondsRef.child('pages/profile/clientEvents');	
-					GLOB.imageUploadServerRef = GLOB.first30SecondsRef.child('pages/imageUpload/serverEvents');
-					GLOB.imageUploadClientRef = GLOB.first30SecondsRef.child('pages/imageUpload/clientEvents');		
-					updateListeners();
-					var pushNotification = window.plugins.pushNotification;
-					pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
-				});
-			// If an authentication token already exists in localStorage, register with Google Cloud Messaging (GCM) and retrieve a GCM
-			// ID for pushnotifications. 
-			} else {
+	// The event fires when Phonegap's device APIs have loaded and is the last event fired during initialization.
+	// It registers the device with Google Cloud Messaging for push notifications and performs initial authentication 
+	// functions based on the device's UUID.
+	document.addEventListener("deviceready", function() {
+	// Firebase reference for a device that hasn't been authenticated. If no authentication token exists in localStorage, 
+	// the client's device ID will be sent to this reference when the user interacts with the newUser page. 
+	// This directory will be used by all new clients so proper security restrictions should be imposed on this directory to prevent exploits.
+		// Take the device's universal unique identifier (UUID) and place it in a global variable
+		GLOB.deviceUuid = device.uuid;
+		// If there is no authentication token in localStorage, we need to authenticate the user.
+		if (GLOB.currentUserId == null) {
+			// change to the newUser page. The client will send the device UUID based on user interaction with this page.
+			$.mobile.changePage("#newUser")
+			// Create a unique Firebase reference based on the device UUID. We set this as a global function so the reference remains
+			// accessible after the deviceReady event functions are complete.
+			GLOB.newUserIdResponseRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid);
+			// Create a listener based on this reference. Since it's unique, the server will use it to send an authentication
+			// token to the device. 
+			GLOB.newUserIdResponseRef.on('child_added', function(childSnapshot, prevChildName) {
+				var val = childSnapshot.val();
+				// Place the received authentication token in localStorage
+				window.localStorage.setItem("f30sUserId", val);
+				// For test purposes, change to the splash page. Refer to the first30Seconds logic table to determine which page
+				// should be the destination on completion of this function.
+				$.mobile.changePage("#splash")
+				// Reset all Firebase references using the authentication token as the top-level identifier. 
+				// Primary Firebase reference
+				GLOB.first30SecondsRef = new Firebase('https://f30s.firebaseio.com/' + val);
+				// Firebase pageReady reference, used when app is fully initialized
+				GLOB.pageReadyRef = GLOB.first30SecondsRef.child('pageReady');
+				// Firebase reference for Stripe-related messages generated by the client.
+				GLOB.stripeClientRef = GLOB.first30SecondsRef.child('Stripe/clientEvents');
+				// Firebase reference for Stripe to send a pay token after a successful purchase.
+				GLOB.stripeTokenRef = GLOB.first30SecondsRef.child('Stripe/payTokens');
+				// Firebase reference for global server messages, primarly used for currentPage messages that set the displayed page.
+				GLOB.globalServerRef = GLOB.first30SecondsRef.child('global/serverEvents');
+				// Firebase reference for global client messages
+				GLOB.globalClientRef = GLOB.first30SecondsRef.child('global/clientEvents');
+				// Firebase reference for server alert messages (global)
+				GLOB.globalServerAlertRef = GLOB.first30SecondsRef.child('global/alerts');
+				// Firebase reference for server messages for the Stripe Checkout overlay. Though we're currently only using it 
+				// on the Home page, the Stripe overlay can be called from any page, therefore we'll treat it as global.
+				GLOB.globalServerStripeRef = GLOB.first30SecondsRef.child('Stripe/serverEvents');
+				// Firebase references for server and client messages related to geolocation functions
+				GLOB.globalServerGeoRef = GLOB.first30SecondsRef.child('global/serverEvents/geolocation');	
+				GLOB.globalClientGeoRef = GLOB.first30SecondsRef.child('global/geolocation');
+				// Since GLOB.newUserIdRequestRef is not an authenticated channel, the reference doesn't need to be updated and isn't
+				// included in this list.
+				// Firebase references for server and client messages for the imageUpload page
+				GLOB.imageUploadServerRef = GLOB.first30SecondsRef.child('pages/imageUpload/serverEvents');
+				GLOB.imageUploadClientRef = GLOB.first30SecondsRef.child('pages/imageUpload/clientEvents');
+				// Firebase references for server and client messages for the profile page
+				GLOB.profileServerRef = GLOB.first30SecondsRef.child('pages/profile/serverEvents');
+				GLOB.profileClientRef = GLOB.first30SecondsRef.child('pages/profile/clientEvents');
+				// Firebase references for server and client messages for the Home page
+				GLOB.homeServerRef = GLOB.first30SecondsRef.child('pages/home/serverEvents');
+				GLOB.homeClientRef = GLOB.first30SecondsRef.child('pages/home/clientEvents');
+				// Firebase references for server and client messages for Invite page
+				GLOB.inviteServerRef = GLOB.first30SecondsRef.child('pages/invite/serverEvents');
+				GLOB.inviteClientRef = GLOB.first30SecondsRef.child('pages/invite/clientEvents');
+				// Firebase references for server and client messages for the inTransit page
+				GLOB.inTransitServerRef = GLOB.first30SecondsRef.child('pages/inTransit/serverEvents')
+				GLOB.inTransitClientRef = GLOB.first30SecondsRef.child('pages/inTransit/clientEvents');
+				// Firebase references for server and client messages for the atParty page
+				GLOB.atPartyServerRef = GLOB.first30SecondsRef.child('pages/atParty/serverEvents/');
+				GLOB.atPartyClientRef = GLOB.first30SecondsRef.child('pages/atParty/clientEvents');
+				// Firebase server reference to add an otherUser to the atParty page
+				GLOB.atPartyOtherUserRef = GLOB.first30SecondsRef.child('pages/atParty/otherUser');
+				// Firebase references for server and client messages for the rateOtherUser page
+				GLOB.rateOtherUserServerRef = GLOB.first30SecondsRef.child('pages/rateOtherUser/serverEvents');
+				GLOB.rateOtherUserClientRef = GLOB.first30SecondsRef.child('pages/rateOtherUser/clientEvents');
+				// Firebase references for server and client messages for the Match page
+				GLOB.matchServerRef = GLOB.first30SecondsRef.child('pages/match/serverEvents');
+				GLOB.matchClientRef = GLOB.first30SecondsRef.child('pages/match/clientEvents');
+
+				// overwrite the listeners with the new references
+				updateListeners();
+				// register device for push notifications
 				var pushNotification = window.plugins.pushNotification;
 				pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
-			};
-		});
+			});
+		// If an authentication token already exists in localStorage, register with Google Cloud Messaging (GCM) and retrieve a GCM
+		// ID for pushnotifications. 
+		} else {
+			var pushNotification = window.plugins.pushNotification;
+			pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
+		};
+	});
 
 	// Push notification functions called by the deviceReady event
-		// Reference for push notifications.	
- 		var globalClientDeviceIDRef = GLOB.first30SecondsRef.child('global/clientEvents/GCMPushNotificationsID');
-			
-		// Success handler for GCM registration. Result should be "OK".
-			function successHandler (result) {
-			// We can send this notification to Firebase, but since the Registration ID is only sent as a success condition, 
-			// and we have error handlers (below), this becomes a redundant message that only adds to our Firebase overhead. 
-			// So we'll keep it but comment it out in case we decide to include it later. 
-			//	deviceRef.push( { "GCM_registration" : result } );
-			}
+	// Reference for push notifications.	
+	var globalClientDeviceIDRef = GLOB.first30SecondsRef.child('global/clientEvents/GCMPushNotificationsID');
+		
+	// Success handler for GCM registration. Result should be "OK".
+	function successHandler (result) {
+	// We can send this notification to Firebase, but since the Registration ID is only sent as a success condition, 
+	// and we have error handlers (below), this becomes a redundant message that only adds to our Firebase overhead. 
+	// So we'll keep it but comment it out in case we decide to include it later. 
+	//	deviceRef.push( { "GCM_registration" : result } );
+	}
 
-		// Error handler for GCM registration. Sends a received error message to Firebase. 
-			function errorHandler (error) {
-				globalClientDeviceIDRef.push( { "GCM_registration_error" : error } );
-			}
+	// Error handler for GCM registration. Sends a received error message to Firebase. 
+	function errorHandler (error) {
+		globalClientDeviceIDRef.push( { "GCM_registration_error" : error } );
+	}
 
-		// Notification event handler for GCM registration and push notifications. 
-			function onNotificationGCM(e) {
-				switch( e.event ) {
-					// If a Registration ID is successfully generated, send it to Firebase. The server will need this ID to
-					// generate push notifications via GCM.
-					case 'registered':
-						if ( e.regid.length > 0 ) {
-							GLOB.GCMId = e.regid;
-							// Send the result to Firebase. Since this will be the first authenticated client to Firebase, 
-							// and the reference name includes the authentication token sent by the server, sending of the 
-							// GCH push notification ID using this reference provides all information needed by the server'
-							// to engage the user. deviceReady is also the last event fired on initialization. 
-							// This is therefore sent as the 'Page Ready' message.
- 							GLOB.pageReadyRef.push( { "GCM_Push_Notifications_Id" : e.regid } );
-						}
-					break;
-					// this is the case for an actual push notification.
-					case 'message':
-						alert('message = ' + e.message + ' msgcnt = ' + e.msgcnt);
-					break;
-					// If an error happens during a push notification, send the error to Firebase
-					case 'error':
-						globalClientDeviceIDRef.push( { "GCM_error" : e.msg } );
-					break;
-					// Any other outcome, send an "unknown event" message to Firebase.
-					default:
-						globalClientDeviceIDRef.push( { "GCM_unknown_event" : true } );
-					break;
+	// Notification event handler for GCM registration and push notifications. 
+	function onNotificationGCM(e) {
+		switch( e.event ) {
+			// If a Registration ID is successfully generated, send it to Firebase. The server will need this ID to
+			// generate push notifications via GCM.
+			case 'registered':
+				if ( e.regid.length > 0 ) {
+					GLOB.GCMId = e.regid;
+					// Send the result to Firebase. Since this will be the first authenticated client to Firebase, 
+					// and the reference name includes the authentication token sent by the server, sending of the 
+					// GCH push notification ID using this reference provides all information needed by the server'
+					// to engage the user. deviceReady is also the last event fired on initialization. 
+					// This is therefore sent as the 'Page Ready' message.
+ 					GLOB.pageReadyRef.push( { "GCM_Push_Notifications_Id" : e.regid } );
 				}
-			}
+			break;
+			// this is the case for an actual push notification.
+			case 'message':
+				alert('message = ' + e.message + ' msgcnt = ' + e.msgcnt);
+			break;
+			// If an error happens during a push notification, send the error to Firebase
+			case 'error':
+				globalClientDeviceIDRef.push( { "GCM_error" : e.msg } );
+			break;
+			// Any other outcome, send an "unknown event" message to Firebase.
+			default:
+				globalClientDeviceIDRef.push( { "GCM_unknown_event" : true } );
+			break;
+		}
+	}
 
-	// Stripe Checkout 
-		// Firebase reference for Stripe-related messages generated by the client.
-		GLOB.stripeClientRef = GLOB.first30SecondsRef.child('Stripe/clientEvents');
-		// Firebase reference for Stripe to send a pay token after a successful purchase.
-		GLOB.stripeTokenRef = GLOB.first30SecondsRef.child('Stripe/payTokens');
-
-		// Function to handle Stripe checkout process
-			var handler = StripeCheckout.configure({
-				// When a Stripe merchant account is created, you're given two publishable keys: one for testing and one for 
-				// when the app is live. Below is the test key that was used for development. This should be replaced
-				// with a test / live key from the Stripe account to be used in production.
-				key: 'pk_test_9hivJ7TpkhcQkukMYt57spj1',
-				// The name, description and purchase amount will be presented in the Stripe overlay. Currently this is
-				// set for one purchase type: ten credits for ten dollars.
-				name: 'First 30 Seconds',
-				description: '10 party credits',
-				amount: 1000,
-				// When a stripe overlay opens, a message is sent to Firebase to notify the server. This helps 
-				// reduce the potential for asynchronous conflicts.
-				opened: function() {
-					GLOB.stripeClientRef.push( { Checkout_open : true } );
-				},
-				// When a stripe overlay is closed by the user, a message is sent to Firebase to notify the server. 
-				// This helps reduce the potential for asynchronous conflicts.
-				closed: function() {
-					GLOB.stripeClientRef.push( { Checkout_open : false } );
-				},
-				// Generate a pay token (token.id) when the purchase is successfully completed.
-				// Use the token to create the charge with a server-side script.
-				token: function(token) {
-					GLOB.stripeTokenRef.push( { "payToken" : token.id , "payCard" : token.card.last4 , "purchaseEmail" : token.email} );
-					// Open the waiting overlay. This allows the server to update credits before returning
-					// control to the user.
-					sys_openWaiting();
-				}
-			});
+	// Function to handle Stripe checkout process
+	var handler = StripeCheckout.configure({
+		// When a Stripe merchant account is created, you're given two publishable keys: one for testing and one for 
+		// when the app is live. Below is the test key that was used for development. This should be replaced
+		// with a test / live key from the Stripe account to be used in production.
+		key: 'pk_test_9hivJ7TpkhcQkukMYt57spj1',
+		// The name, description and purchase amount will be presented in the Stripe overlay. Currently this is
+		// set for one purchase type: ten credits for ten dollars.
+		name: 'First 30 Seconds',
+		description: '10 party credits',
+		amount: 1000,
+		// When a stripe overlay opens, a message is sent to Firebase to notify the server. This helps 
+		// reduce the potential for asynchronous conflicts.
+		opened: function() {
+			GLOB.stripeClientRef.push( { Checkout_open : true } );
+		},
+		// When a stripe overlay is closed by the user, a message is sent to Firebase to notify the server. 
+		// This helps reduce the potential for asynchronous conflicts.
+		closed: function() {
+			GLOB.stripeClientRef.push( { Checkout_open : false } );
+		},
+		// Generate a pay token (token.id) when the purchase is successfully completed.
+		// Use the token to create the charge with a server-side script.
+		token: function(token) {
+			GLOB.stripeTokenRef.push( { "payToken" : token.id , "payCard" : token.card.last4 , "purchaseEmail" : token.email} );
+			// Open the waiting overlay. This allows the server to update credits before returning
+			// control to the user.
+			sys_openWaiting();
+		}
+	});
 
 	// Cropit
-		// The imageUpload page uses the Cropit image upload plugin by Scott Cheng. This allows the user to open
-		// an image from their device and then zoom, pan, crop, and upload it to Firebase. For API and details 
-		// on its use, refer to http://scottcheng.github.io/cropit/
+	// The imageUpload page uses the Cropit image upload plugin by Scott Cheng. This allows the user to open
+	// an image from their device and then zoom, pan, crop, and upload it to Firebase. For API and details 
+	// on its use, refer to http://scottcheng.github.io/cropit/
 
-		// The cropit plugin must be called within the Firebase function that provides page data for the imageUpload page. 
-		// Refer to the imageUpload section for specifics of the plugin implementation.
+	// The cropit plugin must be called within the Firebase function that provides page data for the imageUpload page. 
+	// Refer to the imageUpload section for specifics of the plugin implementation.
 
 // GLOBAL FUNCTIONS
 	// Global functions can occur on multiple pages or all pages.
  	
 	// Server updates rating of an otherUser
-		// The function updates the rating associated with the unique ID of the otherUser, updates the parent thumbnail
-		// display on the #party page and returns the user to that page.
-		function sys_globalRateDisplay( jsonRating, UID ) {
-			// Change the rating on the #Party page to reflect what the user selected. 
-			// It uses the value on the selector at the time of submit.
-			// If the user hasn't selected a rating, display "Please Review" as the rating text
-			if (jsonRating == '-1') {
-				$('#rating' + UID).html("Please review");
-			};
-			// If the user's selected the "Not Interested" element from the pulldown, the pulldown value
-			// is zero and the corresponding element's rating text will change to say "Not interested"
-			if (jsonRating == '0') {
-				$('#rating' + UID).html("Not interested");
-			};
-			// Otherwise, the value will be 1 - 5, which will be converted to a string of the symbol 
-			// '♥' of the corresponding length. For example, a rating of 3 will display as ♥♥♥.
-			if ( (jsonRating > '0') && (jsonRating < '6') ) {
-				var newHearts = Array(+ jsonRating + 1).join("♥");
-				// Display the string created on the atParty page.
-				$('#rating' + UID).html( newHearts );
-			}		
-		}
+	// The function updates the rating associated with the unique ID of the otherUser, updates the parent thumbnail
+	// display on the #party page and returns the user to that page.
+	function sys_globalRateDisplay( jsonRating, UID ) {
+		// Change the rating on the #Party page to reflect what the user selected. 
+		// It uses the value on the selector at the time of submit.
+		// If the user hasn't selected a rating, display "Please Review" as the rating text
+		if (jsonRating == '-1') {
+			$('#rating' + UID).html("Please review");
+		};
+		// If the user's selected the "Not Interested" element from the pulldown, the pulldown value
+		// is zero and the corresponding element's rating text will change to say "Not interested"
+		if (jsonRating == '0') {
+			$('#rating' + UID).html("Not interested");
+		};
+		// Otherwise, the value will be 1 - 5, which will be converted to a string of the symbol 
+		// '♥' of the corresponding length. For example, a rating of 3 will display as ♥♥♥.
+		if ( (jsonRating > '0') && (jsonRating < '6') ) {
+			var newHearts = Array(+ jsonRating + 1).join("♥");
+			// Display the string created on the atParty page.
+			$('#rating' + UID).html( newHearts );
+		}		
+	}
+
+	// Manually close an alert. 
+	// We need this for the newUser page: since there's no way for the server to know
+	// if a faulty form submission was executed by an unauthenticated user, the user must close the alert manually.
+	$(document).on( "click", "#newUserAlertWrapper", function() {
+		$('.manualAlertWrapper').hide();
+		$('.alert').html("");
+	});
+
 
 	// Waiting overlay functions
-		// Client opens Waiting overlay (loader)
-		$(document).on( "click", ".show-page-loading-msg", function() {
-			var $this = $( this ),
-			msgText = $this.jqmData( "msgtext" ) || $.mobile.loader.prototype.options.text,
-			textVisible = $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
-			textonly = !!$this.jqmData( "textonly" );
-			html = $this.jqmData( "html" ) || "";
-
+	// Client opens Waiting overlay (loader)
+	$(document).on( "click", ".show-page-loading-msg", function() {
+		var $this = $( this ),
+		msgText = $this.jqmData( "msgtext" ) || $.mobile.loader.prototype.options.text,
+		textVisible = $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
+		textonly = !!$this.jqmData( "textonly" );
+		html = $this.jqmData( "html" ) || "";
 			$.mobile.loading( 'show', {
-				  text: msgText,
-				  textVisible: textVisible,
-				  theme: 'a',
-				  textonly: textonly,
-				  html: html
-			});
-		})
+			  text: msgText,
+			  textVisible: textVisible,
+			  theme: 'a',
+			  textonly: textonly,
+			  html: html
+		});
+	})
 
+	// Server opens Waiting overlay.
+	// Uses current page ID to open the proper instance of the overlay. The waiting overlay is unique for each
+	// page and includes the page ID in its own ID. For example, if the client is on the Home page, the div 
+	// being opened would have the ID "homeWaiting"
+	function sys_openWaiting() {
+		$.mobile.loading( "show", {
+			text: "Waiting...",
+			textVisible: true,
+			theme: "a",
+		});				
+	}
 
-function updateListeners() {	
+	// Server closes Waiting overlay 
+	// Uses current page ID to close the proper instance of the overlay. The waiting overlay is unique for each
+	// page and includes the page ID in its own ID. For example, if the client is on the Home page, the div 
+	// being opened would have the ID "homeWaiting"
+	function sys_closeWaiting() {
+		$.mobile.loading("hide")
+	}
 
-	// changePage listeners
-		// Firebase reference for currentPage messages. These set the currently displayed page within the app.
+	// Geolocation functions	
+	// Retrieve the device's current latitude and longitude.
+	var getLocation = function() {
+		navigator.geolocation.getCurrentPosition(onSuccess, onError, { enableHighAccuracy: true });
+	}
+
+	// success callbacks for getLocation()
+	function onSuccess(position) {
+		//Lat long will be fetched and stored in session variables
+		//These variables will be used while storing data in local database 
+		lat = position.coords.latitude;
+		lng = position.coords.longitude;
+		// Send the lat and lng values to Firebase
+		GLOB.globalClientGeoRef.push( { 'latitude' : lat, 'longitude' : lng } );
+	}
+		
+	// failure callback if an error is returned by the geolocation function
+	function onError(error) {
+		console.log('code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
+	}
+
+	// This function is called to poll for location periodically so we can track the user's progress to
+	// the party destination. For test purposes, it has been set to one second. In production, this should 
+	// be set to 30 seconds.		
+	function cycleLocation(){
+		GLOB.cycle = setInterval( getLocation, 1000)
+	}
+		
+	// Stop the geolocation polling function
+	function stopLocation(){
+		clearInterval(GLOB.cycle)
+	}
+
+// SERVER LISTENERS
+	// This function contains the code for all Firebase listeners for server-generated messages. For authenticated users, this function is called 
+	// after the Firebase references are loaded to ensure server messages are sent to an authenticated channel. For new users, the Firebase references 
+	// are set to placeholders until an authentication token is received, and this function is called again after the Firebase references are updated.
+	function updateListeners() {
+		// Global listeners	
 
 		// Server sets initial page to be displayed
-			GLOB.globalServerRef.child('currentPage').on('child_added', function(childSnapshot, prevChildName) {
-				// Retrieve the JSON string stored in alertMsg	
-				var val = childSnapshot.val();
-				// If a message to change the current page is received, change to that page.	
-				$.mobile.changePage("#" + val);					
-			});
+		GLOB.globalServerRef.child('currentPage').on('child_added', function(childSnapshot, prevChildName) {
+			// Retrieve the JSON string stored in alertMsg	
+			var val = childSnapshot.val();
+			// If a message to change the current page is received, change to that page.	
+			$.mobile.changePage("#" + val);					
+		});
 
 		// Server changes page to be displayed
-			GLOB.globalServerRef.child('currentPage').on('child_changed', function(childSnapshot, prevChildName) {
-				// Retrieve the JSON string stored in alertMsg	
-				var val = childSnapshot.val();
-				$.mobile.changePage("#" + val);
-			});
-
-};
-
-/*		.on( "click", ".hide-page-loading-msg", function() {
-		  $.mobile.loading( "hide" );
+		GLOB.globalServerRef.child('currentPage').on('child_changed', function(childSnapshot, prevChildName) {
+			// Retrieve the JSON string stored in alertMsg	
+			var val = childSnapshot.val();
+			$.mobile.changePage("#" + val);
 		});
-*/
-		// Server opens Waiting overlay.
-			// Uses current page ID to open the proper instance of the overlay. The waiting overlay is unique for each
-			// page and includes the page ID in its own ID. For example, if the client is on the Home page, the div 
-			// being opened would have the ID "homeWaiting"
-			function sys_openWaiting() {
-				$.mobile.loading( "show", {
-					text: "Waiting...",
-					textVisible: true,
-					theme: "a",
-				});				
-			}
 
-		// Server closes Waiting overlay 
-			// Uses current page ID to close the proper instance of the overlay. The waiting overlay is unique for each
-			// page and includes the page ID in its own ID. For example, if the client is on the Home page, the div 
-			// being opened would have the ID "homeWaiting"
-			function sys_closeWaiting() {
-				$.mobile.loading("hide")
-			}
-
-	// Alert functions
-		// Firebase reference for server alert messages
-		GLOB.globalServerAlertRef = GLOB.first30SecondsRef.child('global/alerts');
-		
+		// Alert listneres
+			
 		// Server creates an alert
-			GLOB.globalServerAlertRef.on('child_added', function(childSnapshot, prevChildName) {
-				// Retrieve the JSON string stored in alertMsg	
-				var val = childSnapshot.val();
-				// If the server set the removeWaiting flag to true, close any open 'Waiting...' overlay.
-				// If a waiting overlay isn't open, the command will be ignored.
-				if (val.removeWaitingMsg == true) {
-					sys_closeWaiting();
-				};
-				// If the alert message is empty, close the alert.
-				if (val.alertMsg == "") {
-					$('.alertWrapper').hide();
-				} else {
-					// Extract the alert text from the message		
-					var jsonAlert = JSON.stringify( val.alertMsg );
-					// Populate the text in the alert. By specifying the entire class, we ensure that 
-					// the current page alert text is populated regardless of what that page is.
-					$('.alert').html(val.alertMsg);
-					// Use a slight timeout to avoid collision with the command to populate the alert
-					setTimeout (function() {
-						// Display the alert component. By specifying the entire class, we ensure that 
-						// the alert is displayed on the page that's currently active.
-						$('.alertWrapper').show();
-						// Derive the current page ID
-						var currentPage = $.mobile.activePage.attr('id')
-						// Convert this to the alert ID for the current page. For example,
-						// if the page ID is inTransit, the relevant alert ID is #inTransiTAlertText				
-						var currentAlertId = "#" + currentPage + "AlertText";
-						// Derive the height of the populated alert box and adjust the height of the 
-						// space allocated to the alert so that it never covers the page text or elements 
-						// below it, regardless of how many lines of text may be in the alert.
-						var containerHeight = $(currentAlertId).height()
-						var containerHeightTrim = parseInt(containerHeight) + 37;			
-						$('.alertWrapper').css("height", containerHeightTrim);
-					}, 10);		
-				};		
-			});
+		GLOB.globalServerAlertRef.on('child_added', function(childSnapshot, prevChildName) {
+			// Retrieve the JSON string stored in alertMsg	
+			var val = childSnapshot.val();
+			// If the server set the removeWaiting flag to true, close any open 'Waiting...' overlay.
+			// If a waiting overlay isn't open, the command will be ignored.
+			if (val.removeWaitingMsg == true) {
+				sys_closeWaiting();
+			};
+			// If the alert message is empty, close the alert.
+			if (val.alertMsg == "") {
+				$('.alertWrapper').hide();
+			} else {
+				// Extract the alert text from the message		
+				var jsonAlert = JSON.stringify( val.alertMsg );
+				// Populate the text in the alert. By specifying the entire class, we ensure that 
+				// the current page alert text is populated regardless of what that page is.
+				$('.alert').html(val.alertMsg);
+				// Use a slight timeout to avoid collision with the command to populate the alert
+				setTimeout (function() {
+					// Display the alert component. By specifying the entire class, we ensure that 
+					// the alert is displayed on the page that's currently active.
+					$('.alertWrapper').show();
+					// Derive the current page ID
+					var currentPage = $.mobile.activePage.attr('id')
+					// Convert this to the alert ID for the current page. For example,
+					// if the page ID is inTransit, the relevant alert ID is #inTransiTAlertText				
+					var currentAlertId = "#" + currentPage + "AlertText";
+					// Derive the height of the populated alert box and adjust the height of the 
+					// space allocated to the alert so that it never covers the page text or elements 
+					// below it, regardless of how many lines of text may be in the alert.
+					var containerHeight = $(currentAlertId).height()
+					var containerHeightTrim = parseInt(containerHeight) + 37;			
+					$('.alertWrapper').css("height", containerHeightTrim);
+				}, 10);		
+			};		
+		});
 
 		// Server changes an alert
-			GLOB.globalServerAlertRef.on('child_changed', function(childSnapshot, prevChildName) {
-				// Retrieve the JSON string stored in alertMsg	
-				var val = childSnapshot.val();
-				// If the server set the removeWaiting flag to true, close any open 'Waiting...' overlay.
-				// If a waiting overlay isn't open, the command will be ignored.
-				if (val.removeWaitingMsg == true) {
-						sys_closeWaiting();
-				};
-				// If the alert message is empty, close the alert.
-				if (val.alertMsg == "") {
-					$('.alertWrapper').hide();
-				} else {
-					// Extract the alert text from the message		
-					var jsonAlert = JSON.stringify( val.alertMsg );
-					// Populate the text in the alert. By specifying the entire class, we ensure that 
-					// the current page alert text is populated regardless of what that page is.
-					$('.alert').html(val.alertMsg);
-					// Use a slight timeout to avoid collision with the command to populate the alert
-					setTimeout (function() {
-						// Display the alert component. By specifying the entire class, we ensure that 
-						// the alert is displayed on the page that's currently active.
-						$('.alertWrapper').show();
-						// Derive the current page ID
-						var currentPage = $.mobile.activePage.attr('id')
-						// Convert this to the alert ID for the current page. For example,
-						// if the page ID is inTransit, the relevant alert ID is #inTransiTAlertText				
-						var currentAlertId = "#" + currentPage + "AlertText";
-						// Derive the height of the populated alert box and adjust the height of the 
-						// space allocated to the alert so that it never covers the page text or elements 
-						// below it, regardless of how many lines of text may be in the alert.
-						var containerHeight = $(currentAlertId).height()
-						var containerHeightTrim = parseInt(containerHeight) + 37;			
-						$('.alertWrapper').css("height", containerHeightTrim);
-					}, 10);		
-				};		
-			});
+		GLOB.globalServerAlertRef.on('child_changed', function(childSnapshot, prevChildName) {
+			// Retrieve the JSON string stored in alertMsg	
+			var val = childSnapshot.val();
+			// If the server set the removeWaiting flag to true, close any open 'Waiting...' overlay.
+			// If a waiting overlay isn't open, the command will be ignored.
+			if (val.removeWaitingMsg == true) {
+					sys_closeWaiting();
+			};
+			// If the alert message is empty, close the alert.
+			if (val.alertMsg == "") {
+				$('.alertWrapper').hide();
+			} else {
+				// Extract the alert text from the message		
+				var jsonAlert = JSON.stringify( val.alertMsg );
+				// Populate the text in the alert. By specifying the entire class, we ensure that 
+				// the current page alert text is populated regardless of what that page is.
+				$('.alert').html(val.alertMsg);
+				// Use a slight timeout to avoid collision with the command to populate the alert
+				setTimeout (function() {
+					// Display the alert component. By specifying the entire class, we ensure that 
+					// the alert is displayed on the page that's currently active.
+					$('.alertWrapper').show();
+					// Derive the current page ID
+					var currentPage = $.mobile.activePage.attr('id')
+					// Convert this to the alert ID for the current page. For example,
+					// if the page ID is inTransit, the relevant alert ID is #inTransiTAlertText				
+					var currentAlertId = "#" + currentPage + "AlertText";
+					// Derive the height of the populated alert box and adjust the height of the 
+					// space allocated to the alert so that it never covers the page text or elements 
+					// below it, regardless of how many lines of text may be in the alert.
+					var containerHeight = $(currentAlertId).height()
+					var containerHeightTrim = parseInt(containerHeight) + 37;			
+					$('.alertWrapper').css("height", containerHeightTrim);
+				}, 10);		
+			};		
+		});
 
-		// Manually close an alert. 
-			// We need this for the newUser page: since there's no way for the server to know
-			// if a faulty form submission was executed by an unauthenticated user, the user must close the alert manually.
-			$(document).on( "click", "#newUserAlertWrapper", function() {
-				$('.manualAlertWrapper').hide();
-				$('.alert').html("");
-			});
-
-	// Stripe checkout functions
-		// Firebase reference for server messages for the Stripe Checkout overlay. Though we're currently only using it 
-		// on the Home page, the Stripe overlay can be called from any page, therefore we'll treat it as global.
-		GLOB.globalServerStripeRef = GLOB.first30SecondsRef.child('Stripe/serverEvents');
+		// Stripe checkout listeners
 
 		// Server opens the Stripe overlay
-			GLOB.globalServerStripeRef.on('child_added', function(childSnapshot, prevChildName) {
-				// Retrieve the JSON string stored in alertMsg	
-				var val = childSnapshot.val();
-				// If "stripeMsg" message is sent by the server with a flag of "true", close the Waiting overlay and open 
-				// the Stripe credit card overlay. Note that the user closes this overlay manually, because this overlay
-				// is created by Stripe. We are notified when the user closes the overlay, but this means there's no 
-				// reason for a child_changed listener since this can only be set to true. Therefore, once triggered, any 
-				// prior stripeMsg message MUST be removed from Firebase before sending a subsequent'stripeMsg: true' message, 
-				// or else the child_added listener won't be triggered.
-				if (val == true) {		
-					sys_closeWaiting();
-					handler.open();	
-				};
-			});
+		GLOB.globalServerStripeRef.on('child_added', function(childSnapshot, prevChildName) {
+			// Retrieve the JSON string stored in alertMsg	
+			var val = childSnapshot.val();
+			// If "stripeMsg" message is sent by the server with a flag of "true", close the Waiting overlay and open 
+			// the Stripe credit card overlay. Note that the user closes this overlay manually, because this overlay
+			// is created by Stripe. We are notified when the user closes the overlay, but this means there's no 
+			// reason for a child_changed listener since this can only be set to true. Therefore, once triggered, any 
+			// prior stripeMsg message MUST be removed from Firebase before sending a subsequent'stripeMsg: true' message, 
+			// or else the child_added listener won't be triggered.
+			if (val == true) {		
+				sys_closeWaiting();
+				handler.open();	
+			};
+		});
 
-	// Geolocation functions
-		// Firebase references for server and client messages related to geolocation functions
-		GLOB.globalServerGeoRef = GLOB.first30SecondsRef.child('global/serverEvents/geolocation');	
-		GLOB.globalClientGeoRef = GLOB.first30SecondsRef.child('global/geolocation');
+		// Geolocation listeners
 
 		// Server requests geolocation data from the client
-			GLOB.globalServerGeoRef.on('child_added', function(childSnapshot, prevChildName) {
-				// Retrieve the JSON string stored in geoMsg	
-				var val = childSnapshot.val();
-				// If geoMsg is true, call the getLocation function immediately and then every 30 seconds. For test 
-				// purposes, the interval has been set to 10 seconds but should be a minimum of 30 seconds in production.
-				if (val == true){
-					// getLocation is the actual geolocation polling function. We want to call it immediately first 
-					// to get an initial user location ASAP.
-					getLocation();
-					// Call the setInterval 
-					cycleLocation();
-				};
-				// If geoMsg is false, stop the geolocation function.
-				if (val == false){
-					// getLocation is the actual geolocation polling function. We want to call it immediately first 
-					// to get an initial user location ASAP.
-					stopLocation();
-				};
-			});
-		
+		GLOB.globalServerGeoRef.on('child_added', function(childSnapshot, prevChildName) {
+			// Retrieve the JSON string stored in geoMsg	
+			var val = childSnapshot.val();
+			// If geoMsg is true, call the getLocation function immediately and then every 30 seconds. For test 
+			// purposes, the interval has been set to 10 seconds but should be a minimum of 30 seconds in production.
+			if (val == true){
+				// getLocation is the actual geolocation polling function. We want to call it immediately first 
+				// to get an initial user location ASAP.
+				getLocation();
+				// Call the setInterval 
+				cycleLocation();
+			};
+			// If geoMsg is false, stop the geolocation function.
+			if (val == false){
+				// getLocation is the actual geolocation polling function. We want to call it immediately first 
+				// to get an initial user location ASAP.
+				stopLocation();
+			};
+		});
+			
 		// Server changes cilent geolocation request
-			GLOB.globalServerGeoRef.on('child_changed', function(childSnapshot, prevChildName) {
-				// Retrieve the JSON string stored in geoMsg	
-				var val = childSnapshot.val();
-				// If geoMsg is true, call the getLocation function immediately and then every 30 seconds. For test 
-				// purposes, the interval has been set to 10 seconds but should be a minimum of 30 seconds in production.
-				if (val == true){
-					// getLocation is the actual geolocation polling function. We want to call it immediately first 
-					// to get an initial user location ASAP.
-					getLocation();
-					// Call the setInterval 
-					cycleLocation();
-				};
-				// If geoMsg is false, stop the geolocation function.
-				if (val == false){
-					// getLocation is the actual geolocation polling function. We want to call it immediately first 
-					// to get an initial user location ASAP.
-					stopLocation();
-				};
-			});
-		
-		// Retrieve the device's current latitude and longitude.
-			var getLocation = function() {
-				navigator.geolocation.getCurrentPosition(onSuccess, onError, { enableHighAccuracy: true });
-			}
-
-		// success callbacks for getLocation()
-			function onSuccess(position) {
-				//Lat long will be fetched and stored in session variables
-				//These variables will be used while storing data in local database 
-				lat = position.coords.latitude;
-				lng = position.coords.longitude;
-				// Send the lat and lng values to Firebase
-				GLOB.globalClientGeoRef.push( { 'latitude' : lat, 'longitude' : lng } );
-			}
-		
-		// failure callback if an error is returned by the geolocation function
-			function onError(error) {
-				console.log('code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
-			}
-
-		// This function is called to poll for location periodically so we can track the user's progress to
-		// the party destination. For test purposes, it has been set to one second. In production, this should 
-		// be set to 30 seconds.		
-			function cycleLocation(){
-				GLOB.cycle = setInterval( getLocation, 1000)
-			}
-		
-		// Stop the geolocation polling function
-			function stopLocation(){
-				clearInterval(GLOB.cycle)
-			}
-
-	// Firebase reference for global client-generated event messages. 
-	GLOB.globalClientRef = GLOB.first30SecondsRef.child('global/clientEvents');
-
-	// User clicks 'profile', requesting access to the Profile page.
-		$(document).on( "click", ".profileButton", function() {
-			// send Open_profile message with 'true' value to Firebase
-			GLOB.globalClientRef.push( { Open_profile : true } );
+		GLOB.globalServerGeoRef.on('child_changed', function(childSnapshot, prevChildName) {
+			// Retrieve the JSON string stored in geoMsg	
+			var val = childSnapshot.val();
+			// If geoMsg is true, call the getLocation function immediately and then every 30 seconds. For test 
+			// purposes, the interval has been set to 10 seconds but should be a minimum of 30 seconds in production.
+			if (val == true){
+				// getLocation is the actual geolocation polling function. We want to call it immediately first 
+				// to get an initial user location ASAP.
+				getLocation();
+				// Call the setInterval 
+				cycleLocation();
+			};
+			// If geoMsg is false, stop the geolocation function.
+			if (val == false){
+				// getLocation is the actual geolocation polling function. We want to call it immediately first 
+				// to get an initial user location ASAP.
+				stopLocation();
+			};
 		});
 
-	// User clicks on an inline alert to request that it be closed.
-		$(document).on( "click", ".alertWrapper", function() {
-			// Open the waiting overlay. Unlike the other functions, this is not triggered by an anchor link.
-			// Anchor links trigger the waiting overlay using the HREF="" tag in the HTML. So we have to call 
-			// the Waiting overlay from here instead.
-			sys_openWaiting();
-			var currentPage = $.mobile.activePage.attr('id')
-			// send Close_alert message with 'true' value to Firebase
-			GLOB.globalClientRef.push( { Close_alert : true } );
-		});
+		// Home page listeners
 
-// NEWUSER PAGE
-
-	// newUser page references
-		// Reference to send a user's unique device ID. This 
-		GLOB.newUserIdRequestRef = new Firebase('https://f30s.firebaseio.com/newUserIdRequests/' );
-
-	// Send a message to Firebase with the client device's unique ID. 
-		//	This function is called when the user clicks "Join the party" from the newUser page.
-		$(document).on( "click", "#joinParty", function() {
-			GLOB.newUserIdRequestRef.push( { "deviceUuid" : GLOB.deviceUuid } );
-		});
-
-	// Paid user authentication
-		// If a paid user migrates to a new device or factory resets an existing device, or otherwise removes the authentication
-		// token from localStorage, the server will need to reauthenticate to restore their credits and profile info. The 
-		// user triggers this function from the newUser page by submitting the email address and the last four digits of the 
-		// credit card used to purchase credits. The server responds to a valid submission by sending an authentication token.
-		function restorePaidUser( formObj ) {
-			// Check if either field was left blank.
-			if (($('#creditEmail').val() == "") || ($('#creditLast4').val() == "")) {
-			// If yes, display an alert notifying the user. No message is sent to Firebase.
-				$.mobile.loading('hide')
-				$('#newUserAlertText').html("You left a required field blank. Please fill in the blank and try again.");				
-				$(newUserAlertWrapper).show();
-				// Use this to adjust the height of the space allocated to the alert so that 
-				// it never covers the page text or elements below it.
-				var containerHeight = $(".alert").height()
-				var containerHeightTrim = parseInt(containerHeight) + 37;			
-				$('.alertWrapper').css("height", containerHeightTrim);
-			} else {
-				// Send a message to the server with the client device's UUID, the entered email address and 
-				// last 4 digits of the paid user's credit card
-				$('.alertWrapper').hide();
-				$.mobile.loading('show', {text:"Waiting...", textVisible: true});
-				GLOB.newUserIdRequestRef.push( {  
-					"deviceUuid" : GLOB.deviceUuid,
-					"payEmail" : $('#creditEmail').val(),
-					"payCard" : $('#creditLast4').val(),
-				} ); 
-			}
-			return false; // We don't want the form to trigger a page load. We want to do that through js. 
-		}
-
-// HOME PAGE
-	// Firebase reference for page data for Home page
-	GLOB.homeServerRef = GLOB.first30SecondsRef.child('pages/home/serverEvents');
-
-	// Server sends initial page data to client
+		// Server sends initial page data to client
 		GLOB.homeServerRef.on('child_added', function(childSnapshot, prevChildName) {
 			// Close Waiting overlay if it's open. If not, this command will be ignored.
 			sys_closeWaiting();
@@ -631,7 +591,7 @@ function updateListeners() {
 			}
 		});
 
-	// Server changes page data
+		// Server changes page data
 		GLOB.homeServerRef.on('child_changed', function(childSnapshot, prevChildName) {
 			// Close "Waiting..." overlay if it's open. If not, this command will be ignored.
 			sys_closeWaiting();
@@ -651,26 +611,9 @@ function updateListeners() {
 			}
 		});
 
-	// Firebase reference for client-generated event messages. 
-	GLOB.homeClientRef = GLOB.first30SecondsRef.child('pages/home/clientEvents');
+		// Invite page listeners
 
-	// User selects 'Buy credits', requesting server response
-		$(document).on( "click", "#homeBuyCredits", function() {
-			// send homeBuyCredits message with 'true' value to Firebase
-			GLOB.homeClientRef.push( { homeBuyCredits : true } );
-		});
-
-	// User selects 'Find a party', requesting server response
-		$(document).on( "click", "#homeFindParty", function() {
-			// send Find_party message with 'true' value to Firebase
-			GLOB.homeClientRef.push( { Find_party : true } );
-		});
-
-// INVITE PAGE
-	// Firebase reference for page data for Invite page
-	GLOB.inviteServerRef = GLOB.first30SecondsRef.child('pages/invite/serverEvents');
-
-	// Server sends initial page data to Firebase
+		// Server sends initial page data to Firebase
 		GLOB.inviteServerRef.on('child_added', function(childSnapshot, prevChildName) {
 		// Assign snapshot JSON to a variable
 			var val = childSnapshot.val();
@@ -679,7 +622,7 @@ function updateListeners() {
 			$('#partyDistance').html(val.partyDistanceMsg);
 		});
 
-	// Server changes page data
+		// Server changes page data
 		GLOB.inviteServerRef.on('child_changed', function(childSnapshot, prevChildName) {
 		// Assign snapshot JSON to a variable
 			var val = childSnapshot.val();
@@ -688,26 +631,9 @@ function updateListeners() {
 			$('#partyDistance').html(val.partyDistanceMsg);
 		});
 
-	// Firebase reference for client-generated event messages. 
-	GLOB.inviteClientRef = GLOB.first30SecondsRef.child('pages/invite/clientEvents');
+		// inTransit page listeners
 
-	// User selects 'Decline invitation', requests server response
-		$(document).on( "click", "#inviteDecline", function() {
-		// send Decline_invitation message with 'true' value to Firebase
-			GLOB.inviteClientRef.push( { Decline_invitation : true } );
-		});
-
-	// User accepts an invitation
-		$(document).on( "click", "#inviteAccept", function() {
-		// send Accept_invitation message with 'true' value to Firebase
-			GLOB.inviteClientRef.push( { Accept_invitation : true } );
-		});
-
-// INTRANSIT PAGE
-	// Firebase reference for page data for inTransit page
-	GLOB.inTransitServerRef = GLOB.first30SecondsRef.child('pages/inTransit/serverEvents')
-
-	// Server sends initial page data to Firebase
+		// Server sends initial page data to Firebase
 		GLOB.inTransitServerRef.on('child_added', function(childSnapshot, prevChildName) {
 		// Assign snapshot JSON to a variable
 			var val = childSnapshot.val();
@@ -734,7 +660,7 @@ function updateListeners() {
 			$('#mapLink').attr('href', val.partyMapLinkMsg);
 		});
 
-	// Server changes initial page data
+		// Server changes page data
 		GLOB.inTransitServerRef.on('child_changed', function(childSnapshot, prevChildName) {
 		// Assign snapshot JSON to a variable
 			var val = childSnapshot.val();
@@ -761,42 +687,15 @@ function updateListeners() {
 			$('#mapLink').attr('href', val.partyMapLinkMsg);
 		});
 
-	// Firebase reference for client-generated event messages. 
-	GLOB.inTransitClientRef = GLOB.first30SecondsRef.child('pages/inTransit/clientEvents');
+		// atParty page listeners
 
-	// This function is triggered when client countdown reaches zero before the user arrives at the destination
-		function cli_inTransitProximityTimeout() {
-			// open Waiting overlay
-			sys_openWaiting();
-			// send clientProximityTimeout message with 'true' value to Firebase
-			GLOB.inTransitClientRef.push( { clientProximityTimeout : true } );
-		}
+		// There is no page data required before loading this page.
 
-	// Client cancels the party invitation
-		$(document).on( "click", "#confirmCancelInvite", function() {
-			// Close the confirmation popup
-			$( "#userCancel" ).popup( "close" );
-			// Send the server a message that user cancelled the party invitation
-			GLOB.inTransitClientRef.push( { Cancel_invitation : true } );
-		});
-
-	// Client opened the 'cancel party' overlay but decides to close the overlay instead
-		$(document).on( "click", "#returnToinTransit", function() {
-			// Close the confirmation popup
-			$( "#userCancel" ).popup( "close" );
-		});
-
-// ATPARTY PAGE
-	// There is no page data required before loading this page.
-	// Firebase reference for atParty server events
-	GLOB.atPartyServerRef = GLOB.first30SecondsRef.child('pages/atParty/serverEvents/');
-
-	// Listener: Server response to 'Pause Matches' request
+		// Server response to 'Pause Matches' request
 		GLOB.atPartyServerRef.child('pause').on('child_added', function(childSnapshot, prevChildName) {
 			var val = childSnapshot.val();
 			sys_closeWaiting();
-
-			if (val == true) {			
+				if (val == true) {			
 				$('#atPartyIntroPaused').show();
 				$('#atPartyIntro').hide();
 			};
@@ -806,12 +705,11 @@ function updateListeners() {
 			};
 		});
 
-	// Listener: Server response to 'Pause Matches' request
+		// Server response to 'Pause Matches' request
 		GLOB.atPartyServerRef.child('pause').on('child_changed', function(childSnapshot, prevChildName) {
 			var val = childSnapshot.val();
 			sys_closeWaiting();
-
-			if (val == true) {			
+				if (val == true) {			
 				$('#atPartyIntroPaused').show();
 				$('#atPartyIntro').hide();
 			};
@@ -821,10 +719,7 @@ function updateListeners() {
 			};
 		});
 
-	// Firebase reference for 'otherUser' server messages
-	GLOB.atPartyOtherUserRef = GLOB.first30SecondsRef.child('pages/atParty/otherUser');
-
-	// Server adds an otherUser to the atParty list
+		// Server adds an otherUser to the atParty list
 		// This listener dynamically creates the thumbnail of an otherUser for display in the party list 
 		// including image, name, age, rating, and a link to the rateOtherUser page. Description is also
 		// carried into the div for use in rateOtherUser and Match pages but is hidden here.
@@ -865,14 +760,16 @@ function updateListeners() {
 							"<span id='desc" + UID + "' class='hidden'>" + val.otherUserDescMsg + "</span></span>" + 
 						"</div>" + 
 					"</div>"  +
-				"</a>");
-		// Update the rating display element with the converted rating value
+				"</a>"
+			);
+
+			// Update the rating display element with the converted rating value
 			sys_globalRateDisplay(val.otherUserRatingMsg, UID);	
-		// Fade in the thumbnail
+			// Fade in the thumbnail
 			$('#div' + UID).fadeIn(500);
 		});
 
-	// Server changes one or more elements of data for user with a unique ID.
+		// Server changes one or more elements of data for user with a unique ID.
 		// These data elements will also be used for potential creation of rateOtherUser and Match pages.		
 		GLOB.atPartyOtherUserRef.on('child_changed', function(childSnapshot, prevChildName) {
 			var val = childSnapshot.val();
@@ -927,7 +824,7 @@ function updateListeners() {
 			}
 		});
 
-	// Server removes an otherUser from the atParty list
+		// Server removes an otherUser from the atParty list
 		GLOB.atPartyOtherUserRef.on('child_removed', function(oldChildSnapshot) {
 			// Retrieve the Unique ID, which is the key value for the dataset and used as 
 			// the data identifier for the entire thumbnail set.
@@ -939,7 +836,7 @@ function updateListeners() {
 			$('#div' + UID).fadeOut(500, function() { $(this).remove(); });
 		});
 
-	// Server sends a message to open or close a 'Better Party' overlay
+		// Server sends a message to open or close a 'Better Party' overlay
 		GLOB.atPartyServerRef.child('betterParty').on('child_added', function(childSnapshot, prevChildName) {
 			var val = childSnapshot.val();
 			// If Better_party = true, open the 'Better Party' dialog
@@ -959,7 +856,7 @@ function updateListeners() {
 			};
 		});
 
-	// Server sends a message to open or close a 'Better Party' overlay
+		// Server sends a message to open or close a 'Better Party' overlay
 		GLOB.atPartyServerRef.child('betterParty').on('child_changed', function(childSnapshot, prevChildName) {
 			var val = childSnapshot.val();
 			// If Better_party = true, open the 'Better Party' dialog
@@ -979,8 +876,371 @@ function updateListeners() {
 			};
 		});
 
-	// Firebase reference for client-generated event messages. 
-	GLOB.atPartyClientRef = GLOB.first30SecondsRef.child('pages/atParty/clientEvents');
+		// rateOtherUser page listeners
+
+		// Server sends a unique ID which is used to populate the rateOtherUser page.
+		GLOB.rateOtherUserServerRef.child('pageData').on('child_added', function(childSnapshot, prevChildName) {
+			// Retrieve the unique ID from the Firebase message
+			var UID = childSnapshot.val();
+			// Use the unique ID and use it to identify the current instance of the page. This will be needed 
+			// when the client returns the rating for this otherUser.
+			$('#rateOtherUserUID').html( UID );
+			// Retrieve the existing data from the thumbnail on the atParty page and populate the corresponding
+			// rateOtherUser page component 
+			var otherUserImage  = $('#image' + UID ).attr('src')
+			$('#rateOtherUserName').html( $('#name' + UID).html() );
+			$('#rateOtherUserAge').html( $('#age' + UID).html() );					
+			$('#rateOtherUserImage').attr('src', otherUserImage );
+			$('#rateOtherUserDesc').html( $('#desc' + UID).html() );
+			// Retrieve the string denoting the value for the current rating
+			var rateOtherUserRateVal = $("#ratingNumber" + UID).html()
+	 		// Populate the corresponding page element.
+			$(document).on("pageinit", "#rateOtherUser", function () {
+				$('#rateOtherUserRating').val( rateOtherUserRateVal ).selectmenu("refresh", true);
+				// If rateOtherUserRatingMsg has a value of -1, that means the otherUser hasn't been rated by the user yet
+				// and the 'submit' button should be disabled.
+				if (rateOtherUserRateVal == "-1"){
+					$('#ratingSubmit').button('disable');
+				};
+				// Otherwise the value must be between 0 and 5 inclusive. If rateOtherUserRatingMsg falls in that range,
+				// the user has previously rated this otherUser and the 'submit' button should be enabled.
+				if ( (rateOtherUserRateVal > "-1") && (rateOtherUserRateVal < "6") ) {
+					$('#ratingSubmit').button('enable');
+				};
+			});
+		});
+
+		// Server sends a new unique ID which is used to repopulate the rateOtherUser page.
+		GLOB.rateOtherUserServerRef.child('pageData').on('child_changed', function(childSnapshot, prevChildName) {
+			// Retrieve the unique ID from the Firebase message
+			var UID = childSnapshot.val();
+			// Use the unique ID and use it to identify the current instance of the page. This will be needed 
+			// when the client returns the rating for this otherUser.
+			$('#rateOtherUserUID').html( UID );
+			// Retrieve the existing data from the thumbnail on the atParty page and populate the corresponding
+			// rateOtherUser page component 
+			var otherUserImage  = $('#image' + UID ).attr('src')
+			$('#rateOtherUserName').html( $('#name' + UID).html() );
+			$('#rateOtherUserAge').html( $('#age' + UID).html() );					
+			$('#rateOtherUserImage').attr('src', otherUserImage );
+			$('#rateOtherUserDesc').html( $('#desc' + UID).html() );
+			// Retrieve the string denoting the value for the current rating
+			var rateOtherUserRateVal = $("#ratingNumber" + UID).html()
+	 		// Populate the corresponding page element.
+			$('#rateOtherUserRating').val( rateOtherUserRateVal ).selectmenu("refresh", true);
+			// If rateOtherUserRatingMsg has a value of -1, that means the otherUser hasn't been rated by the user yet
+			// and the 'submit' button should be disabled.
+			if (rateOtherUserRateVal == "-1"){
+				$('#ratingSubmit').button('disable');
+			};
+			// Otherwise the value must be between 0 and 5 inclusive. If rateOtherUserRatingMsg falls in that range,
+			// the user has previously rated this otherUser and the 'submit' button should be enabled.
+			if ( (rateOtherUserRateVal > "-1") && (rateOtherUserRateVal < "6") ) {
+				$('#ratingSubmit').button('enable');
+			};
+		});
+
+		// match page listeners
+
+		// Server sends a unique ID which is used to populate the match page.
+		GLOB.matchServerRef.child('pageData').on('child_added', function(childSnapshot, prevChildName) {
+			// Retrieve the unique ID from the Firebase message
+			var UID = childSnapshot.val();
+			// Retrieve the existing data from the thumbnail on the atParty page and populate the corresponding
+			// Match page component 
+			var matchImg  = $('#image' + UID ).attr('src')
+			$('#matchUID').html( UID );
+			$('#matchName').html( $('#name' + UID).html() );
+			$('#matchAge').html( $('#age' + UID).html() );					
+			$('#matchImage').attr('src', matchImg );
+			$('#matchDesc').html( $('#desc' + UID).html() );
+		});
+
+		// Server sends another unique ID which is used to repopulate the match page.
+		GLOB.matchServerRef.child('pageData').on('child_changed', function(childSnapshot, prevChildName) {
+			// Retrieve the unique ID from the Firebase message
+			var UID = childSnapshot.val();
+			// Retrieve the existing data from the thumbnail on the atParty page and populate the corresponding
+			// Match page component 
+			var matchImg  = $('#image' + UID ).attr('src')
+			$('#matchUID').html( UID );
+			$('#matchName').html( $('#name' + UID).html() );
+			$('#matchAge').html( $('#age' + UID).html() );					
+			$('#matchImage').attr('src', matchImg );
+			$('#matchDesc').html( $('#desc' + UID).html() );
+		});
+
+		// profile page listeners
+
+		// Server sends existing profile data to Firebase
+		GLOB.profileServerRef.on('child_added', function(childSnapshot, prevChildName) {
+			var val = childSnapshot.val();
+			// Prepopulate profile form fields with existing profile data
+			$('#profileName').val(val.profileNameMsg);
+			$('#profileDesc').val(val.profileDescMsg);
+			$('#profileImage').attr('src', val.profileImageMsg);
+			// Initialize the age sliders			
+			$(document).on('pagebeforeshow', '#profile',function(){ 
+				// Populate the age sliders with values from the Firebase message      
+				$('#profileAge').val(val.profileAgeMsg);
+				$('#minAge').val(val.minAgeMsg);
+				$('#maxAge').val(val.maxAgeMsg);
+				// Refresh the sliders. Unlike most form and page elements, the sliders must be manually refreshed.
+				$('#profileAge').slider('refresh');
+				$('#minAge').slider('refresh');
+				$('#maxAge').slider('refresh');
+			});
+		});
+
+		// Server updates profile image
+		GLOB.profileServerRef.on('child_changed', function(childSnapshot, prevChildName) { 
+			var val = childSnapshot.val();
+			// Add or replace the current profile image with the new profile image
+			$('#profileImage').attr('src', val.profileImageMsg);
+		});
+
+		// imageUpload page listeners
+
+		// Server sends imageUpload page data. The pageinit event handler is required for the plugin to function properly, 
+		// so the .export event is included here as part of the plugin function set.
+		$(document).on("pageinit", "#imageUpload", function () {
+			GLOB.imageUploadServerRef.on('child_added', function(childSnapshot, prevChildName) {
+				var val = childSnapshot.val();
+				// The imageUpload page uses the Cropit image upload plugin by Scott Cheng. This allows the user to open
+				// an image from their device and then zoom, pan, crop, and upload it to Firebase. For API and details 
+				// on its use, refer to http://scottcheng.github.io/cropit/
+				// Function to execute the Cropit plugin
+				$('.image-editor').cropit({
+					// Post an image to the page display. Val is the variable representing the childSnapshot data 
+					// from the Firebase initialization message.
+					imageState: {
+						src: val.currentImageMsg
+					},
+					// If an image is already at full resolution, the plugin disables the zoom slider, so hide it.
+					onZoomDisabled:function(){			
+						$('#zoomElement').hide();
+					},
+					// If an image can be zoomed, display the zoom slider.
+					onZoomEnabled:function(){
+						$('#zoomElement').show();
+					},
+					// The 'Save profile photo' button is enabled when a new image is uploaded.
+					onFileChange:function(){								
+						$('#imageUploadSave').button('enable');
+					}
+				});
+				if (val.hideCancelButtonMsg == true) {
+					$('#imageUploadCancel').button('disable');
+				};
+				if (val.hideCancelButtonMsg == false) {
+					$('#imageUploadCancel').button('enable');
+				};
+			});
+
+			// Server changes imageUpload page data
+			GLOB.imageUploadServerRef.on('child_changed', function(childSnapshot, prevChildName) {
+				var val = childSnapshot.val();
+				// The imageUpload page uses the Cropit image upload plugin by Scott Cheng. This allows the user to open
+				// an image from their device and then zoom, pan, crop, and upload it to Firebase. For API and details 
+				// on its use, refer to http://scottcheng.github.io/cropit/
+				// Function to execute the Cropit plugin
+				$('.image-editor').cropit({
+					// Post an image to the page display. Val is the variable representing the childSnapshot data 
+					// from the Firebase initialization message.
+					imageState: {
+						src: val.currentImageMsg
+					},
+					// If an image is already at full resolution, the plugin disables the zoom slider, so hide it.
+					onZoomDisabled:function(){			
+						$('#zoomElement').hide();
+					},
+					// If an image can be zoomed, display the zoom slider.
+					onZoomEnabled:function(){
+						$('#zoomElement').show();
+					},
+					// The 'Save profile photo' button is enabled when a new image is uploaded.
+					onFileChange:function(){								
+						$('#imageUploadSave').button('enable');
+					}
+				});
+				if (val.hideCancelButtonMsg == true) {
+					$('#imageUploadCancel').button('disable');
+				};
+				if (val.hideCancelButtonMsg == false) {
+					$('#imageUploadCancel').button('enable');
+				};
+			});
+
+			// Cropit function called when the user clicks 'Save profile photo'
+			$('.export').click(function() {
+				var imageData = $('.image-editor').cropit('export');
+				// window.open(imageData);
+				GLOB.imageUploadClientRef.push( { New_profile_image : imageData } );
+			});
+				// Disable the 'Save profile photo' button when the plugin is initialized.
+			$('#imageUploadSave').button('disable');
+		});
+	};
+
+
+// CLIENT FIREBASE FUNCTIONS
+
+	// Global client Firebase functions
+	
+	// User clicks 'profile', requesting access to the Profile page.
+	$(document).on( "click", ".profileButton", function() {
+		// send Open_profile message with 'true' value to Firebase
+		GLOB.globalClientRef.push( { Open_profile : true } );
+	});
+
+	// User clicks on an inline alert to request that it be closed.
+	$(document).on( "click", ".alertWrapper", function() {
+		// Open the waiting overlay. Unlike the other functions, this is not triggered by an anchor link.
+		// Anchor links trigger the waiting overlay using the HREF="" tag in the HTML. So we have to call 
+		// the Waiting overlay from here instead.
+		sys_openWaiting();
+		var currentPage = $.mobile.activePage.attr('id')
+		// send Close_alert message with 'true' value to Firebase
+		GLOB.globalClientRef.push( { Close_alert : true } );
+	});
+
+	// newUser page client Firebase functions
+
+	// Send a message to Firebase with the client device's unique ID. 
+	// This function is called when the user clicks "Join the party" from the newUser page.
+	$(document).on( "click", "#joinParty", function() {
+		GLOB.newUserIdRequestRef.push( { "deviceUuid" : GLOB.deviceUuid } );
+	});
+
+	// Paid user authentication
+	// If a paid user migrates to a new device or factory resets an existing device, or otherwise removes the authentication
+	// token from localStorage, the server will need to reauthenticate to restore their credits and profile info. The 
+	// user triggers this function from the newUser page by submitting the email address and the last four digits of the 
+	// credit card used to purchase credits. The server responds to a valid submission by sending an authentication token.
+	function restorePaidUser( formObj ) {
+		// Check if either field was left blank.
+		if (($('#creditEmail').val() == "") || ($('#creditLast4').val() == "")) {
+		// If yes, display an alert notifying the user. No message is sent to Firebase.
+			$.mobile.loading('hide')
+			$('#newUserAlertText').html("You left a required field blank. Please fill in the blank and try again.");				
+			$(newUserAlertWrapper).show();
+			// Use this to adjust the height of the space allocated to the alert so that 
+			// it never covers the page text or elements below it.
+			var containerHeight = $(".alert").height()
+			var containerHeightTrim = parseInt(containerHeight) + 37;			
+			$('.alertWrapper').css("height", containerHeightTrim);
+		} else {
+			// Send a message to the server with the client device's UUID, the entered email address and 
+			// last 4 digits of the paid user's credit card
+			$('.alertWrapper').hide();
+			$.mobile.loading('show', {text:"Waiting...", textVisible: true});
+			GLOB.newUserIdRequestRef.push( {  
+				"deviceUuid" : GLOB.deviceUuid,
+				"payEmail" : $('#creditEmail').val(),
+				"payCard" : $('#creditLast4').val(),
+			} ); 
+		}
+		return false; // We don't want the form to trigger a page load. We want to do that through js. 
+	}
+
+	// imageUpload page client Firebase functions
+
+	// User cancels the image upload
+	$(document).on( "click", "#imageUploadCancel", function() {
+		// send a message to Firebase requesting return to the Profile page
+		GLOB.imageUploadClientRef.push( { Return_toProfile : true } );
+	});
+
+	// profile page client Firebase functions
+
+	// User submits updated profile form
+		function usr_profileUpdate() {
+			// Send the data in the form to Firebase
+			// Check if either field was left blank.
+			if (($('#profileName').val() == "") || ($('#profileAge').val() == "")) {
+			// If yes, hide the waiting overlay and display an alert notifying the user.
+				$.mobile.hidePageLoadingMsg();
+				$('#profileAlertText').html("You left a required field blank. Please complete the form and submit again.");				
+				$(profileAlertWrapper).show();				
+			} else {
+				// Send profile data to Firebase
+				$(profileAlertWrapper).hide();
+				GLOB.profileClientRef.push( {
+					profileUpdate : true,
+					newProfileName : $('#profileName').val(),
+					newProfileAge : $('#profileAge').val(),
+					newProfileMinAge : $('#minAge').val(),
+					newProfileMaxAge : $('#maxAge').val(),
+					newProfileDesc : $('#profileDesc').val(),
+				}); 
+			};
+			return false; // We don't want the form to trigger a page load. We want to do that through js. 
+		}
+
+	// User requests to upload a new profile image.
+		$(document).on( "click", "#profileUploadButton", function() {
+		// send Change_image message with a value of 'true'
+			GLOB.profileClientRef.push( { Change_image : true } );
+		});
+
+	// User opts to close the Profile page and requests a response from the server.
+		$(document).on( "click", "#profileClose", function() {
+		// send Close_profile message with a value of 'true'
+			GLOB.profileClientRef.push( { Close_profile : true } );
+		});
+	// home page client Firebase functions
+
+	// User selects 'Buy credits', requesting server response
+	$(document).on( "click", "#homeBuyCredits", function() {
+		// send homeBuyCredits message with 'true' value to Firebase
+		GLOB.homeClientRef.push( { homeBuyCredits : true } );
+	});
+
+	// User selects 'Find a party', requesting server response
+	$(document).on( "click", "#homeFindParty", function() {
+		// send Find_party message with 'true' value to Firebase
+		GLOB.homeClientRef.push( { Find_party : true } );
+	});
+
+	// invite page client Firebase functions
+
+	// User selects 'Decline invitation', requests server response
+		$(document).on( "click", "#inviteDecline", function() {
+		// send Decline_invitation message with 'true' value to Firebase
+			GLOB.inviteClientRef.push( { Decline_invitation : true } );
+		});
+
+	// User accepts an invitation
+		$(document).on( "click", "#inviteAccept", function() {
+		// send Accept_invitation message with 'true' value to Firebase
+			GLOB.inviteClientRef.push( { Accept_invitation : true } );
+		});
+
+	// inTransit page client Firebase functions
+
+	// This function is triggered when client countdown reaches zero before the user arrives at the destination
+		function cli_inTransitProximityTimeout() {
+			// open Waiting overlay
+			sys_openWaiting();
+			// send clientProximityTimeout message with 'true' value to Firebase
+			GLOB.inTransitClientRef.push( { clientProximityTimeout : true } );
+		}
+
+	// Client cancels the party invitation
+		$(document).on( "click", "#confirmCancelInvite", function() {
+			// Close the confirmation popup
+			$( "#userCancel" ).popup( "close" );
+			// Send the server a message that user cancelled the party invitation
+			GLOB.inTransitClientRef.push( { Cancel_invitation : true } );
+		});
+
+	// Client opened the 'cancel party' overlay but decides to close the overlay instead. No message sent to Firebase.
+		$(document).on( "click", "#returnToinTransit", function() {
+			// Close the confirmation popup
+			$( "#userCancel" ).popup( "close" );
+		});
+
+	// atParty page client Firebase functions
 
 	// Client pauses matches at the party
 		$(document).on( "click", "#pause", function() {
@@ -988,7 +1248,7 @@ function updateListeners() {
 			GLOB.atPartyClientRef.push( { Pause_matches : true } );
 		});
 
-	// Client pauses matches at the party
+	// Client resumes matches at the party
 		$(document).on( "click", "#endPause", function() {
 			// send Pause_matches message with 'false' value to Firebase
 			GLOB.atPartyClientRef.push( { Pause_matches : false } );
@@ -1038,74 +1298,7 @@ function updateListeners() {
 			GLOB.atPartyClientRef.push( { Rate_otherUser : jsonUID } );
 		}
 
-// RATEOTHERUSER PAGE
-	// Firebase reference for page data for rateOtheruser page
-	GLOB.rateOtherUserServerRef = GLOB.first30SecondsRef.child('pages/rateOtherUser/serverEvents');
-
-	// Server sends a unique ID which is used to populate the rateOtherUser page.
-		GLOB.rateOtherUserServerRef.child('pageData').on('child_added', function(childSnapshot, prevChildName) {
-			// Retrieve the unique ID from the Firebase message
-			var UID = childSnapshot.val();
-			// Use the unique ID and use it to identify the current instance of the page. This will be needed 
-			// when the client returns the rating for this otherUser.
-			$('#rateOtherUserUID').html( UID );
-			// Retrieve the existing data from the thumbnail on the atParty page and populate the corresponding
-			// rateOtherUser page component 
-			var otherUserImage  = $('#image' + UID ).attr('src')
-			$('#rateOtherUserName').html( $('#name' + UID).html() );
-			$('#rateOtherUserAge').html( $('#age' + UID).html() );					
-			$('#rateOtherUserImage').attr('src', otherUserImage );
-			$('#rateOtherUserDesc').html( $('#desc' + UID).html() );
-			// Retrieve the string denoting the value for the current rating
-			var rateOtherUserRateVal = $("#ratingNumber" + UID).html()
-	 		// Populate the corresponding page element.
-			$(document).on("pageinit", "#rateOtherUser", function () {
-				$('#rateOtherUserRating').val( rateOtherUserRateVal ).selectmenu("refresh", true);
-				// If rateOtherUserRatingMsg has a value of -1, that means the otherUser hasn't been rated by the user yet
-				// and the 'submit' button should be disabled.
-				if (rateOtherUserRateVal == "-1"){
-					$('#ratingSubmit').button('disable');
-				};
-				// Otherwise the value must be between 0 and 5 inclusive. If rateOtherUserRatingMsg falls in that range,
-				// the user has previously rated this otherUser and the 'submit' button should be enabled.
-				if ( (rateOtherUserRateVal > "-1") && (rateOtherUserRateVal < "6") ) {
-					$('#ratingSubmit').button('enable');
-				};
-			});
-		});
-
-	// Server sends a new unique ID which is used to repopulate the rateOtherUser page.
-		GLOB.rateOtherUserServerRef.child('pageData').on('child_changed', function(childSnapshot, prevChildName) {
-			// Retrieve the unique ID from the Firebase message
-			var UID = childSnapshot.val();
-			// Use the unique ID and use it to identify the current instance of the page. This will be needed 
-			// when the client returns the rating for this otherUser.
-			$('#rateOtherUserUID').html( UID );
-			// Retrieve the existing data from the thumbnail on the atParty page and populate the corresponding
-			// rateOtherUser page component 
-			var otherUserImage  = $('#image' + UID ).attr('src')
-			$('#rateOtherUserName').html( $('#name' + UID).html() );
-			$('#rateOtherUserAge').html( $('#age' + UID).html() );					
-			$('#rateOtherUserImage').attr('src', otherUserImage );
-			$('#rateOtherUserDesc').html( $('#desc' + UID).html() );
-			// Retrieve the string denoting the value for the current rating
-			var rateOtherUserRateVal = $("#ratingNumber" + UID).html()
-	 		// Populate the corresponding page element.
-			$('#rateOtherUserRating').val( rateOtherUserRateVal ).selectmenu("refresh", true);
-			// If rateOtherUserRatingMsg has a value of -1, that means the otherUser hasn't been rated by the user yet
-			// and the 'submit' button should be disabled.
-			if (rateOtherUserRateVal == "-1"){
-				$('#ratingSubmit').button('disable');
-			};
-			// Otherwise the value must be between 0 and 5 inclusive. If rateOtherUserRatingMsg falls in that range,
-			// the user has previously rated this otherUser and the 'submit' button should be enabled.
-			if ( (rateOtherUserRateVal > "-1") && (rateOtherUserRateVal < "6") ) {
-				$('#ratingSubmit').button('enable');
-			};
-		});
-
-	// Firebase reference for client-generated event messages. 
-	GLOB.rateOtherUserClientRef = GLOB.first30SecondsRef.child('pages/rateOtherUser/clientEvents');
+	// rateOtherUser page client Firebase functions
 
 	// User rates an otherUser
 		$(document).on( "click", "#ratingSubmit", function() {
@@ -1117,9 +1310,9 @@ function updateListeners() {
 
 	// User reports offensive behavior
 		$(document).on( "click", "#rateOtherUserConfirmTOS", function() {
-		// close the TOS dialog
+			// close the TOS dialog
 			$('#rateOtherUserTOSDialog').popup('close')
-		// Retrieve the otherUser's unique ID
+			// Retrieve the otherUser's unique ID
 			var UID = $('#rateOtherUserUID').html();
 			// send New_otherUserRating message with the numerical rating value to Firebase
 			GLOB.rateOtherUserClientRef.push( { rateOtherUser_TOSViolation : UID } );
@@ -1127,46 +1320,13 @@ function updateListeners() {
 
 	// User opens 'report offensive behavior' dialog but decides to close the dialog instead
 		$(document).on( "click", "#rateOtherUserCancelTOS", function() {
-		// close the TOS dialog
+			// close the TOS dialog
 			$('#rateOtherUserTOSDialog').popup('close')
-		// Retrieve the otherUser's unique ID
+			// Retrieve the otherUser's unique ID
 			var UID = $('#rateOtherUserUID').html();
 		});
 
-// MATCH PAGE
-	// Firebase reference for page data for rateOtheruser page
-	GLOB.matchServerRef = GLOB.first30SecondsRef.child('pages/match/serverEvents');
-
-	// Server sends a unique ID which is used to populate the match page.
-		GLOB.matchServerRef.child('pageData').on('child_added', function(childSnapshot, prevChildName) {
-			// Retrieve the unique ID from the Firebase message
-			var UID = childSnapshot.val();
-			// Retrieve the existing data from the thumbnail on the atParty page and populate the corresponding
-			// Match page component 
-			var matchImg  = $('#image' + UID ).attr('src')
-			$('#matchUID').html( UID );
-			$('#matchName').html( $('#name' + UID).html() );
-			$('#matchAge').html( $('#age' + UID).html() );					
-			$('#matchImage').attr('src', matchImg );
-			$('#matchDesc').html( $('#desc' + UID).html() );
-		});
-
-	// Listener: Server sends another unique ID which is used to repopulate the match page.
-		GLOB.matchServerRef.child('pageData').on('child_changed', function(childSnapshot, prevChildName) {
-			// Retrieve the unique ID from the Firebase message
-			var UID = childSnapshot.val();
-			// Retrieve the existing data from the thumbnail on the atParty page and populate the corresponding
-			// Match page component 
-			var matchImg  = $('#image' + UID ).attr('src')
-			$('#matchUID').html( UID );
-			$('#matchName').html( $('#name' + UID).html() );
-			$('#matchAge').html( $('#age' + UID).html() );					
-			$('#matchImage').attr('src', matchImg );
-			$('#matchDesc').html( $('#desc' + UID).html() );
-		});
-
-	// Firebase reference for client-generated event messages. 
-	GLOB.matchClientRef = GLOB.first30SecondsRef.child('pages/match/clientEvents');
+	// match page client Firebase functions
 
 	// User closes a match
 		$(document).on( "click", "#matchDoneConfirm", function() {
@@ -1176,7 +1336,7 @@ function updateListeners() {
 			GLOB.matchClientRef.push( { Close_match : true } );
 		});
 
-	// User opened the 'close match dialog' but stays on the match page instead
+	// User opened the 'close match dialog' but stays on the match page instead. No message sent to Firebase.
 		$(document).on( "click", "#matchDoneCancel", function() {
 		// close the confirmation dialog
 			$('#matchDone').popup('close')
@@ -1190,7 +1350,7 @@ function updateListeners() {
 			GLOB.matchClientRef.push( { Cant_find_match : true } );
 		});
 
-	// User opens the 'can't find match' dialog but decides to close the dialog instead
+	// User opens the 'can't find match' dialog but decides to close the dialog instead. No message sent to Firebase.
 		$(document).on( "click", "#cantFindCancel", function() {
 		// close the confirmation dialog
 			$('#cantFindMatch').popup('close')
@@ -1206,172 +1366,10 @@ function updateListeners() {
 			GLOB.matchClientRef.push( { match_TOSViolation : UID } );
 		});
 
-	// User opens 'report offensive behavior' dialog but chooses to cancel instead
+	// User opens 'report offensive behavior' dialog but chooses to cancel instead. No message sent to Firebase.
 		$(document).on( "click", "#matchCancelTOS", function() {
 		// close the TOS dialog
 			$('#matchTOSDialog').popup('close')
-		});
-
-// PROFILE PAGE
-	// Firebase reference for page data for inTransit page
-	GLOB.profileServerRef = GLOB.first30SecondsRef.child('pages/profile/serverEvents');
-
-	// Server sends existing profile data to Firebase
-		GLOB.profileServerRef.on('child_added', function(childSnapshot, prevChildName) {
-			var val = childSnapshot.val();
-			// Prepopulate profile form fields with existing profile data
-			$('#profileName').val(val.profileNameMsg);
-			$('#profileDesc').val(val.profileDescMsg);
-			$('#profileImage').attr('src', val.profileImageMsg);
-			// Initialize the age sliders			
-			$(document).on('pagebeforeshow', '#profile',function(){ 
-				// Populate the age sliders with values from the Firebase message      
-				$('#profileAge').val(val.profileAgeMsg);
-				$('#minAge').val(val.minAgeMsg);
-				$('#maxAge').val(val.maxAgeMsg);
-				// Refresh the sliders. Unlike most form and page elements, the sliders must be manually refreshed.
-				$('#profileAge').slider('refresh');
-				$('#minAge').slider('refresh');
-				$('#maxAge').slider('refresh');
-			});
-		});
-
-	// Server updates profile image
-		GLOB.profileServerRef.on('child_changed', function(childSnapshot, prevChildName) { 
-			var val = childSnapshot.val();
-			// Add or replace the current profile image with the new profile image
-			$('#profileImage').attr('src', val.profileImageMsg);
-		});
-
-	// Firebase reference for client-generated event messages. 
-	GLOB.profileClientRef = GLOB.first30SecondsRef.child('pages/profile/clientEvents');
-
-	// User submits updated profile form
-		function usr_profileUpdate() {
-			// Send the data in the form to Firebase
-			// Check if either field was left blank.
-			if (($('#profileName').val() == "") || ($('#profileAge').val() == "")) {
-			// If yes, hide the waiting overlay and display an alert notifying the user.
-				$.mobile.hidePageLoadingMsg();
-				$('#profileAlertText').html("You left a required field blank. Please complete the form and submit again.");				
-				$(profileAlertWrapper).show();				
-			} else {
-				// Send profile data to Firebase
-				$(profileAlertWrapper).hide();
-				GLOB.profileClientRef.push( {
-					profileUpdate : true,
-					newProfileName : $('#profileName').val(),
-					newProfileAge : $('#profileAge').val(),
-					newProfileMinAge : $('#minAge').val(),
-					newProfileMaxAge : $('#maxAge').val(),
-					newProfileDesc : $('#profileDesc').val(),
-				}); 
-			};
-			return false; // We don't want the form to trigger a page load. We want to do that through js. 
-		}
-
-	// User requests to upload a new profile image.
-		$(document).on( "click", "#profileUploadButton", function() {
-		// send Change_image message with a value of 'true'
-			GLOB.profileClientRef.push( { Change_image : true } );
-		});
-
-	// User opts to close the Profile page and requests a response from the server.
-		$(document).on( "click", "#profileClose", function() {
-		// send Close_profile message with a value of 'true'
-			GLOB.profileClientRef.push( { Close_profile : true } );
-		});
-
-// IMAGEUPLOAD PAGE
-	// Firebase reference for page data for imageUpload page
-	GLOB.imageUploadServerRef = GLOB.first30SecondsRef.child('pages/imageUpload/serverEvents');
-	GLOB.imageUploadClientRef = GLOB.first30SecondsRef.child('pages/imageUpload/clientEvents');
-
-	// Listener: imageUpload page data
-		$(document).on("pageinit", "#imageUpload", function () {
-			GLOB.imageUploadServerRef.on('child_added', function(childSnapshot, prevChildName) {
-				var val = childSnapshot.val();
-				// The imageUpload page uses the Cropit image upload plugin by Scott Cheng. This allows the user to open
-				// an image from their device and then zoom, pan, crop, and upload it to Firebase. For API and details 
-				// on its use, refer to http://scottcheng.github.io/cropit/
-				// Function to execute the Cropit plugin
-				$('.image-editor').cropit({
-					// Post an image to the page display. Val is the variable representing the childSnapshot data 
-					// from the Firebase initialization message.
-					imageState: {
-						src: val.currentImageMsg
-					},
-					// If an image is already at full resolution, the plugin disables the zoom slider, so hide it.
-					onZoomDisabled:function(){			
-						$('#zoomElement').hide();
-					},
-					// If an image can be zoomed, display the zoom slider.
-					onZoomEnabled:function(){
-						$('#zoomElement').show();
-					},
-					// The 'Save profile photo' button is enabled when a new image is uploaded.
-					onFileChange:function(){								
-						$('#imageUploadSave').button('enable');
-					}
-				});
-				if (val.hideCancelButtonMsg == true) {
-					$('#imageUploadCancel').button('disable');
-				};
-				if (val.hideCancelButtonMsg == false) {
-					$('#imageUploadCancel').button('enable');
-				};
-			});
-
-			GLOB.imageUploadServerRef.on('child_changed', function(childSnapshot, prevChildName) {
-				var val = childSnapshot.val();
-				// The imageUpload page uses the Cropit image upload plugin by Scott Cheng. This allows the user to open
-				// an image from their device and then zoom, pan, crop, and upload it to Firebase. For API and details 
-				// on its use, refer to http://scottcheng.github.io/cropit/
-				// Function to execute the Cropit plugin
-				$('.image-editor').cropit({
-					// Post an image to the page display. Val is the variable representing the childSnapshot data 
-					// from the Firebase initialization message.
-					imageState: {
-						src: val.currentImageMsg
-					},
-					// If an image is already at full resolution, the plugin disables the zoom slider, so hide it.
-					onZoomDisabled:function(){			
-						$('#zoomElement').hide();
-					},
-					// If an image can be zoomed, display the zoom slider.
-					onZoomEnabled:function(){
-						$('#zoomElement').show();
-					},
-					// The 'Save profile photo' button is enabled when a new image is uploaded.
-					onFileChange:function(){								
-						$('#imageUploadSave').button('enable');
-					}
-				});
-				if (val.hideCancelButtonMsg == true) {
-					$('#imageUploadCancel').button('disable');
-				};
-				if (val.hideCancelButtonMsg == false) {
-					$('#imageUploadCancel').button('enable');
-				};
-			});
-
-
-			// Cropit function called when the user clicks 'Save profile photo'
-			$('.export').click(function() {
-				var imageData = $('.image-editor').cropit('export');
-				// window.open(imageData);
-				GLOB.imageUploadClientRef.push( { New_profile_image : imageData } );
-			});
-
-			// Disable the 'Save profile photo' button when the plugin is initialized.
-			$('#imageUploadSave').button('disable');
-		});
-
-
-	// User cancels the image upload
-		$(document).on( "click", "#imageUploadCancel", function() {
-			// send a message to Firebase requesting return to the Profile page
-			GLOB.imageUploadClientRef.push( { Return_toProfile : true } );
 		});
 
 // INITIALIZATION
