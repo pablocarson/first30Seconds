@@ -3,7 +3,14 @@
 	GLOB = [];
 	// Initialize the global variable for android device UUID
 	GLOB.deviceUuid = "";
-	// Reset function: Initialize the unit test.
+
+ 	// Reset function: Initialize the unit test.
+	function initializeUnitTest() {
+		// Return the page to the Splash page.
+		$.mobile.changePage('#splash');
+		// Perform a page reset to clear all data.
+		document.location.reload(true);
+	};
 
 // CODE REQUIRED FOR UNIT TEST
 	// This allows us to run the unit test as an array of individual test components.
