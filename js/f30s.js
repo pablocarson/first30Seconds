@@ -87,6 +87,9 @@
 	GLOB.globalClientRef = GLOB.first30SecondsRef.child('global/clientEvents');
 	// Firebase reference for server alert messages (global)
 	GLOB.globalServerAlertRef = GLOB.first30SecondsRef.child('global/alerts');
+	// Firebase reference for server alert messages for the newUser page only. We need a separate reference because
+	// if we're on the newUser page we don't have an authentication token yet, so we use the device.uuid channel.
+	GLOB.newuserServerAlertRef = GLOB.first30SecondsRef.child('global/alerts');
 	// Firebase reference for server messages for the Stripe Checkout overlay. Though we're currently only using it 
 	// on the Home page, the Stripe overlay can be called from any page, therefore we'll treat it as global.
 	GLOB.globalServerStripeRef = GLOB.first30SecondsRef.child('Stripe/serverEvents');
@@ -145,7 +148,10 @@
 			$.mobile.changePage("#newUser")
 			// Create a unique Firebase reference based on the device UUID. We set this as a global function so the reference remains
 			// accessible after the deviceReady event functions are complete.
-			GLOB.newUserIdResponseRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid);
+			GLOB.newUserIdResponseRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid + '/authenticationToken');
+			// Firebase reference for server alert messages for the newUser page only. We need a separate reference because
+			// if we're on the newUser page we don't have an authentication token yet, so we use the device.uuid channel.
+			GLOB.newuserServerAlertRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid + '/alerts');
 			// Create a listener based on this reference. Since it's unique, the server will use it to send an authentication
 			// token to the device. 
 			GLOB.newUserIdResponseRef.on('child_added', function(childSnapshot, prevChildName) {
@@ -336,9 +342,8 @@
 	// Manually close an alert. 
 	// We need this for the newUser page: since there's no way for the server to know
 	// if a faulty form submission was executed by an unauthenticated user, the user must close the alert manually.
-	$(document).on( "click", "#newUserAlertWrapper", function() {
+	$(document).on( "click", ".manualAlertWrapper", function() {
 		$('.manualAlertWrapper').hide();
-		$('.alert').html("");
 	});
 
 
@@ -481,7 +486,84 @@
 			// If the server set the removeWaiting flag to true, close any open 'Waiting...' overlay.
 			// If a waiting overlay isn't open, the command will be ignored.
 			if (val.removeWaitingMsg == true) {
-					sys_closeWaiting();
+				sys_closeWaiting();
+			};
+			// If the alert message is empty, close the alert.
+			if (val.alertMsg == "") {
+				$('.alertWrapper').hide();
+			} else {
+				// Extract the alert text from the message		
+				var jsonAlert = JSON.stringify( val.alertMsg );
+				// Populate the text in the alert. By specifying the entire class, we ensure that 
+				// the current page alert text is populated regardless of what that page is.
+				$('.alert').html(val.alertMsg);
+				// Use a slight timeout to avoid collision with the command to populate the alert
+				setTimeout (function() {
+					// Display the alert component. By specifying the entire class, we ensure that 
+					// the alert is displayed on the page that's currently active.
+					$('.alertWrapper').show();
+					// Derive the current page ID
+					var currentPage = $.mobile.activePage.attr('id')
+					// Convert this to the alert ID for the current page. For example,
+					// if the page ID is inTransit, the relevant alert ID is #inTransiTAlertText				
+					var currentAlertId = "#" + currentPage + "AlertText";
+					// Derive the height of the populated alert box and adjust the height of the 
+					// space allocated to the alert so that it never covers the page text or elements 
+					// below it, regardless of how many lines of text may be in the alert.
+					var containerHeight = $(currentAlertId).height()
+					var containerHeightTrim = parseInt(containerHeight) + 37;			
+					$('.alertWrapper').css("height", containerHeightTrim);
+				}, 10);		
+			};		
+		});
+
+			
+		// Server creates an alert
+		GLOB.newUserServerAlertRef.on('child_added', function(childSnapshot, prevChildName) {
+			// Retrieve the JSON string stored in alertMsg	
+			var val = childSnapshot.val();
+			// If the server set the removeWaiting flag to true, close any open 'Waiting...' overlay.
+			// If a waiting overlay isn't open, the command will be ignored.
+			if (val.removeWaitingMsg == true) {
+				sys_closeWaiting();
+			};
+			// If the alert message is empty, close the alert.
+			if (val.alertMsg == "") {
+				$('.alertWrapper').hide();
+			} else {
+				// Extract the alert text from the message		
+				var jsonAlert = JSON.stringify( val.alertMsg );
+				// Populate the text in the alert. By specifying the entire class, we ensure that 
+				// the current page alert text is populated regardless of what that page is.
+				$('.alert').html(val.alertMsg);
+				// Use a slight timeout to avoid collision with the command to populate the alert
+				setTimeout (function() {
+					// Display the alert component. By specifying the entire class, we ensure that 
+					// the alert is displayed on the page that's currently active.
+					$('.alertWrapper').show();
+					// Derive the current page ID
+					var currentPage = $.mobile.activePage.attr('id')
+					// Convert this to the alert ID for the current page. For example,
+					// if the page ID is inTransit, the relevant alert ID is #inTransiTAlertText				
+					var currentAlertId = "#" + currentPage + "AlertText";
+					// Derive the height of the populated alert box and adjust the height of the 
+					// space allocated to the alert so that it never covers the page text or elements 
+					// below it, regardless of how many lines of text may be in the alert.
+					var containerHeight = $(currentAlertId).height()
+					var containerHeightTrim = parseInt(containerHeight) + 37;			
+					$('.alertWrapper').css("height", containerHeightTrim);
+				}, 10);		
+			};		
+		});
+
+		// Server changes an alert
+		GLOB.newUserServerAlertRef.on('child_changed', function(childSnapshot, prevChildName) {
+			// Retrieve the JSON string stored in alertMsg	
+			var val = childSnapshot.val();
+			// If the server set the removeWaiting flag to true, close any open 'Waiting...' overlay.
+			// If a waiting overlay isn't open, the command will be ignored.
+			if (val.removeWaitingMsg == true) {
+				sys_closeWaiting();
 			};
 			// If the alert message is empty, close the alert.
 			if (val.alertMsg == "") {
@@ -1127,10 +1209,11 @@
 	function restorePaidUser( formObj ) {
 		// Check if either field was left blank.
 		if (($('#creditEmail').val() == "") || ($('#creditLast4').val() == "")) {
-		// If yes, display an alert notifying the user. No message is sent to Firebase.
+		// Since the default action is to open the Waiting overlay, we want to close it when displaying the error,
+		// allowing the user to fill the required field and resubmit.
 			$.mobile.loading('hide')
-			$('#newUserAlertText').html("You left a required field blank. Please fill in the blank and try again.");				
-			$(newUserAlertWrapper).show();
+//			$('#newUserManualAlertText').html("You left a required field blank. Please fill in the blank and try again.");				
+			$(newUserManualAlertWrapper).show();
 			// Use this to adjust the height of the space allocated to the alert so that 
 			// it never covers the page text or elements below it.
 			var containerHeight = $(".alert").height()
@@ -1139,7 +1222,7 @@
 		} else {
 			// Send a message to the server with the client device's UUID, the entered email address and 
 			// last 4 digits of the paid user's credit card
-			$('.alertWrapper').hide();
+			$('.manualAlertWrapper').hide();
 			$.mobile.loading('show', {text:"Waiting...", textVisible: true});
 			GLOB.newUserIdRequestRef.push( {  
 				"deviceUuid" : GLOB.deviceUuid,
@@ -1167,8 +1250,7 @@
 			if (($('#profileName').val() == "") || ($('#profileAge').val() == "")) {
 			// If yes, hide the waiting overlay and display an alert notifying the user.
 				$.mobile.hidePageLoadingMsg();
-				$('#profileAlertText').html("You left a required field blank. Please complete the form and submit again.");				
-				$(profileAlertWrapper).show();				
+				$(profileManualAlertWrapper).show();				
 			} else {
 				// Send profile data to Firebase
 				$(profileAlertWrapper).hide();

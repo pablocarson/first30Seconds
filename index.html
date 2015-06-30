@@ -49,22 +49,28 @@
 
 	<div data-role="content"><!-- content -->
 	
-		<!-- Inline alert. Hidden by default.
-		
-		Body text of alert is generated dynamically by system or in response to user actions. 
-		User can close manually, otherwise alert closes when user initiates an action on the page 
-		or when alert is superceded by a newer system alert. -->
-		<div id="newUserAlertWrapper" class="manualAlertWrapper">
-		
+		<!-- Inline server alert. Hidden by default. Body text of alert is generated dynamically by system. 
+		Alert is closed by server, or is refreshed when alert content changes. -->
+		<div id="newUserAlertWrapper" class="alertWrapper">
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the 
 			element communicates this to the user.-->
 			<input type="button" data-role="button" data-theme="d" data-mini="true" value="Close" data-icon="delete" data-iconpos="notext" class="ui-btn-right">
-			
 			<div class="alert" id="newUserAlertText"><!-- System-generated alert copy appears here -->
 			</div>
 			<div class="spacer10px"></div><!-- Spacer between alert and page content -->
+		</div>
 
-			
+		<!-- Inline client alert. Hidden by default.
+		Alert content is static and is generated when user fails to enter a required field. 
+		User closes the alert manually. -->
+		<div id="newUserManualAlertWrapper" class="manualAlertWrapper">
+			<!-- User 'close' element. User can select anywhere on the alert to close it but the 
+			element communicates this to the user.-->
+			<input type="button" data-role="button" data-theme="d" data-mini="true" value="Close" data-icon="delete" data-iconpos="notext" class="ui-btn-right">
+			<div class="manualAlert" id="newUserManualAlertText">
+				You left a required field blank. Please complete the form and submit again.
+			</div>
+			<!-- <div class="spacer10px"></div>Spacer between alert and page content -->
 		</div>
 
 		<!-- Paid users will use this form to restore profile and credits. -->
@@ -153,10 +159,8 @@
 
 	<div data-role="content" style="padding:0px"><!-- content. Spans entire width of display. -->
 	 
-		<!-- Inline alert. Hidden by default.
-		Body text of alert is generated dynamically by system or in response to user actions. 
-		User can close manually, otherwise alert closes when user initiates an action on the page 
-		or when alert is supplanted by a newer system alert. -->
+		<!-- Inline server alert. Hidden by default. Body text of alert is generated dynamically by system. 
+		Alert is closed by server, or is refreshed when alert content changes. -->
 		<div id="imageUploadAlertWrapper" class="alertWrapper" style="margin-top: 20px">
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
 			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
@@ -240,16 +244,27 @@
 	
 	<div data-role="content">
 
-		<!-- Inline alert. Hidden by default.
-		Body text of alert is generated dynamically by system or in response to user actions. 
-		User can close manually, otherwise alert closes when user initiates an action on the page 
-		or when alert is supplanted by a newer system alert. -->
+		<!-- Inline server alert. Hidden by default. Body text of alert is generated dynamically by system. 
+		Alert is closed by server, or is refreshed when alert content changes. -->
 		<div id="profileAlertWrapper" class="alertWrapper profileAlertWrapper">
 	
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
 			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
 			<div class="alert" id="profileAlertText"><!-- System-generated alert copy goes here -->
 			</div>
+		</div>
+
+		<!-- Inline client alert. Hidden by default.
+		Alert content is static and is generated when user fails to enter a required field. 
+		User closes the alert manually. -->
+		<div id="profileManualAlertWrapper" class="manualAlertWrapper">
+			<!-- User 'close' element. User can select anywhere on the alert to close it but the 
+			element communicates this to the user.-->
+			<input type="button" data-role="button" data-theme="d" data-mini="true" value="Close" data-icon="delete" data-iconpos="notext" class="ui-btn-right">
+			<div class="manualAlert" id="profileManualAlertText">
+				You left a required field blank. Please complete the form and submit again.
+			</div>
+			<!-- <div class="spacer10px"></div>Spacer between alert and page content -->
 		</div>
 		
 		<!-- Profile submission form. Initial values will be populated by system via Firebase. -->
@@ -268,7 +283,7 @@
 			<div class="spacer5px"><!-- Spacer between photo and other form content -->
 			</div><br>
  
-			<label for="profileName">User name:</label>
+			<label for="profileName">Name:</label>
 			<input type="text" name="profileName" id="profileName" value="" placeholder="Required field" data-mini="true">
 			<div class="spacer5px"></div>
 
@@ -283,7 +298,9 @@
 			</div>
  			<div class="spacer5px"></div>
   
-			<textarea cols="40" name="textarea" id="profileDesc" placeholder="Description (max 500 characters)" data-mini="true"></textarea>         
+			<label for="textarea">Description (max 500 characters):</label>                
+			<textarea cols="40" name="textarea" id="profileDesc" maxlength="500" data-mini="true">Example: I like walks on the beach and puppies and kittens and stuff.
+			</textarea>
 			<div class="spacer5px"></div>
 			<div class="ui-grid-a"><!-- Pause party participation -->
 				<div class="ui-block-a">
@@ -344,10 +361,8 @@
 
 	<div data-role="content"><!-- content -->
 	
-		<!-- Inline alert. Hidden by default.
-		Body text of alert is generated dynamically by system or in response to user actions. 
-		User can close manually, otherwise alert closes when user initiates an action on the page 
-		or when alert is supplanted by a newer system alert. -->
+		<!-- Inline server alert. Hidden by default. Body text of alert is generated dynamically by system. 
+		Alert is closed by server, or is refreshed when alert content changes. -->
 		<div id="homeAlertWrapper" class="alertWrapper">
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
 			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
@@ -429,10 +444,8 @@
   
 	<div data-role="content"><!-- content -->
  
-		<!-- Inline alert. Hidden by default.
-		Body text of alert is generated by system or in response to user actions. 
-		User can close manually, otherwise alert closes when user initiates an action on the page 
-		or when alert is supplanted by a newer system alert. -->
+		<!-- Inline server alert. Hidden by default. Body text of alert is generated dynamically by system. 
+		Alert is closed by server, or is refreshed when alert content changes. -->
 		<div id="inviteAlertWrapper" class="alertWrapper">
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the 
 			element communicates this to the user.-->
@@ -577,10 +590,8 @@
 	<div data-role="content"><!-- content -->
 		
 
-		<!-- Inline alert. Hidden by default.
-		Body text of alert is generated dynamically by system or in response to user actions. 
-		User can close manually, otherwise alert closes when user initiates an action on the page 
-		or when alert is supplanted by a newer system alert. -->
+		<!-- Inline server alert. Hidden by default. Body text of alert is generated dynamically by system. 
+		Alert is closed by server, or is refreshed when alert content changes. -->
 		<div id="inTransitAlertWrapper" class="alertWrapper">
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
 			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
@@ -715,18 +726,14 @@
 		This is the only content element in this page until others join the party. -->
 		<div id="atPartyIntroContainer" style="background-color:#f0f0f0; padding:15px;">
 
-			<!-- Inline alert. Hidden by default.
-			Body text of alert is generated dynamically by system or in response to user actions. 
-			User can close manually, otherwise alert closes when user initiates an action on the page 
-			or when alert is supplanted by a newer system alert. -->
-			<div id="atPartyAlertWrapper" class="alertWrapper">
-	
-				<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
-				<input type="button" data-mini="true" data-icon="delete" value="Close" data-iconpos="notext" class="ui-btn-right">
-				<div class="alert" id="atPartyAlertText">
-				</div>
-
-			</div>   
+		<!-- Inline server alert. Hidden by default. Body text of alert is generated dynamically by system. 
+		Alert is closed by server, or is refreshed when alert content changes. -->
+		<div id="atPartyAlertWrapper" class="alertWrapper">	
+			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
+			<input type="button" data-mini="true" data-icon="delete" value="Close" data-iconpos="notext" class="ui-btn-right">
+			<div class="alert" id="atPartyAlertText">
+			</div>
+		</div>   
 		
 			<div id ="atPartyIntro" style="text-shadow:none; color:#000000;">Guests show up below as they arrive. Review them and 
 			select your level of interest. The more you review, the higher the odds of a match.
@@ -906,10 +913,8 @@
 
 	<div data-role="content" style="padding:0px"><!-- content. Spans entire width of display. -->
 
-		<!-- Inline alert. Hidden by default.
-		Body text of alert is generated dynamically by system or in response to user actions. 
-		User can close manually, otherwise alert closes when user initiates an action on the page 
-		or when alert is supplanted by a newer system alert. -->
+		<!-- Inline server alert. Hidden by default. Body text of alert is generated dynamically by system. 
+		Alert is closed by server, or is refreshed when alert content changes. -->
 		<div id="rateOtherUserAlertWrapper" class="alertWrapper rateMatchAlertWrapper">
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
 			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
@@ -1028,10 +1033,8 @@
 	<div data-role="content" style="padding:0px"><!-- content. Spans entire width of display. -->
 
 	 
-		<!-- Inline alert. Hidden by default.
-		Body text of alert is generated dynamically by system or in response to user actions. 
-		User can close manually, otherwise alert closes when user initiates an action on the page 
-		or when alert is supplanted by a newer system alert. -->
+		<!-- Inline server alert. Hidden by default. Body text of alert is generated dynamically by system. 
+		Alert is closed by server, or is refreshed when alert content changes. -->
 		<div id="matchAlertWrapper" class="alertWrapper rateMatchAlertWrapper">
 			<!-- User 'close' element. User can select anywhere on the alert to close it but the element communicates this to the user.-->
 			<input type="button" data-mini="true" data-icon="delete" data-iconpos="notext" value="Close" class="ui-btn-right">
