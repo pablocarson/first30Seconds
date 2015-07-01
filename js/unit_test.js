@@ -335,7 +335,7 @@ function unitTests() {
                     // Initialize a new global variable
                         GLOB.usr_newUserCloseAlert = "";
                     // Create a listener to assign the last value received by Firebase to the global variable
-                        var checkNewUserClientRef = new Firebase('https://f30s.firebaseio.com/ + GLOB.deviceUuid + '/clientEvents/' );
+                        var checkNewUserClientRef = new Firebase('https://f30s.firebaseio.com/' + GLOB.deviceUuid + '/clientEvents/' );
                         checkNewUserClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
                             GLOB.usr_newUserCloseAlert = JSON.stringify(val);
