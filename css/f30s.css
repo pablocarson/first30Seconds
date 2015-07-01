@@ -84,6 +84,29 @@ h2 {
     margin-left: auto;
   }
   
+  .newUserAlert {
+    position: relative; 
+    top: -25px;
+    left: -3px;
+    text-decoration:none;
+	text-shadow:none;
+    font-size:12px;
+    font-weight:bold;
+    width: 80%;
+    border: solid;
+    border-color:#555555;
+    border-radius:5px;
+    box-shadow: 2px 2px 5px #666666;
+    color:#d00000;
+    background-color:#ffffff; 
+    padding-top:10px;
+    padding-bottom:10px;
+    padding-right:10px;
+    padding-left:10px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  
   .manualAlert {
     position: relative; 
     top: -25px;
