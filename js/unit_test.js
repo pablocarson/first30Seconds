@@ -282,7 +282,7 @@ function unitTests() {
                         // Open the Waiting overlay
                             sys_openWaiting();
                         return( 1000 );
-                    },
+                    };
                 },
                 function() {
                     // Send a message to Firebase containing an alert with instructions to remove a waiting overlay if one is present
