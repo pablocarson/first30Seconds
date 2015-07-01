@@ -206,7 +206,7 @@
 			GLOB.newUserClientAlertRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid + '/clientEvents');
 
 			// User clicks on a newUser page server-generated alert to request that it be closed.
-			$(document).on( "click", "#newUserAlertWrapper", function() {
+			$(document).on( "click", ".newUserAlertWrapper", function() {
 				// Open the waiting overlay. Unlike the other functions, this is not triggered by an anchor link.
 				// Anchor links trigger the waiting overlay using the HREF="" tag in the HTML. So we have to call 
 				// the Waiting overlay from here instead.
