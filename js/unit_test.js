@@ -276,14 +276,17 @@ function unitTests() {
                     },
             // Server sends an alert
                 function() {
-                    descAlert( "The message containing the device ID was received by FIrebase. Let's test the server alert functions. First we'll open the Waiting overlay and then simulate a Firebase message instructing the client to close the overlay and open the alert. This also covers the case where no Waiting overlay is open, since if it's closed, the command to remove it is ignored." );
-                    // Open the Waiting overlay
-                        sys_openWaiting();
-                    return( 1000 );
+                    // Since this is a test element for an anonymous user, run it only if there's no value for f30sUserId in localStorage.
+                    if (GLOB.f30sUserId == null) {
+                        descAlert( "The message containing the device ID, user's purchase email, and the last 4 digits of the user's credit card was received by FIrebase. Let's test the server alert functions. Even though we haven't completed authentication, we may need to respond, for example, if the user's submitted purchase credentials aren't in the system. For this, we'll use the device ID that was submitted. First we'll open the Waiting overlay and then simulate a Firebase message instructing the client to close the overlay and open the alert. This also covers the case where no Waiting overlay is open, since if it's closed, the command to remove it is ignored." );
+                        // Open the Waiting overlay
+                            sys_openWaiting();
+                        return( 1000 );
+                    },
                 },
                 function() {
                     // Send a message to Firebase containing an alert with instructions to remove a waiting overlay if one is present
-                        GLOB.globalServerAlertRef.set({
+                        GLOB.newUserServerAlertRef.set({
                             currentAlert : {
                                 alertMsg : " [Alert text] (newUser) ",
                                 removeWaitingMsg : true
@@ -363,7 +366,7 @@ function unitTests() {
                 function() {
                     descAlert( "The 'close alert' message was received by Firebase and the Waiting overlay appeared. Let's simulate a server message to Firebase instructing the client to close both the alert and the Waiting overlay." );
                     // Simulate a server message to Firebase to close the alert and the waiting overlay. The alert is closed by setting the text of the alert to null ("")
-                        GLOB.globalServerAlertRef.set({
+                        GLOB.newUserServerAlertRef.set({
                             currentAlert : {
                                 alertMsg : "",
                                 removeWaitingMsg : true
@@ -398,7 +401,7 @@ function unitTests() {
                 },
                 function() {
                     // Send a message to Firebase containing an alert and the instruction to retain the Waiting overlay
-                        GLOB.globalServerAlertRef.set({
+                        GLOB.newUserServerAlertRef.set({
                             currentAlert : {
                                 alertMsg : " [Alert text] (newUser / Waiting) ",
                                 removeWaitingMsg : false
