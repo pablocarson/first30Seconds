@@ -335,12 +335,12 @@ function unitTests() {
                     // Initialize a new global variable
                         GLOB.usr_newUserCloseAlert = "";
                     // Create a listener to assign the last value received by Firebase to the global variable
-                        var checkGlobalClientRef = new Firebase('https://f30s.firebaseio.com/uniqueUserId12345/global/clientEvents/' );
-                        checkGlobalClientRef.on('child_added', function(childSnapshot, prevChildName) {
+                        var checkNewUserClientRef = new Firebase('https://f30s.firebaseio.com/ + GLOB.deviceUuid + '/clientEvents/' );
+                        checkNewUserClientRef.on('child_added', function(childSnapshot, prevChildName) {
                             var val = childSnapshot.val();
                             GLOB.usr_newUserCloseAlert = JSON.stringify(val);
                         // Close the listener
-                            checkGlobalClientRef.off()
+                            checkNewUserClientRef.off()
                         });
                     // Add a delay to ensure the data is received
                         return( 1000 );

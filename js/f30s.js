@@ -201,6 +201,18 @@
 				};		
 			});
 
+			// Reference for client events on the newUser page. Because the user's not authenticated yet, we 
+			// send the request to a reference based on device.uuid.
+			GLOB.newUserServerAlertRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid + '/clientEvents');
+
+			// User clicks on a newUser page server-generated alert to request that it be closed.
+			$(document).on( "click", "#newUserAlertWrapper", function() {
+				// Open the waiting overlay. Unlike the other functions, this is not triggered by an anchor link.
+				// Anchor links trigger the waiting overlay using the HREF="" tag in the HTML. So we have to call 
+				// the Waiting overlay from here instead.
+				sys_openWaiting();
+				GLOB.newUserServerAlertRef.push( { Close_alert : true } );
+			});
 
 
 		// If an authentication token already exists in localStorage, register with Google Cloud Messaging (GCM) and retrieve a GCM
