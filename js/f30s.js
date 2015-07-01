@@ -129,8 +129,6 @@
 			GLOB.newUserServerAlertRef.on('child_added', function(childSnapshot, prevChildName) {
 				// Retrieve the JSON string stored in alertMsg	
 				var val = childSnapshot.val();
-				alert(val);
-				alert(val.alertMsg)
 				// If the server set the removeWaiting flag to true, close any open 'Waiting...' overlay.
 				// If a waiting overlay isn't open, the command will be ignored.
 				if (val.removeWaitingMsg == true) {
@@ -138,18 +136,18 @@
 				};
 				// If the alert message is empty, close the alert.
 				if (val.alertMsg == "") {
-					$('.alertWrapper').hide();
+					$('.newUserAlertWrapper').hide();
 				} else {
 					// Extract the alert text from the message		
 					var jsonAlert = JSON.stringify( val.alertMsg );
 					// Populate the text in the alert. By specifying the entire class, we ensure that 
 					// the current page alert text is populated regardless of what that page is.
-					$('.alert').html(val.alertMsg);
+					$('.newUserAlert').html(val.alertMsg);
 					// Use a slight timeout to avoid collision with the command to populate the alert
 					setTimeout (function() {
 						// Display the alert component. By specifying the entire class, we ensure that 
 						// the alert is displayed on the page that's currently active.
-						$('.alertWrapper').show();
+						$('.newUserAlertWrapper').show();
 						// Derive the current page ID
 						var currentPage = $.mobile.activePage.attr('id')
 						// Convert this to the alert ID for the current page. For example,
@@ -160,7 +158,7 @@
 						// below it, regardless of how many lines of text may be in the alert.
 						var containerHeight = $(currentAlertId).height()
 						var containerHeightTrim = parseInt(containerHeight) + 37;			
-						$('.alertWrapper').css("height", containerHeightTrim);
+						$('.newUserAlertWrapper').css("height", containerHeightTrim);
 					}, 10);		
 				};		
 			});
@@ -176,18 +174,18 @@
 				};
 				// If the alert message is empty, close the alert.
 				if (val.alertMsg == "") {
-					$('.alertWrapper').hide();
+					$('.newUserAlertWrapper').hide();
 				} else {
 					// Extract the alert text from the message		
 					var jsonAlert = JSON.stringify( val.alertMsg );
 					// Populate the text in the alert. By specifying the entire class, we ensure that 
 					// the current page alert text is populated regardless of what that page is.
-					$('.alert').html(val.alertMsg);
+					$('.newUserAlert').html(val.alertMsg);
 					// Use a slight timeout to avoid collision with the command to populate the alert
 					setTimeout (function() {
 						// Display the alert component. By specifying the entire class, we ensure that 
 						// the alert is displayed on the page that's currently active.
-						$('.alertWrapper').show();
+						$('.newUserAlertWrapper').show();
 						// Derive the current page ID
 						var currentPage = $.mobile.activePage.attr('id')
 						// Convert this to the alert ID for the current page. For example,
@@ -198,7 +196,7 @@
 						// below it, regardless of how many lines of text may be in the alert.
 						var containerHeight = $(currentAlertId).height()
 						var containerHeightTrim = parseInt(containerHeight) + 37;			
-						$('.alertWrapper').css("height", containerHeightTrim);
+						$('.newUserAlertWrapper').css("height", containerHeightTrim);
 					}, 10);		
 				};		
 			});
