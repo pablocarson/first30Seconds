@@ -129,6 +129,8 @@
 			GLOB.newUserServerAlertRef.on('child_added', function(childSnapshot, prevChildName) {
 				// Retrieve the JSON string stored in alertMsg	
 				var val = childSnapshot.val();
+				alert(val);
+				alert(val.alertMsg)
 				// If the server set the removeWaiting flag to true, close any open 'Waiting...' overlay.
 				// If a waiting overlay isn't open, the command will be ignored.
 				if (val.removeWaitingMsg == true) {
