@@ -106,6 +106,11 @@
 			GLOB.newUserIdResponseRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid + '/authenticationToken');
 			// Create a listener based on this reference. Since it's unique, the server will use it to send an authentication
 			// token to the device. 
+
+			// Firebase reference for server alert messages for the newUser page only. We need a separate reference because
+			// if we're on the newUser page we don't have an authentication token yet, so we use the device.uuid channel.
+			GLOB.newuserServerAlertRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid + '/alerts');
+			
 			GLOB.newUserIdResponseRef.on('child_added', function(childSnapshot, prevChildName) {
 				var val = childSnapshot.val();
 				// Place the received authentication token in localStorage
@@ -120,10 +125,6 @@
 				var pushNotification = window.plugins.pushNotification;
 				pushNotification.register(successHandler, errorHandler,{"senderID":"663432953781","ecb":"onNotificationGCM"});
 			});
-
-			// Firebase reference for server alert messages for the newUser page only. We need a separate reference because
-			// if we're on the newUser page we don't have an authentication token yet, so we use the device.uuid channel.
-			GLOB.newuserServerAlertRef = new Firebase('https://f30s.firebaseio.com/' + device.uuid + '/alerts');
 			
 			// Server creates an alert for the newUser page. 
 			GLOB.newUserServerAlertRef.on('child_added', function(childSnapshot, prevChildName) {
