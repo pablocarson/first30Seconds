@@ -285,164 +285,194 @@ function unitTests() {
                     };
                 },
                 function() {
-                    // Send a message to Firebase containing an alert with instructions to remove a waiting overlay if one is present
-                        GLOB.newUserServerAlertRef.set({
-                            currentAlert : {
-                                alertMsg : " [Alert text] (newUser) ",
-                                removeWaitingMsg : true
-                            },
-                        })
-                    //  Include a small delay for app response
-                        return( 1000 );
+                    // Since this is a test element for an anonymous user, run it only if there's no value for f30sUserId in localStorage.
+                    if (GLOB.f30sUserId == null) {
+                        // Send a message to Firebase containing an alert with instructions to remove a waiting overlay if one is present
+                            GLOB.newUserServerAlertRef.set({
+                                currentAlert : {
+                                    alertMsg : " [Alert text] (newUser) ",
+                                    removeWaitingMsg : true
+                                },
+                            })
+                        //  Include a small delay for app response
+                            return( 1000 );
+                    };
                 },
                 function() {
-                    // Confirm receipt / display of alert text by app
-                        var currentText = $('#newUserAlertText').text()
-                        var expectedText =" [Alert text] (newUser) ";
-                        if ( currentText != expectedText ) {
-                            alert(
-                                "Expecting text: [" +
-                                expectedText +
-                                "]. Got text: ["+
-                                currentText +
-                                "]"
-                            );
-                            return( -1 );
-                        };
-                        if ( $(newUserAlertWrapper).css('display') != 'block') {
-                            alert(
-                                "Error: App should be displaying an alert."
-                            );
-                            return( -1 );
-                        };
-                    // Confirm that the Waiting overlay is closed
-                        if ($(".ui-loader-background").css('display') != 'none') {
-                            alert(
-                                "Error: App should not be in Waiting mode."
-                            );
-                            return( -1 );
-                        };
+                    // Since this is a test element for an anonymous user, run it only if there's no value for f30sUserId in localStorage.
+                    if (GLOB.f30sUserId == null) {
+                        // Confirm receipt / display of alert text by app
+                            var currentText = $('#newUserAlertText').text()
+                            var expectedText =" [Alert text] (newUser) ";
+                            if ( currentText != expectedText ) {
+                                alert(
+                                    "Expecting text: [" +
+                                    expectedText +
+                                    "]. Got text: ["+
+                                    currentText +
+                                    "]"
+                                );
+                                return( -1 );
+                            };
+                            if ( $(newUserAlertWrapper).css('display') != 'block') {
+                                alert(
+                                    "Error: App should be displaying an alert."
+                                );
+                                return( -1 );
+                            };
+                        // Confirm that the Waiting overlay is closed
+                            if ($(".ui-loader-background").css('display') != 'none') {
+                                alert(
+                                    "Error: App should not be in Waiting mode."
+                                );
+                                return( -1 );
+                            };
+                    };
                 },
             // User selects alert to close it
                 function() {
-                    descAlert( "The alert was displayed and the Waiting overlay was removed. Let's click on the alert to test that the Waiting overlay opens and a message is sent to Firebase requesting to close the alert." );
-                    // Click on the alert
-                        $(newUserAlertWrapper).click();
-                    // Add a delay to allow for display update
-                        return( 2000 );
+                    // Since this is a test element for an anonymous user, run it only if there's no value for f30sUserId in localStorage.
+                    if (GLOB.f30sUserId == null) {
+                        descAlert( "The alert was displayed and the Waiting overlay was removed. Let's click on the alert to test that the Waiting overlay opens and a message is sent to Firebase requesting to close the alert." );
+                        // Click on the alert
+                            $(newUserAlertWrapper).click();
+                        // Add a delay to allow for display update
+                            return( 2000 );
+                    };
                 },
                 function() {
-                    // Initialize a new global variable
-                        GLOB.usr_newUserCloseAlert = "";
-                    // Create a listener to assign the last value received by Firebase to the global variable
-                        var checkNewUserClientRef = new Firebase('https://f30s.firebaseio.com/' + GLOB.deviceUuid + '/clientEvents/' );
-                        checkNewUserClientRef.on('child_added', function(childSnapshot, prevChildName) {
-                            var val = childSnapshot.val();
-                            GLOB.usr_newUserCloseAlert = JSON.stringify(val);
-                        // Close the listener
-                            checkNewUserClientRef.off()
-                        });
-                    // Add a delay to ensure the data is received
-                        return( 1000 );
+                    // Since this is a test element for an anonymous user, run it only if there's no value for f30sUserId in localStorage.
+                    if (GLOB.f30sUserId == null) {
+                        // Initialize a new global variable
+                            GLOB.usr_newUserCloseAlert = "";
+                        // Create a listener to assign the last value received by Firebase to the global variable
+                            var checkNewUserClientRef = new Firebase('https://f30s.firebaseio.com/' + GLOB.deviceUuid + '/clientEvents/' );
+                            checkNewUserClientRef.on('child_added', function(childSnapshot, prevChildName) {
+                                var val = childSnapshot.val();
+                                GLOB.usr_newUserCloseAlert = JSON.stringify(val);
+                            // Close the listener
+                                checkNewUserClientRef.off()
+                            });
+                        // Add a delay to ensure the data is received
+                            return( 1000 );
+                    };
                 },
                 function() {
-                    // Confirm that the 'Close_alert' message was received by Firebase
-                        if (GLOB.usr_newUserCloseAlert != '{"Close_alert":true}') {
-                            alert(
-                                'Expecting {"Close_alert":true }. Got: ' +
-                                GLOB.usr_newUserCloseAlert
-                            );
-                            return( -1 );
-                        };
-                    // Confirm that the Waiting overlay is open
-                        if ($(".ui-loader-background").css('display') != 'block') {
-                            alert(
-                                "Error: App should be in Waiting mode."
-                            );
-                            return( -1 );
-                        };
+                    // Since this is a test element for an anonymous user, run it only if there's no value for f30sUserId in localStorage.
+                    if (GLOB.f30sUserId == null) {
+                        // Confirm that the 'Close_alert' message was received by Firebase
+                            if (GLOB.usr_newUserCloseAlert != '{"Close_alert":true}') {
+                                alert(
+                                    'Expecting {"Close_alert":true }. Got: ' +
+                                    GLOB.usr_newUserCloseAlert
+                                );
+                                return( -1 );
+                            };
+                        // Confirm that the Waiting overlay is open
+                            if ($(".ui-loader-background").css('display') != 'block') {
+                                alert(
+                                    "Error: App should be in Waiting mode."
+                                );
+                                return( -1 );
+                            };
+                    };
                 },
             // Server removes an alert
                 function() {
-                    descAlert( "The 'close alert' message was received by Firebase and the Waiting overlay appeared. Let's simulate a server message to Firebase instructing the client to close both the alert and the Waiting overlay." );
-                    // Simulate a server message to Firebase to close the alert and the waiting overlay. The alert is closed by setting the text of the alert to null ("")
-                        GLOB.newUserServerAlertRef.set({
-                            currentAlert : {
-                                alertMsg : "",
-                                removeWaitingMsg : true
-                            },
-                        })
-                    //  Include a small delay for app response
-                        return( 1000 );
+                    // Since this is a test element for an anonymous user, run it only if there's no value for f30sUserId in localStorage.
+                    if (GLOB.f30sUserId == null) {
+                        descAlert( "The 'close alert' message was received by Firebase and the Waiting overlay appeared. Let's simulate a server message to Firebase instructing the client to close both the alert and the Waiting overlay." );
+                        // Simulate a server message to Firebase to close the alert and the waiting overlay. The alert is closed by setting the text of the alert to null ("")
+                            GLOB.newUserServerAlertRef.set({
+                                currentAlert : {
+                                    alertMsg : "",
+                                    removeWaitingMsg : true
+                                },
+                            })
+                        //  Include a small delay for app response
+                            return( 1000 );
+                    };
                 },
                 function() {
-                    // Confirm that alert has been removed
-                        if ( $(newUserAlertWrapper).css('display') == 'block') {
-                            alert(
-                                "Error: App should not be displaying an alert."
-                            );
-                            return( -1 );
-                        };
-                    // Confirm that Waiting overlay has been removed
-                        if ($(".ui-loader-background").css('display') != 'none') {
-                            alert(
-                                "Error: App should not be in Waiting mode."
-                            );
-                            return( -1 );
-                        };
+                    // Since this is a test element for an anonymous user, run it only if there's no value for f30sUserId in localStorage.
+                    if (GLOB.f30sUserId == null) {
+                        // Confirm that alert has been removed
+                            if ( $(newUserAlertWrapper).css('display') == 'block') {
+                                alert(
+                                    "Error: App should not be displaying an alert."
+                                );
+                                return( -1 );
+                            };
+                        // Confirm that Waiting overlay has been removed
+                            if ($(".ui-loader-background").css('display') != 'none') {
+                                alert(
+                                    "Error: App should not be in Waiting mode."
+                                );
+                                return( -1 );
+                            };
+                    };
                 },
             // Server sends an alert while client is in Waiting mode
                 function() {
-                    descAlert( "The alert and the Waiting overlay both closed. Let's restore the Waiting overlay and test the alert again, this time with the instruction to retain the Waiting overlay. The alert should open behind the translucent overlay." );
-                    // Induce a waiting state
-                        sys_openWaiting();
-                    // Add a delay to allow for display update
-                        return( 1000 );
+                    // Since this is a test element for an anonymous user, run it only if there's no value for f30sUserId in localStorage.
+                    if (GLOB.f30sUserId == null) {
+                        descAlert( "The alert and the Waiting overlay both closed. Let's restore the Waiting overlay and test the alert again, this time with the instruction to retain the Waiting overlay. The alert should open behind the translucent overlay." );
+                        // Induce a waiting state
+                            sys_openWaiting();
+                        // Add a delay to allow for display update
+                            return( 1000 );
+                    };
                 },
                 function() {
-                    // Send a message to Firebase containing an alert and the instruction to retain the Waiting overlay
-                        GLOB.newUserServerAlertRef.set({
-                            currentAlert : {
-                                alertMsg : " [Alert text] (newUser / Waiting) ",
-                                removeWaitingMsg : false
-                            },
-                        })
-                    // Add a delay to allow for display update
-                        return( 1000 );
+                    // Since this is a test element for an anonymous user, run it only if there's no value for f30sUserId in localStorage.
+                    if (GLOB.f30sUserId == null) {
+                        // Send a message to Firebase containing an alert and the instruction to retain the Waiting overlay
+                            GLOB.newUserServerAlertRef.set({
+                                currentAlert : {
+                                    alertMsg : " [Alert text] (newUser / Waiting) ",
+                                    removeWaitingMsg : false
+                                },
+                            })
+                        // Add a delay to allow for display update
+                            return( 1000 );
+                    };
                 },
                 function() {
-                    // Confirm that Waiting overlay is still present
-                        if ($(".ui-loader-background").css('display') != 'block') {
-                            alert(
-                                "Error: App should be in Waiting mode."
-                            );
-                            return( -1 );
-                        };
-                    // Confirm receipt / display of alert text by app
-                        var currentText = $('#newUserAlertText').text()
-                        var expectedText =" [Alert text] (newUser / Waiting) ";
-                        if ( currentText != expectedText ) {
-                            alert(
-                                "Expecting text: [" +
-                                expectedText +
-                                "]. Got text: ["+
-                                currentText +
-                                "]"
-                            );
-                            return( -1 );
-                        };
-                        if ( $(newUserAlertWrapper).css('display') != 'block') {
-                            alert(
-                                "Error: App should be displaying an alert."
-                            );
-                            return( -1 );
-                        };
+                    // Since this is a test element for an anonymous user, run it only if there's no value for f30sUserId in localStorage.
+                    if (GLOB.f30sUserId == null) {
+                        // Confirm that Waiting overlay is still present
+                            if ($(".ui-loader-background").css('display') != 'block') {
+                                alert(
+                                    "Error: App should be in Waiting mode."
+                                );
+                                return( -1 );
+                            };
+                        // Confirm receipt / display of alert text by app
+                            var currentText = $('#newUserAlertText').text()
+                            var expectedText =" [Alert text] (newUser / Waiting) ";
+                            if ( currentText != expectedText ) {
+                                alert(
+                                    "Expecting text: [" +
+                                    expectedText +
+                                    "]. Got text: ["+
+                                    currentText +
+                                    "]"
+                                );
+                                return( -1 );
+                            };
+                            if ( $(newUserAlertWrapper).css('display') != 'block') {
+                                alert(
+                                    "Error: App should be displaying an alert."
+                                );
+                                return( -1 );
+                            };
+                    };
                 },
             // User clicks 'About this app' link
                 function() {
                     if (GLOB.f30sUserId == null) {
                         // Let's test the "About this app" link. The client should respond by opening the "About this app" page. The page is static so no information is sent to Firebase. 
-                        descAlert( "Let's test the 'About this app' link. The client should respond by opening the 'About this app' page.");
+                        descAlert( "The alert appeared behind the Waiting overlay. Let's test the 'About this app' link. The client should respond by opening the 'About this app' page.");
                         // Remove the Waiting overlay
                             sys_closeWaiting();
                         return( 1000 );
@@ -505,7 +535,7 @@ function unitTests() {
                     // Since this is a test element for an anonymous user, run it only if there's no value for f30sUserId in localStorage.
                     if (GLOB.f30sUserId == null) {
                         // When the server detects that a new device ID has been sent to Firebase, it sends a Firebase message with an f30sUserID to a reference created from the device ID.
-                        descAlert( "We're back on the newUser page. When the server detects a message containing a new device ID,  it uses that ID as a Firebase reference  to return an authentication token to the client. The client responds by placing the token in localStorage, updating all client references and listeners using the token as the primary Firebase reference, and sending a pageReady message to Firebase at the new reference.")
+                        descAlert( "We're back on the newUser page. Note that the alert remains open. This is useful in case an alert appears while the user is on the static 'about' page. When the server detects a message containing a new device ID,  it uses that ID as a Firebase reference  to return an authentication token to the client. The client responds by placing the token in localStorage, updating all client references and listeners using the token as the primary Firebase reference, and sending a pageReady message to Firebase at the new reference.")
                         // Server sends Firebase message containing a unique f30s user ID.
                             GLOB.newUserIdResponseRef.set ( { f30sUserIdMsg : "uniqueUserId12345" } )
                         // Add a delay for Firebase response
