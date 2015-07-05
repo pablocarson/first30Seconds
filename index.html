@@ -615,15 +615,9 @@
 				</span>,
 				
 				<span id="partyStateText"><!-- State in which venue resides -->
-				</span>
-				
+				</span>				
 			</div>
  
-			<a href="" id="partyPhoneLinkText"><!-- tel: link for venue phone number -->
-				<div id="partyPhoneText"><!-- venue phone number -->
-				</div>
-			</a>
-			
 			<div class="center-wrapper">
 			You're expected in the next
 				<span id="countdownTimer" class="timer"><!-- Countdown timer with time remaining populated by system -->
@@ -743,7 +737,7 @@
 				<div class="ui-grid-a"><!-- Pause party participation -->
 					<div class="ui-block-a">
 						<button type="button" data-theme="b" id="pause" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
-							Pause matches
+							Pause matching
 						</button>
 					</div>
 					<div class="ui-block-b"><!-- Leave the party -->
@@ -758,7 +752,7 @@
 			<!-- Alternate version of upper page component below the header. This version is
 			displayed when the user is in 'Pause Matches' state. This is the only content 
 			element in this page until others join the party. -->
-			<div id ="atPartyIntroPaused" class="warning">Matches are currently paused. You can still rate people in the list and they can rate you, but you won't be matched with anyone until you return to the party.
+			<div id ="atPartyIntroPaused" class="warning">Matches are currently paused. You can still rate people in the list and they can rate you, but you won't be matched with anyone until you resume matching.
 			
 				<div class="spacer5px">
 				</div>
@@ -766,7 +760,7 @@
 				<div class="ui-grid-a">
 					<div class="ui-block-a"><!-- Close pause state and return to the party -->
 						<button type="button" data-theme="b" id="endPause" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
-							Resume matches
+							Resume matching
 						</button>
 					</div>
 					<div class="ui-block-b"><!-- Leave the party -->
@@ -834,12 +828,12 @@
 				There's another party!
 			</div>
 				
-			A party is starting nearby where you have higher odds of a match. If you decide to check it out, you'll be removed from this party's list.
+			A party is starting nearby where you have higher odds of a match. If you agree to go there, you'll be removed from this party's list.
 			<p>
 			
 			<!-- "Better party" confirmation. Opens Waiting overlay and sends message to Firebase. -->			
 			<a href="#atPartyWaiting" id="goBetterParty" data-rel="popup" data-position-to="window" data-role="button" data-theme="d" data-inline="true" data-mini="true">
-				Check it out
+				Go there
 			</a>
 			
 			<!-- Cancels and returns user to party view -->
@@ -931,8 +925,8 @@
 
 		<!-- Select menu for rating. Must have a value from 0 to 5 (user must select a rating) for submit button 
 		to become active. --> 
-		<select name='rateOtherUserRating1' id='rateOtherUserRating' data-theme='b' data-native-menu='false' onChange="$('#ratingSubmit').button('enable')">
-			<option value="-1" data-placeholder="true">How interested are you?</option>
+		<select name='rateOtherUserRating1' id='rateOtherUserRating' data-theme='b' data-native-menu='false' data-mini="true" onChange="$('#ratingSubmit').button('enable')">
+			<option value="-1" data-placeholder="true">&nbsp;&nbsp;&nbsp;&nbsp;How interested are you?</option>
 			<option value="0" data-theme="a">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I'm not interested</option>
 			<option value="1">♥&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I'm not *not* interested...</option>
 			<option value="2">♥♥&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Seems all right</option>
@@ -942,8 +936,8 @@
 		</select>
 		
 		<!-- Rating submit button. Inactive by default, selection of a rating activates the button. --> 
-		<button type="button" data-theme="b" id="ratingSubmit" class="show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting...">
-			Submit and return to list
+		<button type="button" data-theme="b" id="ratingSubmit" class="show-page-loading-msg" data-textvisible="true" data-mini="true" data-msgtext="Waiting...">
+			Submit and return to party
 		</button><br>
 		
 		<!-- TOS violation button. Opens TOS violation modal dialog. --> 
@@ -955,10 +949,10 @@
 		<div data-role='popup' id='rateOtherUserTOSDialog' class='dialog' data-overlay-theme='a' data-corners='false' data-tolerance='30,15' >
 			
 			<div class='dialogHeader'>
-				Report Offensive Behavior
+				Report offensive behavior
 			</div>
 				
-			Reporting this person means they'll never appear on your match lists again. We can't intervene directly so if this is a serious problem please tell the owners of the party location or, in extreme cases, call 911.<p>
+			Reporting this person means they'll never appear on your match lists again. We can't intervene directly so if this is a serious problem please tell the owners of the venue or, in extreme cases, call 911.<p>
 				
 			<div class="ui-grid-a">
 				<div class="ui-block-a">
@@ -1003,11 +997,6 @@
   
 	<div data-role="footer" data-theme="d" class="center-wrapper" data-position="fixed"><!-- Footer -->
 
-	
-		<!-- Link to profile -->
-		<button type="button" data-theme="b" id="rateOtherUserProfile" class="profileButton show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
-			Profile
-		</button>
 
 		<!-- Link to #rateOtherUser help -->	
 		<a href="#rateOtherUserHelp" id="rateOtherUserHelpButton" data-rel="popup" data-position-to="window" data-theme="b" data-role="button" data-transition="fade">
@@ -1066,21 +1055,21 @@
 			
 			<hr>
 			
-			Other matches are paused until you close this match.
+			You will not be matched with other partygoers until this match is closed.
 			
 		</div>
 
 		<!-- Sends 'match complete' message to close match and opens 'Waiting...' overlay.
 		Hidden on page load and appears after a predetermined amount of time. For test purposes, 
 		the delay is one second. -->
-		<a href="#matchDone" id="matchClose" data-theme="b" data-rel="popup" data-role="button" data-position-to="window">
+		<a href="#matchDone" id="matchClose" data-theme="b" data-rel="popup" data-role="button" data-mini="true" data-position-to="window">
 			Close match
 		</a>
 	  
 		<!-- Sends 'can't find' message to close match and opens 'Waiting...' overlay.
 		Hidden on page load and appears after a predetermined amount of time. For test purposes, 
 		the delay is two seconds. 		-->
-		<a href="#cantFindMatch" id="cantFindMatchButton" data-theme="b" data-rel="popup" data-role="button" data-position-to="window">
+		<a href="#cantFindMatch" id="cantFindMatchButton" data-theme="b" data-rel="popup" data-role="button" data-mini="true" data-position-to="window">
 			I can't find this person
 		</a>
 	
@@ -1097,7 +1086,7 @@
 				Are you sure?
 			</div>
 				
-			Please confirm that you want to close this match.<p>
+			Please confirm that you want to close this match. You'll return to the party where you can be matched again.<p>
 
 			<div class="ui-grid-a">
 				<div class="ui-block-a">
@@ -1117,10 +1106,10 @@
 		<!-- Confirmation dialog for 'I can't find this person' --> 		     
 		<div data-role="popup" id="cantFindMatch" class="dialog" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" >
 			<div class="dialogHeader">
-				They're Not Here
+				They're not here
 			</div>
 				
-			We're sorry you're having trouble. If you're sure you can't find them, we'll close this match and return you to the party.<p>
+			We're sorry you're having trouble. If you're sure you can't find them, we'll end this match and you'll return to the party where you can be matched again.<p>
 
 			<div class="ui-grid-a">
 				<div class="ui-block-a">
@@ -1141,10 +1130,10 @@
 		<div data-role='popup' id='matchTOSDialog' class='dialog' data-overlay-theme='a' data-corners='false' data-tolerance='30,15' >
 			
 			<div class='dialogHeader'>
-				Report Offensive Behavior
+				Report offensive behavior
 			</div>
 				
-			Reporting this person means they'll never appear on your match lists again. We can't intervene directly so if this is a serious problem please tell the owners of the party location or, in extreme cases, call 911.<p>
+			Reporting this person means they'll never appear on your match lists again. We can't intervene directly so if this is a serious problem please tell the owners of the venue or, in extreme cases, call 911.<p>
 				
 			<div class="ui-grid-a">
 				<div class="ui-block-a">
@@ -1187,12 +1176,6 @@
 
 	  
 	<div data-theme="d" class="center-wrapper" data-position="fixed" data-role="footer"><!-- footer -->
-	
-	
-		<!-- Link to profile -->
-		<button type="button" data-theme="b" id="matchProfile" class="profileButton show-page-loading-msg" data-textvisible="true" data-msgtext="Waiting..." data-mini="true">
-			Profile
-		</button>
 
 		<a href="#matchHelp" id="matchHelpButton" data-rel="popup" data-position-to="window" data-role="button" data-transition="fade" data-theme="b">
 			Help
