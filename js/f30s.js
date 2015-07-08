@@ -330,8 +330,9 @@
 		};
 		// Otherwise, the value will be 1 - 5, which will be converted to a string of heart symbols 
 		// (&hearts;) of the corresponding length. For example, a rating of 3 will display as three heart symbols.
+		// The native HTML &hearts; code won't render the color properly, so we're currently using a small base64 image to render the hearts.
 		if ( (jsonRating > '0') && (jsonRating < '6') ) {
-			var newHearts = Array(+ jsonRating + 1).join("&hearts;");
+			var newHearts = Array(+ jsonRating + 1).join("<img src='data:image/gif;base64,R0lGODlhDAAMANU/AP8QEP8FBf8lJf8XF/8LC/8AAP8BAf/w8P8CAv/v7/+YmP8bG//X1/8ICP/29v8GBv9tbf9JSf9CQv8MDP8fH/+qqv+Xl/+7u/8qKv/7+/8VFf8zM/+Skv+IiP+Dg/9BQf/T0/+MjP/g4P/8/P8gIP/r6//t7f/o6P/n5/+Pj//5+f9wcP+zs//l5f/Fxf/Hx/+1tf/u7v8cHP90dP/6+v8mJv81Nf9UVP++vv+/v/+rq/+Tk/+Njf+Jif+Cgv///yH5BAEAAD8ALAAAAAAMAAwAAAZnwN/hpbu0HCUGCKU6cGyyGoTliUhWLpzAUChMPoBu4xYKdLvh84D3OBcabkBOgOgiuF0D5rDbENwFASQ9QjAUbgYRFSY/PzQWfwUIAwoJjY0JPhoBCzMMI5eNMSkLHSIZoZcnCiKhQQA7' />");
 			// Display the string created on the atParty page.
 			$('#rating' + UID).html( newHearts );
 		}		
