@@ -328,10 +328,10 @@
 		if (jsonRating == '0') {
 			$('#rating' + UID).html("Not interested");
 		};
-		// Otherwise, the value will be 1 - 5, which will be converted to a string of the symbol 
-		// '♥' of the corresponding length. For example, a rating of 3 will display as ♥♥♥.
+		// Otherwise, the value will be 1 - 5, which will be converted to a string of heart symbols 
+		// (&hearts;) of the corresponding length. For example, a rating of 3 will display as three heart symbols.
 		if ( (jsonRating > '0') && (jsonRating < '6') ) {
-			var newHearts = Array(+ jsonRating + 1).join("♥");
+			var newHearts = Array(+ jsonRating + 1).join("&hearts;");
 			// Display the string created on the atParty page.
 			$('#rating' + UID).html( newHearts );
 		}		
