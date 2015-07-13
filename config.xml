@@ -41,6 +41,7 @@
 
     <!-- Core plugins -->
 
+    <gap:plugin name="cordova-plugin-whitelist" source="npm" />
     <gap:plugin name="org.apache.cordova.media-capture" source="npm" />
     <gap:plugin name="org.apache.cordova.device" source="npm" />
     <gap:plugin name="org.apache.cordova.file" source="npm" />
