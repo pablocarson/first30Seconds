@@ -17,8 +17,7 @@
         Paul Caron
     </author>
 
-    <allow-navigation href="*://*.firebase.com/*" />
-    <allow-navigation href="*://*.stripe.com/*" />
+    <allow-navigation href="http://*/*" />
     
     <content src="index.html" />
     <!--
