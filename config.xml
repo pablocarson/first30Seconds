@@ -65,7 +65,7 @@
 -->
 
     <!-- Third party plugins -->
-    <gap:plugin name="com.phonegap.plugins.pushplugin" version="2.4.0" />
+    <gap:plugin name="com.phonegap.plugins.pushplugin" version="2.4.0" source="npm" />
 
     <!-- Define app icon for each platform. -->
     <icon src="icon.png" />
