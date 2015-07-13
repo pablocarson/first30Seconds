@@ -16,6 +16,9 @@
     <author href="http://paulcaron.com" email="pcaron@gmail.com">
         Paul Caron
     </author>
+
+    <allow-navigation href="*://*.firebase.com/*" />
+    <allow-navigation href="*://*.stripe.com/*" />
     
     <content src="index.html" />
     <!--
